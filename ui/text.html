@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text EDA — News Category Analysis</title>
+    <meta name="description" content="Text exploratory data analysis of the News Category dataset.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+
+<nav class="site-nav"><div class="nav-inner">
+    <a href="index.html" class="nav-brand"><i class="fa-solid fa-flask"></i> P4AI-DS</a>
+    <div class="nav-links">
+        <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="text.html"><i class="fa-solid fa-font"></i> Text</a>
+        <a href="image.html"><i class="fa-solid fa-microscope"></i> Image</a>
+    </div>
+    <div class="nav-actions">
+        <button class="theme-toggle" onclick="document.body.classList.toggle('dark')"><i class="fa-solid fa-palette"></i> Theme</button>
+    </div>
+</div></nav>
+
+<div class="page-container">
+    <section class="hero"><h1>Text EDA Report</h1><p>Exploratory analysis of HuffPost news articles in the News Category dataset, covering class balance, missing values, text lengths, timeline patterns, and dominant terms.</p></section>
+    <div class="page-controls">
+        <button class="btn" onclick="expandAll()"><i class="fa-solid fa-angles-down"></i> Expand All</button>
+        <button class="btn" onclick="collapseAll()"><i class="fa-solid fa-angles-up"></i> Collapse All</button>
+    </div>
+
+    <div class="eda-section" id="section-overview">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-table-list"></i> Dataset Overview</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div id="overview-stats" class="stats-grid"></div>
+            <div class="desc-box" id="overview-desc">Loading dataset description...</div>
+            <h3 class="section-title-inline"><i class="fa-solid fa-table-cells"></i> Sample Rows</h3>
+            <div class="data-table-wrap"><table class="data-table" id="sample-table"></table></div>
+            <h3 class="section-title-inline"><i class="fa-solid fa-list-check"></i> Data Types &amp; Missing Values</h3>
+            <div class="data-table-wrap"><table class="data-table" id="dtypes-table"></table></div>
+        </div>
+    </div>
+
+    <div class="eda-section" id="section-categories">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-chart-column"></i> Category Distribution</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="chart-container"><div class="chart-box" id="chart-category"></div>
+                <p class="chart-description">Top news categories ranked by number of articles. The long tail of smaller classes is a key issue for downstream classification.</p></div>
+            <div class="balance-grid" id="category-balance"></div>
+            <div class="insight-box"><h4><i class="fa-solid fa-lightbulb"></i> Key Insights</h4>
+                <ul id="category-insights"><li>Loading category insights...</li></ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="eda-section" id="section-lengths">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-ruler-horizontal"></i> Text Lengths</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="charts-row">
+                <div class="chart-container"><div class="chart-box" id="chart-headline-lengths"></div>
+                    <p class="chart-description">Headlines are short and compact, usually around 10 words.</p></div>
+                <div class="chart-container"><div class="chart-box" id="chart-combined-lengths"></div>
+                    <p class="chart-description">Combining headlines with short descriptions adds much more text context for NLP tasks.</p></div>
+            </div>
+            <div class="balance-grid" id="length-cards"></div>
+        </div>
+    </div>
+
+    <div class="eda-section" id="section-length-by-category">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-text-width"></i> Text Length by Category</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="chart-container"><div class="chart-box" id="chart-length-by-category"></div>
+                <p class="chart-description">Average combined text length for the largest categories. This highlights which news sections tend to use longer summaries.</p></div>
+            <div class="data-table-wrap"><table class="data-table" id="length-by-category-table"></table></div>
+        </div>
+    </div>
+
+    <div class="eda-section" id="section-timeline">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-timeline"></i> Timeline Distribution</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="chart-container"><div class="chart-box" id="chart-timeline"></div>
+                <p class="chart-description">Article volume across years. Later years are noticeably smaller, which suggests a temporal skew in the dataset.</p></div>
+            <div class="insight-box"><h4><i class="fa-solid fa-lightbulb"></i> Key Insights</h4>
+                <ul id="timeline-insights"><li>Loading timeline insights...</li></ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="eda-section" id="section-yearly-trends">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-chart-line"></i> Yearly Category Trends</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="chart-container"><div class="chart-box" id="chart-yearly-trends"></div>
+                <p class="chart-description">Top categories tracked across years to reveal how editorial focus changes over time.</p></div>
+        </div>
+    </div>
+
+    <div class="eda-section" id="section-quality">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-shield-halved"></i> Data Quality</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="charts-row">
+                <div class="chart-container"><div class="chart-box" id="chart-missing"></div>
+                    <p class="chart-description">Missing values are concentrated in `short_description` and `authors`, while label and link fields are complete.</p></div>
+                <div class="chart-container">
+                    <h3 class="section-title-inline"><i class="fa-solid fa-table"></i> Missing Value Table</h3>
+                    <div class="data-table-wrap"><table class="data-table" id="quality-table"></table></div>
+                    <div class="balance-grid" id="dup-summary"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="eda-section" id="section-terms">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-key"></i> Terms and Authors</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="charts-row">
+                <div class="chart-container"><div class="chart-box" id="chart-keywords"></div>
+                    <p class="chart-description">Frequent content words reveal a strong concentration of politics, media, and lifestyle language.</p></div>
+                <div class="chart-container">
+                    <h3 class="section-title-inline"><i class="fa-solid fa-user-pen"></i> Most Frequent Authors</h3>
+                    <div class="data-table-wrap"><table class="data-table" id="authors-table"></table></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="eda-section" id="section-category-terms">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-layer-group"></i> Top Terms by Category</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="chart-container"><div class="chart-box" id="chart-category-terms"></div>
+                <p class="chart-description">Most frequent content words for the largest categories. This shows how topic vocabulary changes across labels.</p></div>
+            <div class="data-table-wrap"><table class="data-table" id="category-terms-table"></table></div>
+        </div>
+    </div>
+
+    <div class="eda-section" id="section-tfidf">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-magnifying-glass-chart"></i> TF-IDF Keywords by Class</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="chart-container"><div class="chart-box" id="chart-tfidf"></div>
+                <p class="chart-description">TF-IDF highlights words that are especially characteristic of each category rather than merely frequent overall.</p></div>
+            <div class="data-table-wrap"><table class="data-table" id="tfidf-table"></table></div>
+        </div>
+    </div>
+
+    <div class="eda-section" id="section-examples">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-copy"></i> Duplicate and Missing Examples</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <h3 class="section-title-inline"><i class="fa-solid fa-clone"></i> Duplicate Records</h3>
+            <div class="data-table-wrap"><table class="data-table" id="duplicate-examples-table"></table></div>
+            <h3 class="section-title-inline"><i class="fa-solid fa-file-circle-xmark"></i> Missing Description Examples</h3>
+            <div class="data-table-wrap"><table class="data-table" id="missing-desc-table"></table></div>
+            <h3 class="section-title-inline"><i class="fa-solid fa-user-slash"></i> Missing Author Examples</h3>
+            <div class="data-table-wrap"><table class="data-table" id="missing-author-table"></table></div>
+        </div>
+    </div>
+</div>
+
+<footer class="site-footer">
+    <p>P4AI-DS (CO3135) | Dataset: News_Category_Dataset_v3.json</p>
+    <p class="footer-members">Group Members: [To be filled]</p>
+</footer>
+
+<script src="script.js"></script>
+<script src="text.js"></script>
+</body>
+</html>

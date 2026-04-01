@@ -1,6 +1,10 @@
-# PetFinder Adoption Prediction — EDA
+# P4AI-DS EDA Dashboard
 
-Exploratory Data Analysis for the [PetFinder.my Adoption Prediction](https://www.kaggle.com/c/petfinder-adoption-prediction) dataset.  
+Exploratory Data Analysis pipelines for:
+
+- the [PetFinder.my Adoption Prediction](https://www.kaggle.com/c/petfinder-adoption-prediction) dataset
+- the [News_Category_Dataset_v3.json](https://www.kaggle.com/datasets/rmisra/news-category-dataset) text dataset
+
 Course: **P4AI-DS (CO3135)**
 
 ## Quick Start
@@ -13,7 +17,7 @@ uv sync
 ./run.sh
 ```
 
-This runs the EDA data export, builds the image gallery, and starts a local server at `http://localhost:8080`.
+This runs the text EDA export, optionally runs the PetFinder image pipeline if that dataset is present, and starts a local server at `http://localhost:8080`.
 
 ## Project Structure
 
@@ -52,6 +56,7 @@ petfinder-analysis/
 
 The dashboard is a vanilla HTML/CSS/JS site using **Plotly.js** for interactive charts. It covers:
 
+- **Text EDA** — Dataset overview, class imbalance, missing values, text lengths, publication timeline, keywords, and top authors
 - **Tabular EDA** — Dataset overview, adoption speed distribution, feature distributions, correlation heatmap, health & vaccination analysis
 - **Image EDA** — Image dimensions, photo count impact, quality metrics (brightness, contrast, blurriness, saturation, colorfulness), RGB color space, composite quality scores
 - **Breed Gallery** — Interactive gallery with Dog/Cat tabs, breed sub-tabs, and 50/100 image views
