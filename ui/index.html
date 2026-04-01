@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetFinder Analysis Report</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <span class="icon">🐾</span>
+                <h1>PetFinder Analysis Data Log</h1>
+            </div>
+            <div class="sys-info">
+                <span>System: Online</span>
+                <span class="time-stamp" id="timestamp"></span>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="workspace">
+            <!-- Tabs -->
+            <nav class="tabs" aria-label="Modalities">
+                <button class="tab-btn active" data-tab="tab-image">
+                    Image Modality
+                </button>
+                <button class="tab-btn" data-tab="tab-tabular">
+                    Tabular Data
+                </button>
+                <button class="tab-btn" data-tab="tab-text">
+                    Text & NLP
+                </button>
+                <button class="tab-btn" data-tab="tab-metadata">
+                    Metadata
+                </button>
+            </nav>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                
+                <!-- IMAGE TAB -->
+                <section id="tab-image" class="tab-content active">
+                    <header class="section-header">
+                        <h2>Image Quality & Attributes</h2>
+                        <p class="description">Analysis of visual profiles: brightness, contrast, blurriness, and advanced extracted features.</p>
+                    </header>
+                    
+                    <div class="dashboard-grid">
+                        <div class="card stat-card">
+                            <h3>Average Brightness</h3>
+                            <div class="value scientific-value">124.5 <span class="unit">lum</span></div>
+                            <div class="trend positive">↑ 2.3%</div>
+                        </div>
+                        <div class="card stat-card">
+                            <h3>Blur Score (Laplacian Variance)</h3>
+                            <div class="value scientific-value">840.1 <span class="unit">var</span></div>
+                            <div class="trend negative">↓ 15.0%</div>
+                        </div>
+                        <div class="card stat-card">
+                            <h3>Colorfulness Metrics</h3>
+                            <div class="value scientific-value">45.2 <span class="unit">idx</span></div>
+                            <div class="trend positive">↑ 1.1%</div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid two-col">
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3>t-SNE Embeddings Map</h3>
+                            </div>
+                            <div class="placeholder-box">
+                                <span class="scientific-value">[Visual Render Initialization...]</span>
+                            </div>
+                        </div>
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3>Spatial Heatmap Distribution</h3>
+                            </div>
+                            <div class="placeholder-box">
+                                <span class="scientific-value">[Awaiting Heatmap Data]</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TABULAR TAB -->
+                <section id="tab-tabular" class="tab-content">
+                    <header class="section-header">
+                        <h2>Tabular Demographics</h2>
+                        <p class="description">System awaits tabular stream initialization. Displaying structural node view...</p>
+                    </header>
+                    <div class="card code-card ascii-display">
+                        <pre class="scientific-code glow-text">
+  [DATA MATRIX INDEX 0x1F]
+  
+      +-------+       +-------+
+      |  AGE  | <---> |  FEE  |
+      +-------+       +-------+
+          |               |
+          v               v
+    +-----------+   +-----------+
+    | PHOTO AMT |-->| ADP SPEED |
+    +-----------+   +-----------+
+  
+  STATUS: INACTIVE / WAITING FOR INGESTION
+  ██████░░░░░░░░░░░░ 30% OVERRIDE
+                        </pre>
+                    </div>
+                </section>
+
+                <!-- TEXT TAB -->
+                <section id="tab-text" class="tab-content">
+                    <header class="section-header">
+                        <h2>Description Analytics</h2>
+                        <p class="description">NLP engines idle. Rendering abstract textual topology...</p>
+                    </header>
+                     <div class="card code-card ascii-display">
+                        <pre class="scientific-code glow-text">
+       .+------+     
+     .' |    .'|     [SENTIMENT: NEUTRAL]
+    +---+--+'  |     [ENTROPY: 0.00]
+    |   |  |   |     [TOKENS PER DOC: 0]
+    |  ,+--+---+     
+    |.'    | .'      > NLP STREAM: DISCONNECTED 
+    +------+'        > AWAITING TEXT VECTORS...
+                     
+      |\___/|        
+      )     (        _\|/_  
+     =\     /=       (o o)  
+       )===(        --\_/-- 
+      /     \           
+      |     |           
+     /       \          
+     \       /          
+      \__  _/           
+        ( (             
+         ) )            
+        (_(             
+                        </pre>
+                    </div>
+                </section>
+
+                <!-- METADATA TAB -->
+                <section id="tab-metadata" class="tab-content">
+                    <header class="section-header">
+                        <h2>Metadata Tracking</h2>
+                        <p class="description">Review JSON properties, extracted annotations, bounding boxes structure.</p>
+                    </header>
+                    <div class="card code-card">
+                        <div class="card-header">
+                            <h3>Sample Bounding Box Data</h3>
+                        </div>
+                        <pre class="scientific-code"><code>{
+  "image_id": "8a02fbf6-1",
+  "annotations": [
+    {
+      "box": [123, 45, 340, 200],
+      "label": "Cat",
+      "confidence": 0.985
+    }
+  ],
+  "colors": [
+    {"hex": "#a39281", "score": 0.45},
+    {"hex": "#ffffff", "score": 0.32}
+  ]
+}</code></pre>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+data: "petfinder"
+eda:
+  seed: 42
+  top_labels_k: 5

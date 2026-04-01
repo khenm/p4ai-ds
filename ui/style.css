@@ -1,0 +1,386 @@
+:root {
+    /* Color Palette - Cozy/Scientific Pastel Theme */
+    --bg-color: #fcf9f5; /* Warm cream */
+    --container-bg: #fffcf8;
+    --text-primary: #5c4433; /* Warm deep brown */
+    --text-sec: #876e5e; /* Darkened from #9e8576 for contrast */
+    --border-color: #f7dac7;
+    
+    /* Pastels */
+    --accent-primary: #e8955a; /* Pastel warm orange */
+    --accent-secondary: #e07a5f; /* Soft terracotta/pink */
+    --accent-tertiary: #f2cc8f; /* Pastel yellow/peach */
+    
+    /* Aesthetic shadows & borders */
+    --shadow-soft: 0 0 15px rgba(232, 149, 90, 0.2), inset 0 0 20px rgba(232, 149, 90, 0.2); /* Glow instead of shadow */
+    --br-radius: 4px; /* More blocky/retro */
+    --br-radius-inner: 2px;
+
+    /* Fonts - Make everything Monospace for the retro terminal vibe */
+    --font-heading: 'Space Mono', 'Fira Code', monospace; 
+    --font-body: 'Space Mono', 'Fira Code', monospace;
+    --font-mono: 'Space Mono', 'Fira Code', monospace; 
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    line-height: 1.6;
+    padding: 2rem;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* Global Light CRT Scanlines */
+body::after {
+    content: " ";
+    display: block;
+    position: fixed;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(255, 255, 255, 0) 50%, rgba(232, 149, 90, 0.08) 50%);
+    z-index: 9999;
+    background-size: 100% 4px;
+    pointer-events: none;
+}
+
+/* App Container */
+.app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: var(--container-bg);
+    border-radius: var(--br-radius);
+    box-shadow: var(--shadow-soft);
+    padding: 2rem;
+    border: 2px solid var(--accent-primary);
+    position: relative;
+    z-index: 1;
+}
+
+/* Header Sections */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px dashed var(--border-color);
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo .icon {
+    font-size: 2.2rem;
+    background: #fdf7f3;
+    border: 2px solid var(--accent-primary);
+    box-shadow: inset 0 0 10px rgba(232, 149, 90, 0.15), 0 0 10px rgba(232, 149, 90, 0.2);
+    padding: 10px;
+    border-radius: var(--br-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+h1, h2, h3, h4 {
+    font-family: var(--font-heading);
+    color: #b36326;
+    text-transform: uppercase;
+    text-shadow: 0 0 2px rgba(179, 99, 38, 0.3);
+}
+
+.logo h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-shadow: 0 0 4px rgba(179, 99, 38, 0.4), 0 0 8px rgba(179, 99, 38, 0.2);
+}
+
+.sys-info {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--accent-primary);
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    background: rgba(232, 149, 90, 0.05);
+    padding: 8px 12px;
+    border-radius: var(--br-radius);
+    border: 1px dashed var(--accent-primary);
+    box-shadow: inset 0 0 6px rgba(232, 149, 90, 0.1);
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 1rem;
+}
+
+.tab-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-sec);
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: var(--br-radius);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.tab-btn:hover {
+    background: rgba(232, 149, 90, 0.1);
+    color: var(--accent-primary);
+}
+
+.tab-btn.active {
+    background: #fdf7f3;
+    color: #8c4212;
+    border: 1px dashed var(--accent-primary);
+    box-shadow: inset 0 0 10px rgba(232, 149, 90, 0.15), 0 0 10px rgba(232, 149, 90, 0.2);
+    text-shadow: 0 0 4px rgba(179, 99, 38, 0.3);
+}
+
+/* Content Area */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.section-header {
+    margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+}
+
+.description {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--text-sec);
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.dashboard-grid.two-col {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+/* Cards */
+.card {
+    background: var(--bg-color);
+    border: 1px solid var(--accent-primary); /* Neo-pastel border */
+    border-radius: var(--br-radius);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    box-shadow: inset 0 0 12px rgba(232, 149, 90, 0.1);
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: inset 0 0 15px rgba(232, 149, 90, 0.2), 0 0 20px rgba(232, 149, 90, 0.3);
+}
+
+.card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--text-sec);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+/* Data Display elements */
+.scientific-value {
+    font-family: var(--font-mono);
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.unit {
+    font-size: 1rem;
+    color: var(--text-sec);
+    margin-left: 4px;
+}
+
+.trend {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    margin-top: 8px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+.trend.positive {
+    background: rgba(100, 180, 130, 0.15);
+    color: #1c3f30;
+}
+
+.trend.negative {
+    background: rgba(224, 122, 95, 0.15);
+    color: #542012;
+}
+
+.placeholder-box {
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(0,0,0,0.02),
+        rgba(0,0,0,0.02) 10px,
+        rgba(0,0,0,0.04) 10px,
+        rgba(0,0,0,0.04) 20px
+    );
+    height: 300px;
+    border-radius: var(--br-radius-inner);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed var(--border-color);
+}
+
+.placeholder-box .scientific-value {
+    font-size: 1rem;
+    color: var(--text-sec);
+}
+
+/* Tables */
+.scientific-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+}
+
+.scientific-table th, 
+.scientific-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.scientific-table th {
+    font-family: var(--font-heading);
+    color: var(--text-sec);
+    font-weight: 600;
+}
+
+.scientific-table tr:hover {
+    background: rgba(0,0,0,0.02);
+}
+
+/* Labels and tags */
+.text-value {
+    font-size: 1.8rem;
+    text-transform: capitalize;
+}
+
+.keyword-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag {
+    background: var(--accent-tertiary);
+    color: #8c6e3b;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+/* Code boxes */
+.code-card {
+    background: var(--container-bg);
+    color: var(--text-primary);
+    border-color: var(--accent-primary);
+}
+.code-card h3 {
+    color: var(--text-primary);
+    border-color: rgba(232, 149, 90, 0.3);
+}
+.code-card .card-header {
+    border-color: rgba(232, 149, 90, 0.3);
+}
+
+.scientific-code {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+    line-height: 1.5;
+}
+
+.scientific-code code {
+    color: var(--text-primary);
+}
+
+/* ASCII display & Glow */
+.ascii-display {
+    background: #fdf7f3; /* Light pastel orange background */
+    border: 1px dashed var(--accent-primary);
+    box-shadow: 0 0 15px rgba(232, 149, 90, 0.2), inset 0 0 20px rgba(232, 149, 90, 0.15);
+    border-radius: var(--br-radius);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+}
+
+.ascii-display::after {
+    display: none; /* Removed local scanlines in favor of global */
+}
+
+.glow-text {
+    color: #b36326; /* Dark orange green to stand out */
+    text-shadow: 0 0 4px rgba(179, 99, 38, 0.4), 0 0 8px rgba(179, 99, 38, 0.2);
+    font-size: 0.95rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+}

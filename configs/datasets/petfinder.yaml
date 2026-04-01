@@ -1,0 +1,3 @@
+name: "petfinder"
+images_dir: "./data/images"
+img_size: 224
