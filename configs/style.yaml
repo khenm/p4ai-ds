@@ -1,0 +1,20 @@
+colors:
+  sequential:
+    - "#E4F1F7"
+    - "#9EC9E2"
+    - "#3C93C2"
+    - "#0D6AAD"
+    - "#0D4A70"
+
+  qualitative:
+    - "#009ADE"
+    - "#FF1F5B"
+    - "#00CD6C"
+    - "#AF58BA"
+    - "#FFC61E"
+    - "#F28522"
+
+  diverging:
+    - "#2A9D8F"
+    - "#E9C46A"
+    - "#E76F51"
