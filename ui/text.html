@@ -15,11 +15,9 @@
     <a href="index.html" class="nav-brand"><i class="fa-solid fa-flask"></i> P4AI-DS</a>
     <div class="nav-links">
         <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="air-analysis.html"><i class="fa-solid fa-table"></i> Tabular</a>
         <a href="text.html"><i class="fa-solid fa-font"></i> Text</a>
         <a href="image.html"><i class="fa-solid fa-microscope"></i> Image</a>
-    </div>
-    <div class="nav-actions">
-        <button class="theme-toggle" onclick="document.body.classList.toggle('dark')"><i class="fa-solid fa-palette"></i> Theme</button>
     </div>
 </div></nav>
 
@@ -178,17 +176,6 @@
         </div>
     </div>
 
-    <div class="eda-section" id="section-category-terms">
-        <div class="section-header" onclick="toggleSection(this)">
-            <h2><i class="fa-solid fa-layer-group"></i> Top Terms by Category</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
-        </div>
-        <div class="section-body">
-            <div class="chart-container"><div class="chart-box" id="chart-category-terms"></div>
-                <p class="chart-description">Most frequent content words for the largest categories. This shows how topic vocabulary changes across labels.</p></div>
-            <div class="data-table-wrap"><table class="data-table" id="category-terms-table"></table></div>
-        </div>
-    </div>
-
     <div class="eda-section" id="section-tfidf">
         <div class="section-header" onclick="toggleSection(this)">
             <h2><i class="fa-solid fa-magnifying-glass-chart"></i> TF-IDF Keywords by Class</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
@@ -200,14 +187,32 @@
         </div>
     </div>
 
+    <div class="eda-section" id="section-key-insights">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-lightbulb"></i> Key Insights</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="insight-box">
+                <h4><i class="fa-solid fa-clipboard-check"></i> Overall Summary</h4>
+                <ul id="final-insights">
+                    <li><strong>POLITICS</strong> is the dominant class with <strong>16.99%</strong> of all articles, while the largest-to-smallest class ratio reaches <strong>35.11x</strong>, so label imbalance is a major modeling concern.</li>
+                    <li>The text is concise overall: headlines average <strong>9.6</strong> words, and the combined headline-plus-description field averages <strong>29.27</strong> words, which is suitable for lightweight text classification pipelines.</li>
+                    <li>The dataset is temporally skewed: article volume peaks in <strong>2013</strong> with <strong>34,583</strong> records, then drops to <strong>1,398</strong> in <strong>2022</strong>, so random splitting can hide time drift.</li>
+                    <li>Data completeness issues are concentrated in metadata rather than labels: <strong>9.41%</strong> of rows lack short descriptions and <strong>17.86%</strong> lack author names, while category, link, and date remain complete.</li>
+                    <li>The corpus is broad but still repetitive in topic focus, with <strong>98,314</strong> unique tokens overall and <strong>trump</strong> as the most frequent content word at <strong>16,506</strong> occurrences.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <footer class="site-footer">
-    <p>P4AI-DS (CO3135) | Dataset: News_Category_Dataset_v3.json</p>
+    <p>P4AI-DS (CO3135) | Dataset: <a href="https://www.kaggle.com/datasets/rmisra/news-category-dataset" target="_blank">News Category Dataset</a></p>
     <p class="footer-members">Group Members: [To be filled]</p>
 </footer>
 
-<script src="script.js"></script>
-<script src="text.js"></script>
+<script src="script.js?v=2"></script>
+<script src="text.js?v=2"></script>
 </body>
 </html>

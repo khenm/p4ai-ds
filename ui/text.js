@@ -2,7 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const [overview, categories, lengths, timeline, quality, terms, stopwords, vocabRichness, bigrams, lengthByCategory, yearlyTrends, categoryTerms, tfidfTerms] = await Promise.all([
+        const [overview, categories, lengths, timeline, quality, terms, stopwords, vocabRichness, bigrams, lengthByCategory, yearlyTrends, tfidfTerms] = await Promise.all([
             loadJSON('text_overview.json'),
             loadJSON('text_category_dist.json'),
             loadJSON('text_lengths.json'),
@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             loadJSON('text_bigrams.json'),
             loadJSON('text_length_by_category.json'),
             loadJSON('text_yearly_category_trends.json'),
-            loadJSON('text_top_terms_by_category.json'),
             loadJSON('text_tfidf_by_category.json'),
         ]);
 
@@ -28,8 +27,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderTerms(terms);
         renderStopwords(stopwords);
         renderVocabulary(vocabRichness);
+        renderFinalInsights(categories, lengths, timeline, quality, terms, vocabRichness);
         renderBigrams(bigrams);
-        renderCategoryTerms(categoryTerms);
         renderTfidf(tfidfTerms);
     } catch (e) {
         console.error('Failed to load text data:', e);
@@ -310,48 +309,52 @@ function renderBigrams(data) {
     document.getElementById('bigrams-table').innerHTML = html;
 }
 
-function renderCategoryTerms(data) {
-    const first = data.groups[0] || { category: '', terms: [] };
-    Plotly.newPlot('chart-category-terms', [{
-        x: first.terms.map(row => row.word).reverse(),
-        y: first.terms.map(row => row.count).reverse(),
-        type: 'bar',
-        orientation: 'h',
-        marker: { color: COLORS.qualitative[4] },
-    }], plotlyLayout(`Top Terms: ${first.category}`, {
-        xaxis: { title: 'Frequency' },
-        yaxis: { title: '' },
-        height: 460,
-        margin: { l: 110, r: 30, t: 50, b: 50 },
-    }), PLOTLY_CONFIG);
-
-    let html = '<thead><tr><th>Category</th><th>Top Terms</th></tr></thead><tbody>';
-    data.groups.forEach(group => {
-        html += `<tr><td>${group.category}</td><td>${group.terms.map(term => `${term.word} (${term.count})`).join(', ')}</td></tr>`;
-    });
-    html += '</tbody>';
-    document.getElementById('category-terms-table').innerHTML = html;
-}
-
 function renderTfidf(data) {
     const first = data.groups[0] || { category: '', terms: [] };
-    Plotly.newPlot('chart-tfidf', [{
-        x: first.terms.map(row => row.term).reverse(),
-        y: first.terms.map(row => row.score).reverse(),
-        type: 'bar',
-        orientation: 'h',
-        marker: { color: COLORS.qualitative[5] },
-    }], plotlyLayout(`TF-IDF Keywords: ${first.category}`, {
-        xaxis: { title: 'Average TF-IDF score' },
-        yaxis: { title: '' },
-        height: 460,
-        margin: { l: 110, r: 30, t: 50, b: 50 },
-    }), PLOTLY_CONFIG);
+    const chartEl = document.getElementById('chart-tfidf');
+    const tableEl = document.getElementById('tfidf-table');
+    if (!chartEl || !tableEl) return;
+
+    try {
+        Plotly.newPlot('chart-tfidf', [{
+            x: first.terms.map(row => row.score).reverse(),
+            y: first.terms.map(row => row.term).reverse(),
+            type: 'bar',
+            orientation: 'h',
+            marker: { color: COLORS.qualitative[5] },
+        }], plotlyLayout(`TF-IDF Keywords: ${first.category}`, {
+            xaxis: { title: 'Average TF-IDF score' },
+            yaxis: { title: '' },
+            height: 460,
+            margin: { l: 110, r: 30, t: 50, b: 50 },
+        }), PLOTLY_CONFIG);
+    } catch (error) {
+        console.error('Failed to render TF-IDF chart:', error);
+        chartEl.innerHTML = '<div class="desc-box">Unable to render the TF-IDF chart, but the keyword table below is still available.</div>';
+    }
 
     let html = '<thead><tr><th>Category</th><th>TF-IDF Keywords</th></tr></thead><tbody>';
     data.groups.forEach(group => {
         html += `<tr><td>${group.category}</td><td>${group.terms.map(term => `${term.term} (${term.score})`).join(', ')}</td></tr>`;
     });
     html += '</tbody>';
-    document.getElementById('tfidf-table').innerHTML = html;
+    tableEl.innerHTML = html;
+}
+
+function renderFinalInsights(categories, lengths, timeline, quality, terms, vocab) {
+    const insightsEl = document.getElementById('final-insights');
+    if (!insightsEl) return;
+
+    const topCategory = categories.labels[0];
+    const topShare = categories.shares[0];
+    const missingShortDesc = quality.missing.find(row => row.column === 'short_description');
+    const missingAuthors = quality.missing.find(row => row.column === 'authors');
+    const topKeyword = terms.keywords[0];
+
+    insightsEl.innerHTML = `
+        <li><strong>${topCategory}</strong> is the dominant class with <strong>${topShare}%</strong> of all articles, while the largest-to-smallest class ratio reaches <strong>${categories.imbalance_ratio}x</strong>, so label imbalance is a major modeling concern.</li>
+        <li>The text is concise overall: headlines average <strong>${lengths.headline_mean}</strong> words, and the combined headline-plus-description field averages <strong>${lengths.combined_mean}</strong> words, which is suitable for lightweight text classification pipelines.</li>
+        <li>The dataset is temporally skewed: article volume peaks in <strong>${timeline.peak_year}</strong> with <strong>${timeline.peak_count.toLocaleString()}</strong> records, then drops to <strong>${timeline.latest_count.toLocaleString()}</strong> in <strong>${timeline.latest_year}</strong>, so random splitting can hide time drift.</li>
+        <li>Data completeness issues are concentrated in metadata rather than labels: <strong>${missingShortDesc.missing_pct}%</strong> of rows lack short descriptions and <strong>${missingAuthors.missing_pct}%</strong> lack author names, while category, link, and date remain complete.</li>
+        <li>The corpus is broad but still repetitive in topic focus, with <strong>${vocab.unique_tokens.toLocaleString()}</strong> unique tokens overall and <strong>${topKeyword.word}</strong> as the most frequent content word at <strong>${topKeyword.count.toLocaleString()}</strong> occurrences.</li>`;
 }

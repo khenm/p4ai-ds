@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Air Pollution EDA — P4AI-DS</title>
+    <meta name="description" content="Exploratory data analysis of the Global Air Pollution dataset — AQI distributions, pollutant statistics, geographical hotspots, correlations, and policy-ready insights.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+
+<nav class="site-nav"><div class="nav-inner">
+    <a href="index.html" class="nav-brand"><i class="fa-solid fa-flask"></i> P4AI-DS</a>
+    <div class="nav-links">
+        <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="air-analysis.html"><i class="fa-solid fa-table"></i> Tabular</a>
+        <a href="text.html"><i class="fa-solid fa-font"></i> Text</a>
+        <a href="image.html"><i class="fa-solid fa-microscope"></i> Image</a>
+    </div>
+</div></nav>
+
+<div class="page-container">
+    <section class="hero">
+        <h1>Global Air Pollution — Exploratory Data Analysis</h1>
+        <p>City-level AQI readings across 175 countries with pollutant-specific indicators (CO, Ozone, NO<sub>2</sub>, PM2.5). This report highlights category distributions, pollutant behavior, regional hotspots, correlations, and actionable environmental recommendations.</p>
+    </section>
+
+    <div class="page-controls">
+        <button class="btn" onclick="expandAll()"><i class="fa-solid fa-angles-down"></i> Expand All</button>
+        <button class="btn" onclick="collapseAll()"><i class="fa-solid fa-angles-up"></i> Collapse All</button>
+    </div>
+
+    <!-- Dataset Overview -->
+    <div class="eda-section" id="section-overview">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-table"></i> Dataset Overview</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div id="overview-stats" class="stats-grid"></div>
+            <div class="desc-box" id="overview-desc">Loading dataset summary...</div>
+            <h3 class="section-title-inline"><i class="fa-solid fa-list-check"></i> Columns &amp; Missingness</h3>
+            <div class="data-table-wrap"><table class="data-table" id="columns-table"></table></div>
+            <h3 class="section-title-inline"><i class="fa-solid fa-table-cells"></i> Sample Records</h3>
+            <div class="data-table-wrap"><table class="data-table" id="sample-table"></table></div>
+        </div>
+    </div>
+
+    <!-- AQI Category Distribution -->
+    <div class="eda-section" id="section-categories">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-chart-pie"></i> AQI Category Distribution</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="charts-row">
+                <div class="chart-container">
+                    <div class="chart-box" id="chart-category"></div>
+                    <p class="chart-description">Share of AQI categories across all monitored cities (Good → Hazardous). Colors align with EPA AQI palette.</p>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-box" id="chart-category-bar"></div>
+                    <p class="chart-description">Absolute counts by category to reveal the long-tailed distribution of unhealthy readings.</p>
+                </div>
+            </div>
+            <div id="category-insights" class="insight-box"></div>
+        </div>
+    </div>
+
+    <!-- Pollutant Analysis -->
+    <div class="eda-section" id="section-pollutants">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-flask"></i> Pollutant Intensity &amp; Spread</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div id="pollutant-stats" class="stats-grid"></div>
+            <div class="charts-row">
+                <div class="chart-container">
+                    <div class="chart-box" id="chart-pollutant-box"></div>
+                    <p class="chart-description">Distribution of pollutant AQI values (CO, Ozone, NO<sub>2</sub>, PM2.5) — boxplots emphasize spread and outliers.</p>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-box" id="chart-pollutant-mean"></div>
+                    <p class="chart-description">Average pollutant AQI contributions, highlighting PM2.5 dominance.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Geographical Hotspots -->
+    <div class="eda-section" id="section-geo">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-earth-asia"></i> Geographical Hotspots</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="chart-container">
+                <div class="chart-box" id="chart-geo"></div>
+                <p class="chart-description">Top 20 countries by mean AQI with overlays for maximum readings, record counts, and city coverage.</p>
+            </div>
+            <div class="insight-box" id="geo-insights"></div>
+        </div>
+    </div>
+
+    <!-- Correlation & Category Mix -->
+    <div class="eda-section" id="section-corr">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-diagram-project"></i> Correlations &amp; Category Mix</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="charts-row">
+                <div class="chart-container">
+                    <div class="chart-box" id="chart-corr"></div>
+                    <p class="chart-description">Correlation matrix across overall AQI and pollutant-specific AQI values.</p>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-box" id="chart-pollutant-categories"></div>
+                    <p class="chart-description">AQI category distribution for each pollutant — compare severity mix across pollutants.</p>
+                </div>
+            </div>
+            <div class="data-table-wrap"><table class="data-table" id="corr-table"></table></div>
+        </div>
+    </div>
+
+    <!-- Scatter Comparisons -->
+    <div class="eda-section" id="section-scatter">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-braille"></i> Pollutant vs Overall AQI</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="scatter-tabs">
+                <button class="scatter-tab-btn active" data-pollutant="CO" onclick="switchScatter(this)">CO</button>
+                <button class="scatter-tab-btn" data-pollutant="Ozone" onclick="switchScatter(this)">Ozone</button>
+                <button class="scatter-tab-btn" data-pollutant="NO2" onclick="switchScatter(this)">NO<sub>2</sub></button>
+                <button class="scatter-tab-btn" data-pollutant="PM2.5" onclick="switchScatter(this)">PM2.5</button>
+            </div>
+            <div class="chart-container">
+                <div class="chart-box" id="chart-scatter"></div>
+                <p class="chart-description">Scatter plot comparing pollutant-specific AQI values against overall AQI. Switch tabs to isolate pollutants.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Outliers & Alerts -->
+    <div class="eda-section" id="section-outliers">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-triangle-exclamation"></i> Outlier Detection &amp; Alerts</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div id="outlier-stats" class="stats-grid"></div>
+            <div class="data-table-wrap"><table class="data-table" id="outlier-table"></table></div>
+        </div>
+    </div>
+
+    <!-- Insights -->
+    <div class="eda-section" id="section-insights">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-lightbulb"></i> Key Findings &amp; Recommendations</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <h4><i class="fa-solid fa-chart-simple"></i> Findings</h4>
+                    <ul id="insight-list"></ul>
+                </div>
+                <div class="summary-card green">
+                    <h4><i class="fa-solid fa-person-chalkboard"></i> Recommendations</h4>
+                    <ul id="recommendation-list"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="site-footer">
+    <p>P4AI-DS (CO3135) | Dataset: <a href="https://www.kaggle.com/datasets/hasibalmuzdadid/global-air-pollution-dataset/data" target="_blank">Global Air Pollution Dataset</a></p>
+    <p class="footer-members">Group Members: [To be filled]</p>
+</footer>
+
+<script src="script.js"></script>
+<script src="air-analysis.js"></script>
+</body>
+</html>
