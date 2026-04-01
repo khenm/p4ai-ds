@@ -15,7 +15,8 @@
         <a href="index.html" class="nav-brand"><i class="fa-solid fa-flask"></i> P4AI-DS</a>
         <div class="nav-links">
             <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
-            <a href="image.html"><i class="fa-solid fa-microscope"></i> EDA Report</a>
+            <a href="text.html"><i class="fa-solid fa-font"></i> Text</a>
+            <a href="image.html"><i class="fa-solid fa-microscope"></i> Image</a>
         </div>
         <div class="nav-actions">
             <button class="theme-toggle" onclick="document.body.classList.toggle('dark')"><i class="fa-solid fa-palette"></i> Theme</button>
@@ -56,11 +57,24 @@
     <div class="about-box">
         <h2><i class="fa-solid fa-circle-info"></i> About This Project</h2>
         <p>This project analyzes the <strong>PetFinder.my Adoption Prediction</strong> dataset from Kaggle. The goal is to understand what factors influence how quickly a pet gets adopted — from tabular features like age, breed, vaccination status, and health condition, to image-level attributes like photo quality, brightness, resolution, and the number of photos per listing.</p>
-        <p style="margin-top: 0.75rem;">The analysis covers <strong>Tabular EDA</strong> (demographics, correlations, health patterns) and <strong>Image EDA</strong> (size distributions, quality metrics, color analysis, photo count impact, and an interactive breed gallery).</p>
+        <p style="margin-top: 0.75rem;">The workspace also includes a <strong>Text EDA</strong> pipeline for the News Category dataset, covering schema inspection, class distribution, missing values, text length statistics, timeline shifts, and dominant content terms.</p>
     </div>
 
     <h2 class="section-title-inline"><i class="fa-solid fa-folder-open"></i> Reports</h2>
     <div class="reports-grid">
+        <div class="report-card">
+            <span class="badge badge-tabular"><i class="fa-solid fa-font"></i> Text Analysis</span>
+            <h3>News Category Text Report</h3>
+            <p>Exploratory data analysis for the News Category dataset, focused on class balance, text lengths, missing values, yearly distribution, and keyword patterns.</p>
+            <ul>
+                <li>Dataset overview, schema, and sample records</li>
+                <li>Category imbalance and smallest classes</li>
+                <li>Headline and combined text length distributions</li>
+                <li>Timeline drift across publication years</li>
+                <li>Missing values, duplicates, terms, and top authors</li>
+            </ul>
+            <a href="text.html" class="btn-report">View Report <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
         <div class="report-card">
             <span class="badge badge-image"><i class="fa-solid fa-microscope"></i> Full Analysis</span>
             <h3>PetFinder EDA Report</h3>
