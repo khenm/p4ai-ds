@@ -60,30 +60,99 @@ def _word_count(series):
     return series.fillna("").astype(str).str.split().str.len()
 
 
+STOPWORDS = {
+    "the", "a", "an", "and", "or", "of", "to", "in", "for", "on", "at", "with",
+    "from", "by", "is", "are", "was", "were", "be", "as", "after", "over", "up",
+    "into", "about", "this", "that", "it", "its", "new", "says", "say", "amid",
+    "why", "how", "what", "who", "your", "you", "have", "not", "but", "more",
+    "can", "has", "our", "one", "all", "will", "out", "when", "his", "their",
+    "her", "they", "people", "time", "just", "like", "day", "than", "year", "get",
+    "some", "life", "he", "she", "we", "if", "no", "do", "did", "does", "so",
+    "my", "me", "us", "them", "had", "been", "also", "here", "too", "off", "now",
+    "want", "way", "first", "last", "make", "made", "because", "these", "those",
+    "news", "week", "u", "s", "it's", "there", "said", "may", "would", "could",
+    "don't", "many", "should", "being", "even", "back", "other", "take", "good",
+    "two", "things", "only", "help", "while", "think", "old", "see", "much", "look",
+}
+TOKEN_PATTERN = re.compile(r"[A-Za-z']+")
+
+
+def _tokenize(text, remove_stopwords=False, min_len=3):
+    tokens = []
+    for token in TOKEN_PATTERN.findall(str(text).lower()):
+        if len(token) < min_len or token.startswith("'"):
+            continue
+        if remove_stopwords and token in STOPWORDS:
+            continue
+        tokens.append(token)
+    return tokens
+
+
+def _character_count(series):
+    return series.fillna("").astype(str).str.len()
+
+
 def _keyword_counts(series, top_k=25):
-    stopwords = {
-        "the", "a", "an", "and", "or", "of", "to", "in", "for", "on", "at", "with",
-        "from", "by", "is", "are", "was", "were", "be", "as", "after", "over", "up",
-        "into", "about", "this", "that", "it", "its", "new", "says", "say", "amid",
-        "why", "how", "what", "who", "your", "you", "have", "not", "but", "more",
-        "can", "has", "our", "one", "all", "will", "out", "when", "his", "their",
-        "her", "they", "people", "time", "just", "like", "day", "than", "year", "get",
-        "some", "life", "he", "she", "we", "if", "no", "do", "did", "does", "so",
-        "my", "me", "us", "them", "had", "been", "also", "here", "too", "off", "now",
-        "want", "way", "first", "last", "make", "made", "because", "these", "those",
-        "news", "week", "u", "s", "it's", "there", "said", "may", "would", "could",
-        "don't", "many", "should", "being", "even", "back", "other", "take", "good",
-        "two", "things", "only", "help", "while", "think", "old", "see", "much", "look",
-    }
-    pattern = re.compile(r"[A-Za-z']+")
     counts = Counter()
 
     for text in series.fillna("").astype(str):
-        for token in pattern.findall(text.lower()):
-            if len(token) >= 3 and token not in stopwords and not token.startswith("'"):
-                counts[token] += 1
+        counts.update(_tokenize(text, remove_stopwords=True))
 
     return [{"word": word, "count": count} for word, count in counts.most_common(top_k)]
+
+
+def _stopword_counts(series, top_k=20):
+    counts = Counter()
+    for text in series.fillna("").astype(str):
+        for token in _tokenize(text, remove_stopwords=False, min_len=1):
+            if token in STOPWORDS:
+                counts[token] += 1
+    return [{"word": word, "count": count} for word, count in counts.most_common(top_k)]
+
+
+def _bigram_counts(series, top_k=20):
+    counts = Counter()
+    for text in series.fillna("").astype(str):
+        tokens = _tokenize(text, remove_stopwords=True)
+        counts.update(zip(tokens, tokens[1:]))
+    return [
+        {"bigram": f"{left} {right}", "count": count}
+        for (left, right), count in counts.most_common(top_k)
+    ]
+
+
+def _vocabulary_richness(series):
+    all_tokens = []
+    for text in series.fillna("").astype(str):
+        all_tokens.extend(_tokenize(text, remove_stopwords=True))
+
+    token_counts = Counter(all_tokens)
+    total_tokens = len(all_tokens)
+    unique_tokens = len(token_counts)
+    hapax_count = sum(1 for count in token_counts.values() if count == 1)
+    dislegomena_count = sum(1 for count in token_counts.values() if count == 2)
+
+    return {
+        "total_tokens": total_tokens,
+        "unique_tokens": unique_tokens,
+        "type_token_ratio": round(float(unique_tokens / total_tokens), 4) if total_tokens else 0.0,
+        "hapax_count": hapax_count,
+        "hapax_ratio": round(float(hapax_count / unique_tokens), 4) if unique_tokens else 0.0,
+        "dislegomena_count": dislegomena_count,
+        "avg_unique_per_article": round(
+            float(
+                mean(
+                    len(set(_tokenize(text, remove_stopwords=True)))
+                    for text in series.fillna("").astype(str)
+                )
+            ),
+            2,
+        ) if len(series) else 0.0,
+        "top_unique_words": [
+            {"word": word, "count": count}
+            for word, count in token_counts.most_common(15)
+        ],
+    }
 
 
 def _top_terms_by_category(df, categories, top_k=8):
@@ -129,6 +198,9 @@ def run_text_eda():
     headline_wc = _word_count(df["headline"])
     desc_wc = _word_count(df["short_description"])
     combined_wc = _word_count(df["combined_text"])
+    headline_cc = _character_count(df["headline"])
+    desc_cc = _character_count(df["short_description"])
+    combined_cc = _character_count(df["combined_text"])
 
     missing = {
         col: {
@@ -173,6 +245,10 @@ def run_text_eda():
         "headline_median_words": int(median(headline_wc)),
         "combined_mean_words": round(float(mean(combined_wc)), 2),
         "combined_median_words": int(median(combined_wc)),
+        "headline_mean_chars": round(float(mean(headline_cc)), 2),
+        "headline_median_chars": int(median(headline_cc)),
+        "combined_mean_chars": round(float(mean(combined_cc)), 2),
+        "combined_median_chars": int(median(combined_cc)),
         "display_columns": sample_cols,
         "sample_rows": sample_rows.to_dict(orient="records"),
         "columns": [
@@ -204,17 +280,30 @@ def run_text_eda():
     bins = [0, 5, 10, 15, 20, 30, 40, 60, 100]
     headline_hist, headline_edges = np.histogram(headline_wc, bins=bins)
     combined_hist, combined_edges = np.histogram(combined_wc, bins=bins)
+    char_bins = [0, 25, 50, 75, 100, 150, 200, 300, 500]
+    headline_char_hist, headline_char_edges = np.histogram(headline_cc, bins=char_bins)
+    combined_char_hist, combined_char_edges = np.histogram(combined_cc, bins=char_bins)
     save_json({
         "headline_bins": [f"{headline_edges[i]}-{headline_edges[i + 1] - 1}" for i in range(len(headline_hist))],
         "headline_counts": [int(v) for v in headline_hist.tolist()],
         "combined_bins": [f"{combined_edges[i]}-{combined_edges[i + 1] - 1}" for i in range(len(combined_hist))],
         "combined_counts": [int(v) for v in combined_hist.tolist()],
+        "headline_char_bins": [f"{headline_char_edges[i]}-{headline_char_edges[i + 1] - 1}" for i in range(len(headline_char_hist))],
+        "headline_char_counts": [int(v) for v in headline_char_hist.tolist()],
+        "combined_char_bins": [f"{combined_char_edges[i]}-{combined_char_edges[i + 1] - 1}" for i in range(len(combined_char_hist))],
+        "combined_char_counts": [int(v) for v in combined_char_hist.tolist()],
         "headline_mean": round(float(mean(headline_wc)), 2),
         "headline_median": int(median(headline_wc)),
         "desc_mean": round(float(mean(desc_wc)), 2),
         "desc_median": int(median(desc_wc)),
         "combined_mean": round(float(mean(combined_wc)), 2),
         "combined_median": int(median(combined_wc)),
+        "headline_char_mean": round(float(mean(headline_cc)), 2),
+        "headline_char_median": int(median(headline_cc)),
+        "desc_char_mean": round(float(mean(desc_cc)), 2),
+        "desc_char_median": int(median(desc_cc)),
+        "combined_char_mean": round(float(mean(combined_cc)), 2),
+        "combined_char_median": int(median(combined_cc)),
     }, "text_lengths.json")
 
     save_json({
@@ -230,47 +319,34 @@ def run_text_eda():
         "missing": [{"column": col, **vals} for col, vals in missing.items()],
         "duplicate_records": duplicate_records,
         "duplicate_links": duplicate_links,
-        "duplicate_examples": [
-            {
-                "date": row["date"].strftime("%Y-%m-%d") if not pd.isna(row["date"]) else "",
-                "category": row["category"],
-                "headline": row["headline"],
-                "link": row["link"],
-            }
-            for _, row in df.loc[df.duplicated(subset=dedup_subset, keep=False), ["date", "category", "headline", "link"]]
-            .head(8)
-            .iterrows()
-        ],
-        "missing_examples": {
-            "short_description": [
-                {
-                    "date": row["date"].strftime("%Y-%m-%d") if not pd.isna(row["date"]) else "",
-                    "category": row["category"],
-                    "headline": row["headline"],
-                    "link": row["link"],
-                }
-                for _, row in df.loc[df["short_description"].str.strip().eq(""), ["date", "category", "headline", "link"]]
-                .head(6)
-                .iterrows()
-            ],
-            "authors": [
-                {
-                    "date": row["date"].strftime("%Y-%m-%d") if not pd.isna(row["date"]) else "",
-                    "category": row["category"],
-                    "headline": row["headline"],
-                    "link": row["link"],
-                }
-                for _, row in df.loc[df["authors"].str.strip().eq(""), ["date", "category", "headline", "link"]]
-                .head(6)
-                .iterrows()
-            ],
-        },
     }, "text_quality.json")
 
     save_json({
         "keywords": _keyword_counts(df["combined_text"], top_k=20),
         "top_authors": [{"author": author, "count": int(count)} for author, count in top_authors.items()],
     }, "text_terms.json")
+
+    stopword_counter = Counter()
+    for text in df["combined_text"].fillna("").astype(str):
+        for token in _tokenize(text, remove_stopwords=False, min_len=1):
+            if token in STOPWORDS:
+                stopword_counter[token] += 1
+    stopword_stats = [{"word": word, "count": count} for word, count in stopword_counter.most_common(20)]
+    vocab_stats = _vocabulary_richness(df["combined_text"])
+    save_json({
+        "stopwords": stopword_stats,
+        "total_stopword_tokens": int(sum(stopword_counter.values())),
+        "stopword_share_top20": round(
+            float(sum(row["count"] for row in stopword_stats) / (sum(stopword_counter.values()) or 1) * 100),
+            2,
+        ) if stopword_counter else 0.0,
+    }, "text_stopwords.json")
+
+    save_json(vocab_stats, "text_vocabulary_richness.json")
+
+    save_json({
+        "bigrams": _bigram_counts(df["combined_text"], top_k=20),
+    }, "text_bigrams.json")
 
     category_length_df = (
         df.assign(headline_words=headline_wc, combined_words=combined_wc)

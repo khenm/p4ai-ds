@@ -70,6 +70,12 @@
                     <p class="chart-description">Combining headlines with short descriptions adds much more text context for NLP tasks.</p></div>
             </div>
             <div class="balance-grid" id="length-cards"></div>
+            <div class="charts-row">
+                <div class="chart-container"><div class="chart-box" id="chart-headline-char-lengths"></div>
+                    <p class="chart-description">Character-length histograms complement word counts and show how compact or verbose the raw text strings actually are.</p></div>
+                <div class="chart-container"><div class="chart-box" id="chart-combined-char-lengths"></div>
+                    <p class="chart-description">Character distributions are useful when estimating storage, truncation risk, and input limits for downstream models.</p></div>
+            </div>
         </div>
     </div>
 
@@ -140,6 +146,38 @@
         </div>
     </div>
 
+    <div class="eda-section" id="section-stopwords">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-filter-circle-xmark"></i> Stopwords Analysis</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="chart-container"><div class="chart-box" id="chart-stopwords"></div>
+                <p class="chart-description">This view keeps stopwords instead of removing them, so you can inspect how much of the corpus is made of high-frequency function words.</p></div>
+            <div class="balance-grid" id="stopword-summary"></div>
+        </div>
+    </div>
+
+    <div class="eda-section" id="section-vocabulary">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-book"></i> Vocabulary Richness</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="balance-grid" id="vocab-cards"></div>
+            <div class="data-table-wrap"><table class="data-table" id="vocab-table"></table></div>
+        </div>
+    </div>
+
+    <div class="eda-section" id="section-bigrams">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-link"></i> Bigrams</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="chart-container"><div class="chart-box" id="chart-bigrams"></div>
+                <p class="chart-description">Bigram frequencies reveal common phrase patterns that simple unigram counts cannot capture.</p></div>
+            <div class="data-table-wrap"><table class="data-table" id="bigrams-table"></table></div>
+        </div>
+    </div>
+
     <div class="eda-section" id="section-category-terms">
         <div class="section-header" onclick="toggleSection(this)">
             <h2><i class="fa-solid fa-layer-group"></i> Top Terms by Category</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
@@ -162,19 +200,6 @@
         </div>
     </div>
 
-    <div class="eda-section" id="section-examples">
-        <div class="section-header" onclick="toggleSection(this)">
-            <h2><i class="fa-solid fa-copy"></i> Duplicate and Missing Examples</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
-        </div>
-        <div class="section-body">
-            <h3 class="section-title-inline"><i class="fa-solid fa-clone"></i> Duplicate Records</h3>
-            <div class="data-table-wrap"><table class="data-table" id="duplicate-examples-table"></table></div>
-            <h3 class="section-title-inline"><i class="fa-solid fa-file-circle-xmark"></i> Missing Description Examples</h3>
-            <div class="data-table-wrap"><table class="data-table" id="missing-desc-table"></table></div>
-            <h3 class="section-title-inline"><i class="fa-solid fa-user-slash"></i> Missing Author Examples</h3>
-            <div class="data-table-wrap"><table class="data-table" id="missing-author-table"></table></div>
-        </div>
-    </div>
 </div>
 
 <footer class="site-footer">

@@ -2,13 +2,16 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const [overview, categories, lengths, timeline, quality, terms, lengthByCategory, yearlyTrends, categoryTerms, tfidfTerms] = await Promise.all([
+        const [overview, categories, lengths, timeline, quality, terms, stopwords, vocabRichness, bigrams, lengthByCategory, yearlyTrends, categoryTerms, tfidfTerms] = await Promise.all([
             loadJSON('text_overview.json'),
             loadJSON('text_category_dist.json'),
             loadJSON('text_lengths.json'),
             loadJSON('text_timeline.json'),
             loadJSON('text_quality.json'),
             loadJSON('text_terms.json'),
+            loadJSON('text_stopwords.json'),
+            loadJSON('text_vocabulary_richness.json'),
+            loadJSON('text_bigrams.json'),
             loadJSON('text_length_by_category.json'),
             loadJSON('text_yearly_category_trends.json'),
             loadJSON('text_top_terms_by_category.json'),
@@ -23,9 +26,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderYearlyTrends(yearlyTrends);
         renderQuality(quality);
         renderTerms(terms);
+        renderStopwords(stopwords);
+        renderVocabulary(vocabRichness);
+        renderBigrams(bigrams);
         renderCategoryTerms(categoryTerms);
         renderTfidf(tfidfTerms);
-        renderExamples(quality);
     } catch (e) {
         console.error('Failed to load text data:', e);
     }
@@ -36,7 +41,8 @@ function renderOverview(data) {
         <div class="stat-card stat-orange"><div class="stat-label">Articles</div><div class="stat-value">${data.total_articles.toLocaleString()}</div></div>
         <div class="stat-card stat-brown"><div class="stat-label">Categories</div><div class="stat-value">${data.category_count}</div><div class="stat-sub">Editorial labels</div></div>
         <div class="stat-card stat-green"><div class="stat-label">Date Range</div><div class="stat-value">${data.date_min.slice(0, 4)}-${data.date_max.slice(0, 4)}</div></div>
-        <div class="stat-card stat-amber"><div class="stat-label">Avg Text Length</div><div class="stat-value">${data.combined_mean_words}</div><div class="stat-sub">Words per article text</div></div>`;
+        <div class="stat-card stat-amber"><div class="stat-label">Avg Text Length</div><div class="stat-value">${data.combined_mean_words}</div><div class="stat-sub">Words per article text</div></div>
+        <div class="stat-card stat-green"><div class="stat-label">Avg Char Length</div><div class="stat-value">${data.combined_mean_chars}</div><div class="stat-sub">Characters per article text</div></div>`;
 
     document.getElementById('overview-desc').innerHTML = `The News Category dataset contains <strong>${data.total_articles.toLocaleString()}</strong> HuffPost articles with <strong>${data.category_count}</strong> category labels. Each record includes a headline, optional short description, author metadata, article link, and publication date from <strong>${data.date_min}</strong> to <strong>${data.date_max}</strong>.`;
 
@@ -109,7 +115,29 @@ function renderLengths(data) {
         <div class="balance-card"><div class="label">Headline Mean</div><div class="value">${data.headline_mean}</div></div>
         <div class="balance-card"><div class="label">Headline Median</div><div class="value">${data.headline_median}</div></div>
         <div class="balance-card"><div class="label">Text Mean</div><div class="value">${data.combined_mean}</div></div>
-        <div class="balance-card"><div class="label">Text Median</div><div class="value">${data.combined_median}</div></div>`;
+        <div class="balance-card"><div class="label">Text Median</div><div class="value">${data.combined_median}</div></div>
+        <div class="balance-card"><div class="label">Headline Char Mean</div><div class="value">${data.headline_char_mean}</div></div>
+        <div class="balance-card"><div class="label">Text Char Mean</div><div class="value">${data.combined_char_mean}</div></div>`;
+
+    Plotly.newPlot('chart-headline-char-lengths', [{
+        x: data.headline_char_bins,
+        y: data.headline_char_counts,
+        type: 'bar',
+        marker: { color: COLORS.qualitative[1] },
+    }], plotlyLayout('Headline Character Length Distribution', {
+        xaxis: { title: 'Characters per headline' },
+        yaxis: { title: 'Count' },
+    }), PLOTLY_CONFIG);
+
+    Plotly.newPlot('chart-combined-char-lengths', [{
+        x: data.combined_char_bins,
+        y: data.combined_char_counts,
+        type: 'bar',
+        marker: { color: COLORS.qualitative[3] },
+    }], plotlyLayout('Combined Text Character Distribution', {
+        xaxis: { title: 'Characters in headline + short description' },
+        yaxis: { title: 'Count' },
+    }), PLOTLY_CONFIG);
 }
 
 function renderLengthByCategory(data) {
@@ -224,6 +252,64 @@ function renderTerms(data) {
     document.getElementById('authors-table').innerHTML = authorHtml;
 }
 
+function renderStopwords(data) {
+    Plotly.newPlot('chart-stopwords', [{
+        x: data.stopwords.slice(0, 12).map(row => row.word).reverse(),
+        y: data.stopwords.slice(0, 12).map(row => row.count).reverse(),
+        type: 'bar',
+        orientation: 'h',
+        marker: { color: COLORS.qualitative[0] },
+    }], plotlyLayout('Most Frequent Stopwords', {
+        xaxis: { title: 'Frequency' },
+        yaxis: { title: '' },
+        height: 480,
+        margin: { l: 90, r: 30, t: 50, b: 50 },
+    }), PLOTLY_CONFIG);
+
+    document.getElementById('stopword-summary').innerHTML = `
+        <div class="balance-card"><div class="label">All Stopword Tokens</div><div class="value">${data.total_stopword_tokens.toLocaleString()}</div></div>
+        <div class="balance-card"><div class="label">Top-20 Coverage</div><div class="value">${data.stopword_share_top20}%</div></div>`;
+}
+
+function renderVocabulary(data) {
+    document.getElementById('vocab-cards').innerHTML = `
+        <div class="balance-card"><div class="label">Total Tokens</div><div class="value">${data.total_tokens.toLocaleString()}</div></div>
+        <div class="balance-card"><div class="label">Unique Tokens</div><div class="value">${data.unique_tokens.toLocaleString()}</div></div>
+        <div class="balance-card"><div class="label">Type-Token Ratio</div><div class="value">${data.type_token_ratio}</div></div>
+        <div class="balance-card"><div class="label">Hapax Ratio</div><div class="value">${data.hapax_ratio}</div></div>
+        <div class="balance-card"><div class="label">Hapax Count</div><div class="value">${data.hapax_count.toLocaleString()}</div></div>
+        <div class="balance-card"><div class="label">Avg Unique / Article</div><div class="value">${data.avg_unique_per_article}</div></div>`;
+
+    let html = '<thead><tr><th>Word</th><th>Count</th></tr></thead><tbody>';
+    data.top_unique_words.forEach(row => {
+        html += `<tr><td>${row.word}</td><td class="num">${row.count.toLocaleString()}</td></tr>`;
+    });
+    html += '</tbody>';
+    document.getElementById('vocab-table').innerHTML = html;
+}
+
+function renderBigrams(data) {
+    Plotly.newPlot('chart-bigrams', [{
+        x: data.bigrams.slice(0, 12).map(row => row.bigram).reverse(),
+        y: data.bigrams.slice(0, 12).map(row => row.count).reverse(),
+        type: 'bar',
+        orientation: 'h',
+        marker: { color: COLORS.qualitative[5] },
+    }], plotlyLayout('Top Bigrams', {
+        xaxis: { title: 'Frequency' },
+        yaxis: { title: '' },
+        height: 500,
+        margin: { l: 140, r: 30, t: 50, b: 50 },
+    }), PLOTLY_CONFIG);
+
+    let html = '<thead><tr><th>Bigram</th><th>Count</th></tr></thead><tbody>';
+    data.bigrams.forEach(row => {
+        html += `<tr><td>${row.bigram}</td><td class="num">${row.count.toLocaleString()}</td></tr>`;
+    });
+    html += '</tbody>';
+    document.getElementById('bigrams-table').innerHTML = html;
+}
+
 function renderCategoryTerms(data) {
     const first = data.groups[0] || { category: '', terms: [] };
     Plotly.newPlot('chart-category-terms', [{
@@ -268,19 +354,4 @@ function renderTfidf(data) {
     });
     html += '</tbody>';
     document.getElementById('tfidf-table').innerHTML = html;
-}
-
-function renderExamples(data) {
-    const renderExampleTable = (targetId, rows) => {
-        let html = '<thead><tr><th>Date</th><th>Category</th><th>Headline</th><th>Link</th></tr></thead><tbody>';
-        rows.forEach(row => {
-            html += `<tr><td>${row.date}</td><td>${row.category}</td><td>${row.headline}</td><td><a href="${row.link}" target="_blank" rel="noopener noreferrer">Open</a></td></tr>`;
-        });
-        html += '</tbody>';
-        document.getElementById(targetId).innerHTML = html;
-    };
-
-    renderExampleTable('duplicate-examples-table', data.duplicate_examples || []);
-    renderExampleTable('missing-desc-table', (data.missing_examples && data.missing_examples.short_description) || []);
-    renderExampleTable('missing-author-table', (data.missing_examples && data.missing_examples.authors) || []);
 }
