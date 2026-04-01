@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDA Report — P4AI-DS</title>
+    <meta name="description" content="Exploratory data analysis of PetFinder dataset — tabular demographics, image quality, color space, and visual attribute analysis.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+
+<nav class="site-nav"><div class="nav-inner">
+    <a href="index.html" class="nav-brand"><i class="fa-solid fa-flask"></i> P4AI-DS</a>
+    <div class="nav-links">
+        <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="image.html"><i class="fa-solid fa-microscope"></i> EDA Report</a>
+    </div>
+    <div class="nav-actions">
+        <button class="theme-toggle" onclick="document.body.classList.toggle('dark')"><i class="fa-solid fa-palette"></i> Theme</button>
+    </div>
+</div></nav>
+
+<div class="page-container">
+    <section class="hero"><h1>Exploratory Data Analysis Report</h1><p>Complete analysis covering tabular demographics and image-level insights across 14,993 pet listings and 58,311 images.</p></section>
+    <div class="page-controls">
+        <button class="btn" onclick="expandAll()"><i class="fa-solid fa-angles-down"></i> Expand All</button>
+        <button class="btn" onclick="collapseAll()"><i class="fa-solid fa-angles-up"></i> Collapse All</button>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!--  PART 1: TABULAR EDA                               -->
+    <!-- ═══════════════════════════════════════════════════ -->
+
+    <!-- T1: Dataset Overview -->
+    <div class="eda-section" id="section-overview">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-table-list"></i> Dataset Overview</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div id="overview-stats" class="stats-grid"></div>
+            <div class="desc-box" id="overview-desc">Loading dataset description...</div>
+            <h3 class="section-title-inline"><i class="fa-solid fa-table-cells"></i> Sample Rows</h3>
+            <div class="data-table-wrap"><table class="data-table" id="sample-table"></table></div>
+            <h3 class="section-title-inline"><i class="fa-solid fa-list-check"></i> Data Types &amp; Missing Values</h3>
+            <div class="data-table-wrap"><table class="data-table" id="dtypes-table"></table></div>
+        </div>
+    </div>
+
+    <!-- T2: Adoption Speed Distribution -->
+    <div class="eda-section" id="section-adoption">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-chart-column"></i> Adoption Speed Distribution</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="charts-row">
+                <div class="chart-container"><div class="chart-box" id="chart-adoption-bar"></div>
+                    <p class="chart-description">Distribution of adoption speed categories across all 14,993 listings. Speed 0 = adopted same day, Speed 4 = not adopted after 100+ days.</p></div>
+                <div class="chart-container"><div class="chart-box" id="chart-type-pie"></div>
+                    <p class="chart-description">Proportion of dogs vs cats in the dataset.</p></div>
+            </div>
+            <div class="balance-grid" id="balance-cards"></div>
+            <div class="insight-box"><h4><i class="fa-solid fa-lightbulb"></i> Key Insights</h4>
+                <ul id="adoption-insights"><li>Loading insights...</li></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- T3: Feature Distributions -->
+    <div class="eda-section" id="section-features">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-chart-line"></i> Feature Distributions</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="charts-row" id="demographics-charts"></div>
+            <div class="charts-row" id="age-fee-charts"></div>
+            <div class="chart-container"><div class="chart-box" id="chart-state"></div>
+                <p class="chart-description">Distribution of pet listings across Malaysian states (top 15).</p></div>
+        </div>
+    </div>
+
+    <!-- T4: Correlation Analysis -->
+    <div class="eda-section" id="section-correlation">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-diagram-project"></i> Correlation Analysis</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="chart-container"><div class="chart-box" id="chart-corr"></div>
+                <p class="chart-description">Correlation heatmap of numeric features. Upper triangle masked. Hover for exact values.</p></div>
+            <h3 class="section-title-inline"><i class="fa-solid fa-ranking-star"></i> Top Correlated Feature Pairs</h3>
+            <div class="data-table-wrap"><table class="data-table" id="corr-pairs-table"></table></div>
+            <div class="insight-box"><h4><i class="fa-solid fa-lightbulb"></i> Key Insights</h4>
+                <ul id="corr-insights"><li>Loading...</li></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- T5: Health & Adoption -->
+    <div class="eda-section" id="section-health">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-heart-pulse"></i> Health &amp; Adoption</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="charts-row">
+                <div class="chart-container"><div class="chart-box" id="chart-health"></div>
+                    <p class="chart-description">Proportional distribution of adoption speeds by health status.</p></div>
+                <div class="chart-container"><div class="chart-box" id="chart-vacc"></div>
+                    <p class="chart-description">Vaccination status vs adoption speed proportional breakdown.</p></div>
+            </div>
+            <div class="insight-box"><h4><i class="fa-solid fa-lightbulb"></i> Key Findings</h4>
+                <ul>
+                    <li>Healthy pets dominate the dataset and show a moderately balanced adoption distribution</li>
+                    <li>Vaccinated pets tend to have slightly faster adoption compared to unvaccinated ones</li>
+                    <li>Very few pets have serious injuries — sample sizes too small for strong conclusions</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!--  PART 2: IMAGE EDA                                 -->
+    <!-- ═══════════════════════════════════════════════════ -->
+
+    <!-- I1: Image Dataset Overview -->
+    <div class="eda-section" id="section-img-overview">
+        <div class="section-header" onclick="toggleSection(this)"><h2><i class="fa-solid fa-camera"></i> Image Dataset Overview</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span></div>
+        <div class="section-body">
+            <div id="img-overview-stats" class="stats-grid"></div>
+            <div class="desc-box" id="img-overview-desc">Loading...</div>
+        </div>
+    </div>
+
+    <!-- I2: Image Size Distribution & Aspect Ratio -->
+    <div class="eda-section" id="section-img-dimensions">
+        <div class="section-header" onclick="toggleSection(this)"><h2><i class="fa-solid fa-ruler-combined"></i> Image Size Distribution &amp; Aspect Ratio</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span></div>
+        <div class="section-body">
+            <div class="chart-container"><div class="chart-box" id="chart-size-scatter"></div>
+                <p class="chart-description">Width vs Height scatter colored by animal type (Dog/Cat). Shows the diversity of image dimensions.</p></div>
+            <div class="charts-row">
+                <div class="chart-container"><div class="chart-box" id="chart-filesize"></div>
+                    <p class="chart-description">File size distribution (KB) by animal type.</p></div>
+                <div class="chart-container"><div class="chart-box" id="chart-aspect"></div>
+                    <p class="chart-description">Aspect ratio distribution with reference lines for common ratios.</p></div>
+            </div>
+            <div class="insight-box"><h4><i class="fa-solid fa-lightbulb"></i> Key Insights</h4>
+                <ul>
+                    <li><strong>Image dimensions:</strong> High diversity — images range from small thumbnails to high-resolution photos</li>
+                    <li><strong>File sizes:</strong> Most images are 20 &ndash; 100 KB, manageable for batch processing</li>
+                    <li><strong>Aspect ratios:</strong> Majority cluster near 4:3 and 3:2 — plan augmentation accordingly</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- I3: Photo Count Analysis -->
+    <div class="eda-section" id="section-photo-count">
+        <div class="section-header" onclick="toggleSection(this)"><h2><i class="fa-solid fa-star"></i> Photo Count Analysis</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span></div>
+        <div class="section-body">
+            <div class="charts-row">
+                <div class="chart-container"><div class="chart-box" id="chart-photo-hist"></div>
+                    <p class="chart-description">Distribution of number of photos uploaded per pet listing.</p></div>
+                <div class="chart-container"><div class="chart-box" id="chart-photo-speed"></div>
+                    <p class="chart-description">Photo count vs adoption speed — pets with more photos tend to be adopted faster.</p></div>
+            </div>
+            <div id="photo-stats" class="stats-grid"></div>
+            <div class="insight-box"><h4><i class="fa-solid fa-lightbulb"></i> Key Insights &mdash; Strongest Visual Signal</h4>
+                <ul id="photo-insights"><li>Loading...</li></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- I4: Color Space & Quality Metrics -->
+    <div class="eda-section" id="section-quality">
+        <div class="section-header" onclick="toggleSection(this)"><h2><i class="fa-solid fa-palette"></i> Color Space Analysis &amp; Quality Metrics</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span></div>
+        <div class="section-body">
+            <div class="charts-row">
+                <div class="chart-container"><div class="chart-box" id="chart-rgb-scatter"></div>
+                    <p class="chart-description">RGB Color Space &mdash; 3D scatter colored by brightness level.</p></div>
+                <div class="chart-container"><div class="chart-box" id="chart-quality-scatter"></div>
+                    <p class="chart-description">Sharpness (Laplacian variance) vs Contrast, colored by animal type.</p></div>
+            </div>
+            <h3 class="section-title-inline"><i class="fa-solid fa-table-cells-large"></i> Quality Metrics by Adoption Speed</h3>
+            <div class="data-table-wrap"><table class="data-table" id="quality-table"></table></div>
+            <div class="chart-container"><div class="chart-box" id="chart-composite"></div>
+                <p class="chart-description">Composite quality score (normalized average of all 5 metrics) vs adoption speed.</p></div>
+            <div class="insight-box"><h4><i class="fa-solid fa-lightbulb"></i> Quality Metrics &mdash; Honest Assessment</h4>
+                <ul>
+                    <li>Individual image quality metrics (brightness, contrast, blurriness, saturation, colorfulness) show <strong>no strong signal</strong> for adoption speed</li>
+                    <li>Composite quality score tested as an alternative — distributions overlap substantially across all speeds</li>
+                    <li>Image quality alone does not predict adoption speed &mdash; <strong>photo count is a far stronger predictor</strong></li>
+                    <li>Quality metrics may still be useful as auxiliary features in a multi-modal model</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- I5: Dominant Color Analysis -->
+    <div class="eda-section" id="section-colors">
+        <div class="section-header" onclick="toggleSection(this)"><h2><i class="fa-solid fa-swatchbook"></i> Dominant Color Analysis</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span></div>
+        <div class="section-body">
+            <h3 class="section-title-inline"><i class="fa-solid fa-layer-group"></i> Palettes by Adoption Speed</h3>
+            <div id="color-swatches-speed"></div>
+            <h3 class="section-title-inline" style="margin-top:1.5rem;"><i class="fa-solid fa-paw"></i> Palettes: Dog vs Cat</h3>
+            <div id="color-swatches-type"></div>
+            <div class="insight-box"><h4><i class="fa-solid fa-lightbulb"></i> Key Insights</h4>
+                <ul>
+                    <li>Dominant colors across adoption speeds are similar — warm browns, whites, and blacks prevail</li>
+                    <li>No strong differentiation in color palettes between fast and slow adoption</li>
+                    <li>Dogs and cats have slightly different color profiles due to breed differences</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- I6: Breed Gallery -->
+    <div class="eda-section" id="section-gallery">
+        <div class="section-header" onclick="toggleSection(this)"><h2><i class="fa-solid fa-images"></i> Image Gallery</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span></div>
+        <div class="section-body">
+            <div class="gallery-controls">
+                <div class="gallery-tabs" id="type-tabs">
+                    <button class="gallery-tab type-tab active" data-type="Dog" onclick="switchType(this)"><i class="fa-solid fa-dog"></i> Dog</button>
+                    <button class="gallery-tab type-tab" data-type="Cat" onclick="switchType(this)"><i class="fa-solid fa-cat"></i> Cat</button>
+                </div>
+                <div class="gallery-limit">
+                    <label for="gallery-count">Show:</label>
+                    <select id="gallery-count" onchange="renderGallery()">
+                        <option value="50">50 images</option>
+                        <option value="100">100 images</option>
+                    </select>
+                </div>
+            </div>
+            <div class="gallery-tabs" id="breed-tabs"></div>
+            <div id="gallery-grid" class="image-grid" style="margin-top:1rem;"></div>
+
+            <h3 class="section-title-inline" style="margin-top:2rem;"><i class="fa-solid fa-trophy"></i> Highest Quality Photos (by Composite Score)</h3>
+            <div id="best-grid" class="image-grid"></div>
+            <h3 class="section-title-inline" style="margin-top:1.5rem;"><i class="fa-solid fa-triangle-exclamation"></i> Lowest Quality Photos (by Composite Score)</h3>
+            <div id="worst-grid" class="image-grid"></div>
+        </div>
+    </div>
+
+    <!-- I7: Feature Visualization -->
+    <div class="eda-section" id="section-features-viz">
+        <div class="section-header" onclick="toggleSection(this)"><h2><i class="fa-solid fa-microscope"></i> Feature Visualization (PCA &amp; t-SNE)</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span></div>
+        <div class="section-body">
+            <div class="charts-row">
+                <div class="chart-container"><div class="chart-box" id="chart-pca"></div>
+                    <p class="chart-description">PCA explained variance — how much information each principal component captures from the 5 quality features.</p></div>
+                <div class="chart-container"><div class="chart-box" id="chart-tsne"></div>
+                    <p class="chart-description">t-SNE projection of quality features colored by adoption speed. Perplexity = 30, 1000 iterations.</p></div>
+            </div>
+            <div class="insight-box"><h4><i class="fa-solid fa-lightbulb"></i> Key Insights</h4>
+                <ul>
+                    <li>PCA shows first 2 components capture approximately 60% of variance — moderate redundancy in quality features</li>
+                    <li>t-SNE projection does <strong>not</strong> show clear clusters by adoption speed, confirming image quality alone is insufficient</li>
+                    <li>Some local structure is visible, driven by brightness/contrast differences rather than adoption outcomes</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- I8: Cross-Modality Analysis -->
+    <div class="eda-section" id="section-cross">
+        <div class="section-header" onclick="toggleSection(this)"><h2><i class="fa-solid fa-arrows-rotate"></i> Cross-Modality Analysis</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span></div>
+        <div class="section-body">
+            <div class="charts-row">
+                <div class="chart-container"><div class="chart-box" id="chart-heatmap"></div>
+                    <p class="chart-description">Photo count x quality score interaction — mean adoption speed as color. Lower values (darker) indicate faster adoption.</p></div>
+                <div class="chart-container"><div class="chart-box" id="chart-type-quality"></div>
+                    <p class="chart-description">Quality metrics comparison between dogs and cats.</p></div>
+            </div>
+            <div class="insight-box"><h4><i class="fa-solid fa-lightbulb"></i> Combined Findings</h4>
+                <ul>
+                    <li>High photo count combined with moderate quality shows fastest adoption in the interaction heatmap</li>
+                    <li>Dogs and cats have similar quality metric distributions</li>
+                    <li>Photo count remains the dominant factor regardless of quality level</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- FINAL: Key Insights Summary -->
+    <div class="eda-section" id="section-summary">
+        <div class="section-header" onclick="toggleSection(this)"><h2><i class="fa-solid fa-bullseye"></i> Key Insights</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span></div>
+        <div class="section-body">
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <h4><i class="fa-solid fa-chart-pie"></i> Dataset Characteristics</h4>
+                    <ul>
+                        <li>Class imbalance exists — Speed 4 (no adoption) is the largest class</li>
+                        <li>Strong correlations between Vaccinated, Dewormed, and Sterilized</li>
+                        <li><strong>Photo count is the strongest predictor</strong> of adoption speed from visual data</li>
+                        <li>Image quality varies widely but shows no strong adoption signal</li>
+                        <li>Resolution is inconsistent — resize/normalization is essential</li>
+                    </ul>
+                </div>
+                <div class="summary-card green">
+                    <h4><i class="fa-solid fa-wrench"></i> Recommendations</h4>
+                    <ul>
+                        <li>Apply SMOTE or class weights for imbalanced adoption speeds</li>
+                        <li>Consider combining Vaccinated/Dewormed/Sterilized into a health composite</li>
+                        <li><strong>Use photo count as a feature</strong> — strongest visual predictor</li>
+                        <li>Resize/normalize images to standard size (e.g., 256 x 256) for training</li>
+                        <li>Multi-modal approach: combine image features with tabular data for best results</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<footer class="site-footer">
+    <p>P4AI-DS (CO3135) | Dataset: <a href="https://www.kaggle.com/c/petfinder-adoption-prediction" target="_blank">Kaggle PetFinder.my</a></p>
+    <p class="footer-members">Group Members: [To be filled]</p>
+</footer>
+
+<script src="script.js"></script>
+<script src="image.js"></script>
+</body>
+</html>
