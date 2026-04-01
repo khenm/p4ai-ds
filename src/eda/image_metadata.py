@@ -1,12 +1,11 @@
 import os
 import glob
+import json
+import shutil
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from PIL import Image
 import numpy as np
+from PIL import Image
 import logging
-from theme import set_theme
 
 logging.basicConfig(level=logging.INFO, format='%(name)s - %(message)s')
 logger = logging.getLogger("image_metadata")
@@ -14,98 +13,142 @@ logger = logging.getLogger("image_metadata")
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 IMG_DIR = os.path.join(PROJECT_ROOT, "data", "petfinder", "train_images")
 TRAIN_CSV = os.path.join(PROJECT_ROOT, "data", "petfinder", "train", "train.csv")
-OUT_DIR = os.path.join(PROJECT_ROOT, "ui", "assets", "figures")
+OUT_DIR = os.path.join(PROJECT_ROOT, "ui", "assets", "data")
+SAMPLES_DIR = os.path.join(PROJECT_ROOT, "ui", "assets", "samples")
 os.makedirs(OUT_DIR, exist_ok=True)
+os.makedirs(SAMPLES_DIR, exist_ok=True)
+
+
+class NpEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return None if np.isnan(obj) else float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super().default(obj)
+
+
+def save_json(data, filename):
+    with open(os.path.join(OUT_DIR, filename), 'w') as f:
+        json.dump(data, f, indent=2, cls=NpEncoder)
+    logger.info(f"Saved {filename}")
+
 
 def run_metadata_eda():
-    logger.info("Extracting image metadata (resolutions, counts)...")
+    logger.info("Extracting image metadata...")
     df = pd.read_csv(TRAIN_CSV)
-    colors = set_theme()
-    
-    # 1. Image Counts per PetID (Histogram)
-    plt.figure(figsize=(8, 5))
-    sns.histplot(df['PhotoAmt'], bins=30, kde=False, color=colors['qualitative'][2])
-    plt.title('Distribution of Number of Photos per Pet')
-    plt.xlabel('Number of Photos')
-    plt.savefig(os.path.join(OUT_DIR, 'img_photo_count_dist.png'), bbox_inches='tight')
-    plt.close()
-    
-    # [NEW] 1.5 Photo Count vs Adoption Speed
-    plt.figure(figsize=(8, 5))
-    sns.boxplot(data=df, x='AdoptionSpeed', y='PhotoAmt', palette=colors['sequential'])
-    plt.title('Photo Count vs Adoption Speed')
-    plt.xlabel('Adoption Speed (0=Fastest, 4=Not Adopted)')
-    plt.ylabel('Number of Photos')
-    # Limit y-axis if extreme outliers exist to make standard ranges visible:
-    plt.ylim(0, df['PhotoAmt'].quantile(0.99))
-    plt.savefig(os.path.join(OUT_DIR, 'img_photo_count_vs_speed.png'), bbox_inches='tight')
-    plt.close()
+    type_map = {1: 'Dog', 2: 'Cat'}
+    pet_type = dict(zip(df['PetID'], df['Type'].map(type_map)))
 
-    # Collect metadata for a subsample of images to evaluate dimensions
-    image_paths = glob.glob(os.path.join(IMG_DIR, "*.jpg"))
-    sample_paths = np.random.choice(image_paths, min(2000, len(image_paths)), replace=False)
-    
-    widths, heights, aspect_ratios = [], [], []
-    for path in sample_paths:
+    all_images = glob.glob(os.path.join(IMG_DIR, "*.jpg"))
+    total_images = len(all_images)
+    logger.info(f"Total images found: {total_images}")
+
+    # 1 — Overview
+    avg_photos = float(df['PhotoAmt'].mean())
+    median_photos = float(df['PhotoAmt'].median())
+
+    np.random.seed(42)
+    sample_paths = np.random.choice(all_images, min(3000, total_images), replace=False)
+
+    widths, heights, file_sizes, types_list = [], [], [], []
+    for p in sample_paths:
         try:
-            with Image.open(path) as img:
+            fsize = os.path.getsize(p) / 1024  # KB
+            with Image.open(p) as img:
                 w, h = img.size
-                widths.append(w)
-                heights.append(h)
-                aspect_ratios.append(w / h)
+            pid = os.path.basename(p).rsplit('-', 1)[0]
+            t = pet_type.get(pid, 'Unknown')
+            widths.append(w)
+            heights.append(h)
+            file_sizes.append(round(fsize, 1))
+            types_list.append(t)
         except Exception:
             pass
-            
-    # 2. Resolution distribution
-    plt.figure(figsize=(10, 4))
-    plt.subplot(1, 2, 1)
-    sns.histplot(widths, bins=30, color=colors['qualitative'][1], label='Width')
-    plt.title('Image Widths')
-    plt.subplot(1, 2, 2)
-    sns.histplot(heights, bins=30, color=colors['qualitative'][0], label='Height')
-    plt.title('Image Heights')
-    plt.tight_layout()
-    plt.savefig(os.path.join(OUT_DIR, 'img_resolution_dist.png'), bbox_inches='tight')
-    plt.close()
-    
-    # 3. Aspect Ratio distribution
-    plt.figure(figsize=(7, 5))
-    sns.histplot(aspect_ratios, bins=40, color=colors['qualitative'][3], kde=True)
-    plt.axvline(1.0, color=colors['diverging'][0], linestyle='--', label='Square 1:1')
-    plt.title('Aspect Ratio (Width/Height) Distribution')
-    plt.legend()
-    plt.savefig(os.path.join(OUT_DIR, 'img_aspect_ratio_dist.png'), bbox_inches='tight')
-    plt.close()
 
-    # 4. Sample Grid mapping categorical Adoption Speed
-    logger.info("Generating Adoption Speed image grids...")
-    fig, axes = plt.subplots(5, 4, figsize=(12, 15))
-    fig.suptitle('Sample Images by Adoption Speed (Row 0=Fastest, Row 4=Slowest/None)', fontsize=16)
-    
-    for speed_val in range(5):
-        samples = df[df['AdoptionSpeed'] == speed_val].sample(10, random_state=42)
-        found = 0
-        for _, row in samples.iterrows():
-            pet_id = row['PetID']
-            img_path = os.path.join(IMG_DIR, f"{pet_id}-1.jpg")
-            if os.path.exists(img_path) and found < 4:
-                try:
-                    img = Image.open(img_path)
-                    ax = axes[speed_val, found]
-                    ax.imshow(img.resize((150, 150)))
-                    ax.set_title(f"Speed: {speed_val}")
-                    ax.axis('off')
-                    found += 1
-                except:
-                    pass
-            if found >= 4:
-                break
-                
-    plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-    plt.savefig(os.path.join(OUT_DIR, 'img_sample_grid.png'), bbox_inches='tight')
-    plt.close()
-    
-    logger.info("Basic metadata tier 1 generated.")
+    median_w = int(np.median(widths)) if widths else 0
+    median_h = int(np.median(heights)) if heights else 0
+    avg_fsize_kb = float(np.mean(file_sizes)) if file_sizes else 0
+    total_size_gb = round(avg_fsize_kb * total_images / 1024 / 1024, 2)
+
+    save_json({
+        'total_images': total_images,
+        'avg_photos_per_pet': round(avg_photos, 2),
+        'median_photos_per_pet': median_photos,
+        'median_width': median_w,
+        'median_height': median_h,
+        'median_resolution': f"{median_w}×{median_h}",
+        'total_size_gb': total_size_gb,
+        'avg_file_size_kb': round(avg_fsize_kb, 1)
+    }, 'image_overview.json')
+
+    # 2 — Dimensions scatter + file sizes
+    aspect_ratios = [round(w / h, 4) if h > 0 else 1.0 for w, h in zip(widths, heights)]
+    save_json({
+        'widths': widths,
+        'heights': heights,
+        'file_sizes': file_sizes,
+        'types': types_list,
+        'aspect_ratios': aspect_ratios,
+        'reference_lines': [
+            {'ratio': 0.75, 'label': '3:4'},
+            {'ratio': 1.0, 'label': '1:1'},
+            {'ratio': 1.33, 'label': '4:3'},
+            {'ratio': 1.5, 'label': '3:2'},
+            {'ratio': 2.0, 'label': '2:1'}
+        ]
+    }, 'image_dimensions.json')
+
+    # 3 — Photo count analysis
+    photo_amts = df['PhotoAmt'].tolist()
+    speed_photo_stats = {}
+    for speed in range(5):
+        sub = df[df['AdoptionSpeed'] == speed]['PhotoAmt']
+        speed_photo_stats[str(speed)] = {
+            'values': sub.tolist(),
+            'mean': round(float(sub.mean()), 2),
+            'median': float(sub.median()),
+            'q1': float(sub.quantile(0.25)),
+            'q3': float(sub.quantile(0.75)),
+        }
+
+    fast_avg = round(float(df[df['AdoptionSpeed'] <= 1]['PhotoAmt'].mean()), 2)
+    slow_avg = round(float(df[df['AdoptionSpeed'] >= 3]['PhotoAmt'].mean()), 2)
+    corr_val = round(float(df['PhotoAmt'].corr(df['AdoptionSpeed'])), 4)
+
+    save_json({
+        'photo_amounts': photo_amts,
+        'speed_stats': speed_photo_stats,
+        'fast_adopted_avg': fast_avg,
+        'slow_adopted_avg': slow_avg,
+        'correlation': corr_val
+    }, 'image_photo_count.json')
+
+    # 4 — Copy sample grid images (5 per speed)
+    logger.info("Copying sample grid images...")
+    sample_grid = {}
+    for speed in range(5):
+        pet_ids = df[df['AdoptionSpeed'] == speed].sample(
+            n=min(5, (df['AdoptionSpeed'] == speed).sum()), random_state=42
+        )['PetID'].tolist()
+        samples = []
+        for pid in pet_ids:
+            src = os.path.join(IMG_DIR, f"{pid}-1.jpg")
+            if os.path.exists(src):
+                dst_name = f"grid_{speed}_{pid}.jpg"
+                shutil.copy2(src, os.path.join(SAMPLES_DIR, dst_name))
+                samples.append({
+                    'pet_id': pid,
+                    'path': f"assets/samples/{dst_name}",
+                    'speed': speed
+                })
+        sample_grid[str(speed)] = samples
+
+    save_json({'grid': sample_grid}, 'image_samples.json')
+    logger.info("Image metadata extraction complete.")
+
 
 if __name__ == "__main__":
     run_metadata_eda()

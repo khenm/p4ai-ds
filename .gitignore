@@ -28,6 +28,7 @@ data/
 checkpoints/
 logs/
 wandb/
+ui/assets/
 *.egg-info/
 .installed.cfg
 *.egg
@@ -212,3 +213,4 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+.DS_Store
