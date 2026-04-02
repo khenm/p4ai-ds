@@ -599,7 +599,10 @@ function renderImgOverview(d) {
         <div class="stat-card stat-brown"><div class="stat-label">Avg Photos/Pet</div><div class="stat-value">${d.avg_photos_per_pet}</div></div>
         <div class="stat-card stat-green"><div class="stat-label">Median Resolution</div><div class="stat-value">${d.median_resolution}</div></div>
         <div class="stat-card stat-amber"><div class="stat-label">Total Size</div><div class="stat-value">${d.total_size_gb} GB</div></div>`;
-    document.getElementById('img-overview-desc').innerHTML = `The PetFinder image dataset contains <strong>${d.total_images.toLocaleString()}</strong> pet photos across all listings. On average, each pet has <strong>${d.avg_photos_per_pet}</strong> photos. The median resolution is <strong>${d.median_resolution}</strong> pixels with an average file size of <strong>${d.avg_file_size_kb} KB</strong>.`;
+    document.getElementById('img-split-stats').innerHTML = `
+        <div class="stat-card stat-green"><div class="stat-label">Train Photos</div><div class="stat-value">${d.train_images.toLocaleString()}</div><div class="stat-sub">${d.train_listings.toLocaleString()} listings</div></div>
+        <div class="stat-card stat-amber"><div class="stat-label">Test Photos</div><div class="stat-value">${d.test_images.toLocaleString()}</div><div class="stat-sub">${d.test_listings.toLocaleString()} listings</div></div>`;
+    document.getElementById('img-overview-desc').innerHTML = `The PetFinder image dataset contains <strong>${d.total_images.toLocaleString()}</strong> pet photos across <strong>${d.total_listings.toLocaleString()}</strong> listings (train + test). On average, each pet has <strong>${d.avg_photos_per_pet}</strong> photos. The median resolution is <strong>${d.median_resolution}</strong> pixels with an average file size of <strong>${d.avg_file_size_kb} KB</strong>.`;
 }
 
 function renderDimensions(d) {
