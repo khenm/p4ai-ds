@@ -28,7 +28,7 @@ data/
 checkpoints/
 logs/
 wandb/
-ui/assets/
+# ui/assets/
 *.egg-info/
 .installed.cfg
 *.egg
