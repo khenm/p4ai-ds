@@ -116,18 +116,6 @@ petfinder-analysis/
 
 ---
 
-## GitHub Pages Deployment
-
-The `ui/` directory is a self-contained static site. To deploy:
-
-1. Generate assets locally with `./run.sh`
-2. Remove `ui/assets/` from `.gitignore` and commit the generated files
-3. Go to **Settings → Pages** on GitHub, set source to branch `master`, folder `/ui`
-
-Site will be available at `https://khenm.github.io/p4ai-ds/`
-
----
-
 ## Dependencies
 
 Key packages: `pandas`, `numpy`, `scikit-learn`, `opencv-python`, `Pillow`, `torch`, `torchvision`, `matplotlib`, `seaborn`.
