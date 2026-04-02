@@ -1,71 +1,133 @@
 # P4AI-DS EDA Dashboard
 
-Exploratory Data Analysis pipelines for:
+Exploratory Data Analysis dashboard for **Assignment 1 — P4AI-DS (CO3135)**. Covers three data modalities — tabular, text, and image — each with a dedicated interactive report built as a static web app.
 
-- the [PetFinder.my Adoption Prediction](https://www.kaggle.com/c/petfinder-adoption-prediction) dataset
-- the [News_Category_Dataset_v3.json](https://www.kaggle.com/datasets/rmisra/news-category-dataset) text dataset
+**Live demo:** https://khenm.github.io/p4ai-ds/
 
-Course: **P4AI-DS (CO3135)**
+---
+
+## Datasets
+
+| Modality | Dataset | Source |
+|---|---|---|
+| Tabular | Global Air Pollution Dataset | [Kaggle](https://www.kaggle.com/datasets/hasibalmuzdadid/global-air-pollution-dataset) |
+| Text | News Category Dataset v3 | [Kaggle](https://www.kaggle.com/datasets/rmisra/news-category-dataset) |
+| Image | PetFinder Adoption Prediction | [Kaggle](https://www.kaggle.com/competitions/petfinder-adoption-prediction/data) |
+
+---
 
 ## Quick Start
+
+**Requirements:** Python 3.10+, [`uv`](https://docs.astral.sh/uv/)
 
 ```bash
 # Install dependencies
 uv sync
 
-# Run pipeline & launch dashboard
+# Run full pipeline and launch dashboard (default port 8081)
 ./run.sh
 ```
 
-This runs the text EDA export, optionally runs the PetFinder image pipeline if that dataset is present, and starts a local server at `http://localhost:8080`.
+Open `http://localhost:8081` in your browser.
+
+### Run individual stages
+
+```bash
+uv run python scripts/eda_text.py       # Text EDA  → ui/assets/data/
+uv run python scripts/eda_air.py        # Air pollution EDA → ui/assets/data/air_pollution/
+uv run python scripts/eda_image.py      # PetFinder EDA (4 phases) → ui/assets/data/ + ui/assets/samples/
+uv run python scripts/gallery_export.py # Breed gallery → ui/assets/data/image_gallery.json
+
+# Start web server only (after assets are generated)
+cd ui && python3 -m http.server 8081
+```
+
+---
 
 ## Project Structure
 
 ```
 petfinder-analysis/
-├── configs/                # YAML configs (training, style)
-├── data/petfinder/         # Raw dataset (not tracked)
-│   ├── train/              # train.csv + train_images/
-│   ├── test/               # test.csv + test_images/
-│   ├── BreedLabels.csv
-│   └── ColorLabels.csv
+├── configs/
+│   ├── eda.yaml               # EDA parameters (seed, top_labels_k)
+│   ├── style.yaml             # Color palette config
+│   └── datasets/              # Dataset-specific metadata
+├── data/                      # Raw datasets (not tracked in git)
+│   ├── petfinder/             # train.csv, train_images/, BreedLabels.csv, ColorLabels.csv
+│   ├── newscategory/          # News_Category_Dataset_v3.json
+│   └── globalairpollution/    # global_air_pollution_dataset.csv
 ├── scripts/
-│   ├── preprocess.py       # Image preprocessing & COCO annotations
-│   ├── eda_image.py        # EDA data export pipeline
-│   └── gallery_export.py   # Breed gallery image export
+│   ├── eda_image.py           # PetFinder EDA entry point (4 phases)
+│   ├── eda_text.py            # News Category EDA entry point
+│   ├── eda_air.py             # Air Pollution EDA entry point
+│   ├── gallery_export.py      # Breed gallery image export
+│   └── preprocess.py          # Image preprocessing & COCO annotations
 ├── src/
-│   ├── preprocess/         # Preprocessing modules
-│   └── eda/                # EDA extraction modules
-│       ├── tabular_context.py
-│       ├── image_metadata.py
-│       ├── image_quality.py
-│       └── image_advanced.py
-├── ui/                     # Static web dashboard
-│   ├── index.html          # Landing page
-│   ├── image.html          # EDA report page
-│   ├── style.css           # Pastel theme
-│   ├── script.js           # Shared utilities & Plotly config
-│   ├── image.js            # Chart rendering & gallery logic
-│   └── assets/data/        # JSON data files (generated, not tracked)
-├── run.sh                  # One-command pipeline + server
+│   ├── preprocess/            # Image preprocessing modules
+│   └── eda/
+│       ├── tabular_context.py # PetFinder tabular analysis (Phase 1)
+│       ├── image_metadata.py  # Image dimensions & resolution (Phase 2)
+│       ├── image_quality.py   # Quality metrics on 3K-image sample (Phase 3)
+│       ├── image_advanced.py  # PCA, t-SNE, dominant colors (Phase 4)
+│       ├── text_context.py    # News Category text analysis
+│       ├── air_pollution_eda.py # Air pollution analysis
+│       └── theme.py           # Shared pastel color palette
+├── ui/                        # Static web dashboard (vanilla HTML/CSS/JS)
+│   ├── index.html             # Landing page
+│   ├── image.html             # PetFinder EDA report
+│   ├── text.html              # News Category report
+│   ├── air-analysis.html      # Air Pollution report
+│   ├── tabular.html           # Tabular EDA report
+│   ├── style.css              # Warm pastel theme
+│   ├── script.js              # Shared utilities & Plotly config
+│   ├── image.js               # PetFinder chart rendering & gallery
+│   ├── tabular.js             # Tabular chart rendering
+│   └── assets/                # Generated JSON + sample images (not tracked)
+├── run.sh                     # One-command pipeline + server
 ├── pyproject.toml
 └── uv.lock
 ```
 
-## EDA Dashboard
+---
 
-The dashboard is a vanilla HTML/CSS/JS site using **Plotly.js** for interactive charts. It covers:
+## Dashboard Reports
 
-- **Text EDA** — Dataset overview, class imbalance, missing values, text lengths, publication timeline, keywords, and top authors
-- **Tabular EDA** — Dataset overview, adoption speed distribution, feature distributions, correlation heatmap, health & vaccination analysis
-- **Image EDA** — Image dimensions, photo count impact, quality metrics (brightness, contrast, blurriness, saturation, colorfulness), RGB color space, composite quality scores
-- **Breed Gallery** — Interactive gallery with Dog/Cat tabs, breed sub-tabs, and 50/100 image views
-- **Advanced** — Dominant color palettes, PCA variance, t-SNE projections, cross-modality analysis
+### Tabular — Global Air Pollution
+- Dataset overview, schema, and country/city coverage
+- AQI category balance and pollutant summary statistics
+- Regional hotspots and country-level risk rankings
+- Correlation structure across AQI and pollutant measures
+
+### Text — News Category
+- Dataset overview, schema, and sample records
+- Category imbalance and smallest class analysis
+- Headline and combined text length distributions
+- Timeline drift across publication years (2012–2022)
+- Missing values, duplicates, top terms, and top authors
+
+### Image — PetFinder Adoption Prediction
+- Dataset overview: 14,993 listings, 58,313 images, 5-class `AdoptionSpeed` target
+- Feature distributions, correlation heatmap, health and vaccination patterns
+- Image dimensions, resolution, photo count impact on adoption speed
+- Quality metrics: brightness, contrast, blur, saturation, colorfulness (3K-image sample)
+- Composite quality scores and interaction heatmap
+- Interactive breed gallery with Dog/Cat tabs
+- Dominant color palettes, PCA variance, t-SNE projections, cross-modality analysis
+
+---
+
+## GitHub Pages Deployment
+
+The `ui/` directory is a self-contained static site. To deploy:
+
+1. Generate assets locally with `./run.sh`
+2. Remove `ui/assets/` from `.gitignore` and commit the generated files
+3. Go to **Settings → Pages** on GitHub, set source to branch `master`, folder `/ui`
+
+Site will be available at `https://khenm.github.io/p4ai-ds/`
+
+---
 
 ## Dependencies
 
-Python 3.10+ with `uv`. Key packages: `pandas`, `numpy`, `scikit-learn`, `opencv-python`, `Pillow`.
-
-## Data
-
-Download the dataset from [Kaggle](https://www.kaggle.com/c/petfinder-adoption-prediction/data) and place it under `data/petfinder/`. The `ui/assets/` directory is generated by `run.sh` and not tracked in git.
+Key packages: `pandas`, `numpy`, `scikit-learn`, `opencv-python`, `Pillow`, `torch`, `torchvision`, `matplotlib`, `seaborn`.
