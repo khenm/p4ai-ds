@@ -662,9 +662,9 @@ function renderPhotoCount(d) {
     }), PLOTLY_CONFIG);
 
     document.getElementById('photo-insights').innerHTML = `
-        <li>Overall, pets with <strong>no adoption (Speed 4)</strong> tend to have fewer photo views — listings with more photos attract more attention</li>
-        <li>Photo count is the <strong>strongest visual predictor</strong> of adoption outcome in this dataset</li>
-        <li>Encourage shelters to upload multiple high-quality photos per listing to improve adoption chances</li>`;
+        <li>Photo count can show a general trend — pets with more images receive more views, which increases the chance of being noticed and adopted</li>
+        <li>Pets with <strong>no adoption (Speed 4)</strong> tend to have fewer photos, suggesting that limited visibility may contribute to rejection</li>
+        <li>More photos likely means more exposure rather than a direct causal factor in adoption outcome</li>`;
 }
 
 function renderQualityTable(d) {
