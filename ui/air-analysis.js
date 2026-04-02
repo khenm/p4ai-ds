@@ -50,9 +50,15 @@ function renderOverview(data) {
 
     document.getElementById('overview-desc').innerHTML = `This dataset captures <strong>${data.total_records.toLocaleString()}</strong> city-level AQI readings spanning <strong>${data.country_count}</strong> countries. Each record combines category-grade AQI labels alongside pollutant-specific AQI values for CO, Ozone, NO<sub>2</sub>, and PM2.5. Missingness is minimal except for country fields in a handful of entries.`;
 
-    let columnTable = '<thead><tr><th>Column</th><th>Type</th><th>Non-null</th><th>Missing</th><th>Missing %</th></tr></thead><tbody>';
+    let columnTable = '<thead><tr><th>Column</th><th>Feature Type</th><th>Type</th><th>Non-null</th><th>Missing</th><th>Missing %</th></tr></thead><tbody>';
     data.columns.forEach((col) => {
-        columnTable += `<tr><td>${col.name}</td><td>${col.dtype}</td><td class="num">${col.non_null.toLocaleString()}</td><td class="num">${col.missing.toLocaleString()}</td><td class="num">${col.missing_pct}%</td></tr>`;
+        columnTable += `<tr>
+        <td>${col.name}</td>
+        <td>${col.feature_type}</td>
+        <td>${col.dtype}</td>
+        <td class="num">${col.non_null.toLocaleString()}</td>
+        <td class="num">${col.missing.toLocaleString()}</td>
+        <td class="num">${col.missing_pct}%</td></tr>`;
     });
     columnTable += '</tbody>';
     document.getElementById('columns-table').innerHTML = columnTable;
