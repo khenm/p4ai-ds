@@ -20,19 +20,22 @@ def main():
     from src.eda.tabular_context import run_tabular_eda
     from src.eda.image_metadata import run_metadata_eda
     from src.eda.image_quality import run_quality_eda
-    from src.eda.image_advanced import run_advanced_eda
+    from src.eda.image_advanced import run_advanced_eda, run_breed_cluster_eda
 
-    logger.info("\n>>> Phase 1/4: Tabular EDA")
+    logger.info("\n>>> Phase 1/5: Tabular EDA")
     run_tabular_eda()
 
-    logger.info("\n>>> Phase 2/4: Image Metadata")
+    logger.info("\n>>> Phase 2/5: Image Metadata")
     run_metadata_eda()
 
-    logger.info("\n>>> Phase 3/4: Image Quality Metrics")
+    logger.info("\n>>> Phase 3/5: Image Quality Metrics")
     run_quality_eda()
 
-    logger.info("\n>>> Phase 4/4: Advanced Image Analysis (PCA, t-SNE, Colors)")
+    logger.info("\n>>> Phase 4/5: Advanced Image Analysis (PCA, t-SNE, Colors)")
     run_advanced_eda()
+
+    logger.info("\n>>> Phase 5/5: Breed Image Similarity & Clustering")
+    run_breed_cluster_eda()
 
     logger.info("=" * 60)
     logger.info("All EDA data extraction complete!")

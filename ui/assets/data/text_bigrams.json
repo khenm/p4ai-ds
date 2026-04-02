@@ -1,0 +1,84 @@
+{
+  "bigrams": [
+    {
+      "bigram": "donald trump",
+      "count": 5526
+    },
+    {
+      "bigram": "hillary clinton",
+      "count": 1794
+    },
+    {
+      "bigram": "white house",
+      "count": 1749
+    },
+    {
+      "bigram": "health care",
+      "count": 1273
+    },
+    {
+      "bigram": "climate change",
+      "count": 1158
+    },
+    {
+      "bigram": "supreme court",
+      "count": 1157
+    },
+    {
+      "bigram": "donald trump's",
+      "count": 1119
+    },
+    {
+      "bigram": "check huffpost",
+      "count": 1039
+    },
+    {
+      "bigram": "united states",
+      "count": 1006
+    },
+    {
+      "bigram": "years ago",
+      "count": 922
+    },
+    {
+      "bigram": "twitter facebook",
+      "count": 909
+    },
+    {
+      "bigram": "bernie sanders",
+      "count": 869
+    },
+    {
+      "bigram": "sure check",
+      "count": 851
+    },
+    {
+      "bigram": "social media",
+      "count": 844
+    },
+    {
+      "bigram": "around world",
+      "count": 789
+    },
+    {
+      "bigram": "york city",
+      "count": 692
+    },
+    {
+      "bigram": "huffpost style",
+      "count": 690
+    },
+    {
+      "bigram": "facebook tumblr",
+      "count": 678
+    },
+    {
+      "bigram": "super bowl",
+      "count": 675
+    },
+    {
+      "bigram": "need know",
+      "count": 668
+    }
+  ]
+}

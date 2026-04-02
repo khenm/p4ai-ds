@@ -20,8 +20,13 @@ def run_preprocess_images(config_path="configs/eda.yaml"):
     with open(config_file, "r") as f:
         config = yaml.safe_load(f)
 
-    raw_dir = Path(config["data"]["raw_dir"])
-    images_dir = Path(config["data"]["images_dir"])
+    dataset_name = config["data"]
+    dataset_config_path = Path("configs/datasets") / f"{dataset_name}.yaml"
+    with open(dataset_config_path, "r") as f:
+        dataset_config = yaml.safe_load(f)
+
+    raw_dir = Path(dataset_config["raw_dir"])
+    images_dir = Path(dataset_config["images_dir"])
     top_k = config["eda"]["top_labels_k"]
 
     images_dir.mkdir(parents=True, exist_ok=True)

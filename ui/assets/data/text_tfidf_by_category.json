@@ -1,0 +1,234 @@
+{
+  "categories": [
+    "POLITICS",
+    "WELLNESS",
+    "ENTERTAINMENT",
+    "TRAVEL",
+    "STYLE & BEAUTY",
+    "PARENTING"
+  ],
+  "groups": [
+    {
+      "category": "POLITICS",
+      "terms": [
+        {
+          "term": "trump",
+          "score": 0.0402
+        },
+        {
+          "term": "donald",
+          "score": 0.0195
+        },
+        {
+          "term": "president",
+          "score": 0.016
+        },
+        {
+          "term": "clinton",
+          "score": 0.0134
+        },
+        {
+          "term": "gop",
+          "score": 0.0132
+        },
+        {
+          "term": "obama",
+          "score": 0.0128
+        },
+        {
+          "term": "new",
+          "score": 0.0124
+        },
+        {
+          "term": "house",
+          "score": 0.0117
+        }
+      ]
+    },
+    {
+      "category": "WELLNESS",
+      "terms": [
+        {
+          "term": "life",
+          "score": 0.0189
+        },
+        {
+          "term": "health",
+          "score": 0.016
+        },
+        {
+          "term": "people",
+          "score": 0.0149
+        },
+        {
+          "term": "time",
+          "score": 0.0143
+        },
+        {
+          "term": "study",
+          "score": 0.0139
+        },
+        {
+          "term": "new",
+          "score": 0.0132
+        },
+        {
+          "term": "sleep",
+          "score": 0.0122
+        },
+        {
+          "term": "day",
+          "score": 0.0114
+        }
+      ]
+    },
+    {
+      "category": "ENTERTAINMENT",
+      "terms": [
+        {
+          "term": "new",
+          "score": 0.0176
+        },
+        {
+          "term": "star",
+          "score": 0.0116
+        },
+        {
+          "term": "trump",
+          "score": 0.0112
+        },
+        {
+          "term": "just",
+          "score": 0.0099
+        },
+        {
+          "term": "like",
+          "score": 0.0093
+        },
+        {
+          "term": "movie",
+          "score": 0.009
+        },
+        {
+          "term": "says",
+          "score": 0.0089
+        },
+        {
+          "term": "film",
+          "score": 0.0086
+        }
+      ]
+    },
+    {
+      "category": "TRAVEL",
+      "terms": [
+        {
+          "term": "travel",
+          "score": 0.0231
+        },
+        {
+          "term": "photos",
+          "score": 0.021
+        },
+        {
+          "term": "world",
+          "score": 0.019
+        },
+        {
+          "term": "new",
+          "score": 0.0164
+        },
+        {
+          "term": "best",
+          "score": 0.015
+        },
+        {
+          "term": "city",
+          "score": 0.0121
+        },
+        {
+          "term": "like",
+          "score": 0.0116
+        },
+        {
+          "term": "time",
+          "score": 0.0114
+        }
+      ]
+    },
+    {
+      "category": "STYLE & BEAUTY",
+      "terms": [
+        {
+          "term": "photos",
+          "score": 0.0355
+        },
+        {
+          "term": "style",
+          "score": 0.0257
+        },
+        {
+          "term": "fashion",
+          "score": 0.0242
+        },
+        {
+          "term": "week",
+          "score": 0.0185
+        },
+        {
+          "term": "check",
+          "score": 0.018
+        },
+        {
+          "term": "look",
+          "score": 0.0174
+        },
+        {
+          "term": "new",
+          "score": 0.0165
+        },
+        {
+          "term": "want",
+          "score": 0.0162
+        }
+      ]
+    },
+    {
+      "category": "PARENTING",
+      "terms": [
+        {
+          "term": "kids",
+          "score": 0.0264
+        },
+        {
+          "term": "children",
+          "score": 0.022
+        },
+        {
+          "term": "parents",
+          "score": 0.0198
+        },
+        {
+          "term": "child",
+          "score": 0.0173
+        },
+        {
+          "term": "baby",
+          "score": 0.0164
+        },
+        {
+          "term": "time",
+          "score": 0.0152
+        },
+        {
+          "term": "year",
+          "score": 0.0146
+        },
+        {
+          "term": "day",
+          "score": 0.0146
+        }
+      ]
+    }
+  ]
+}

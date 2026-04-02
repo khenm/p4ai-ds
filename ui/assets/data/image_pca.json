@@ -1,0 +1,23 @@
+{
+  "explained_variance": [
+    0.3614,
+    0.2411,
+    0.1917,
+    0.1706,
+    0.0352
+  ],
+  "cumulative_variance": [
+    0.3614,
+    0.6025,
+    0.7942,
+    0.9648,
+    1.0
+  ],
+  "components": [
+    "Brightness",
+    "Blurriness",
+    "Contrast",
+    "Colorfulness",
+    "Saturation"
+  ]
+}

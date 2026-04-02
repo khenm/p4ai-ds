@@ -84,7 +84,6 @@ def process_split(split_name, raw_dir, images_dir, top_k):
         target_img_path = target_split_dir / img_path.name
         shutil.copy2(img_path, target_img_path)
 
-        # Get dim if needed
         try:
             with Image.open(target_img_path) as img:
                 width, height = img.size

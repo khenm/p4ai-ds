@@ -19,7 +19,7 @@ function plotlyLayout(title, extra = {}) {
         font: { family: 'Inter, sans-serif', size: 11, color: '#6B5744' },
         xaxis: { gridcolor: '#EDE5D8', gridwidth: 0.5, showline: true, linecolor: '#DDD2C3', linewidth: 0.5, zeroline: false, ...(extra.xaxis || {}) },
         yaxis: { gridcolor: '#EDE5D8', gridwidth: 0.5, showline: true, linecolor: '#DDD2C3', linewidth: 0.5, zeroline: false, ...(extra.yaxis || {}) },
-        margin: { l: 55, r: 25, t: 55, b: 45, ...(extra.margin || {}) },
+        margin: { l: 55, r: 40, t: 60, b: 45, ...(extra.margin || {}) },
         hoverlabel: { bgcolor: '#FDF5EC', font: { family: 'Inter, sans-serif', size: 12 } },
         colorway: COLORS.qualitative,
     };

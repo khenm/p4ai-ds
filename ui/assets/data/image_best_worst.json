@@ -1,0 +1,118 @@
+{
+  "best": [
+    {
+      "pet_id": "e103f7612",
+      "path": "assets/samples/best_e103f7612.jpg",
+      "score": 0.5686,
+      "speed": 3,
+      "type": "Cat"
+    },
+    {
+      "pet_id": "a31d4c0f0",
+      "path": "assets/samples/best_a31d4c0f0.jpg",
+      "score": 0.5439,
+      "speed": 4,
+      "type": "Cat"
+    },
+    {
+      "pet_id": "58805776d",
+      "path": "assets/samples/best_58805776d.jpg",
+      "score": 0.5433,
+      "speed": 4,
+      "type": "Cat"
+    },
+    {
+      "pet_id": "be917151a",
+      "path": "assets/samples/best_be917151a.jpg",
+      "score": 0.5267,
+      "speed": 4,
+      "type": "Dog"
+    },
+    {
+      "pet_id": "a5d1a1271",
+      "path": "assets/samples/best_a5d1a1271.jpg",
+      "score": 0.5224,
+      "speed": 3,
+      "type": "Dog"
+    },
+    {
+      "pet_id": "2ece6b26b",
+      "path": "assets/samples/best_2ece6b26b.jpg",
+      "score": 0.516,
+      "speed": 4,
+      "type": "Cat"
+    },
+    {
+      "pet_id": "81d38d5ec",
+      "path": "assets/samples/best_81d38d5ec.jpg",
+      "score": 0.5152,
+      "speed": 4,
+      "type": "Dog"
+    },
+    {
+      "pet_id": "9cac98ce6",
+      "path": "assets/samples/best_9cac98ce6.jpg",
+      "score": 0.5143,
+      "speed": 2,
+      "type": "Cat"
+    }
+  ],
+  "worst": [
+    {
+      "pet_id": "40dfeeb65",
+      "path": "assets/samples/worst_40dfeeb65.jpg",
+      "score": 0.0538,
+      "speed": 4,
+      "type": "Cat"
+    },
+    {
+      "pet_id": "23e36bfd9",
+      "path": "assets/samples/worst_23e36bfd9.jpg",
+      "score": 0.1016,
+      "speed": 3,
+      "type": "Dog"
+    },
+    {
+      "pet_id": "482fc8a70",
+      "path": "assets/samples/worst_482fc8a70.jpg",
+      "score": 0.1205,
+      "speed": 4,
+      "type": "Cat"
+    },
+    {
+      "pet_id": "121af879a",
+      "path": "assets/samples/worst_121af879a.jpg",
+      "score": 0.1208,
+      "speed": 2,
+      "type": "Cat"
+    },
+    {
+      "pet_id": "97cd20357",
+      "path": "assets/samples/worst_97cd20357.jpg",
+      "score": 0.1239,
+      "speed": 1,
+      "type": "Cat"
+    },
+    {
+      "pet_id": "6c17339fe",
+      "path": "assets/samples/worst_6c17339fe.jpg",
+      "score": 0.1352,
+      "speed": 4,
+      "type": "Dog"
+    },
+    {
+      "pet_id": "6d87736bc",
+      "path": "assets/samples/worst_6d87736bc.jpg",
+      "score": 0.1353,
+      "speed": 1,
+      "type": "Cat"
+    },
+    {
+      "pet_id": "93b289505",
+      "path": "assets/samples/worst_93b289505.jpg",
+      "score": 0.141,
+      "speed": 4,
+      "type": "Cat"
+    }
+  ]
+}

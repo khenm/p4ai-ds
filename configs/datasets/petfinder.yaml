@@ -1,3 +1,4 @@
 name: "petfinder"
+raw_dir: "./data/petfinder"
 images_dir: "./data/images"
 img_size: 224

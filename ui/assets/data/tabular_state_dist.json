@@ -1,0 +1,34 @@
+{
+  "labels": [
+    "Selangor",
+    "Kuala Lumpur",
+    "Pulau Pinang",
+    "Johor",
+    "Perak",
+    "Negeri Sembilan",
+    "Melaka",
+    "Kedah",
+    "Pahang",
+    "Terengganu",
+    "Sabah",
+    "Kelantan",
+    "Sarawak",
+    "Labuan"
+  ],
+  "counts": [
+    8714,
+    3845,
+    843,
+    507,
+    420,
+    253,
+    137,
+    110,
+    85,
+    26,
+    22,
+    15,
+    13,
+    3
+  ]
+}

@@ -10,6 +10,7 @@ logger = logging.getLogger("tabular_context")
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DATA_CSV = os.path.join(PROJECT_ROOT, "data", "petfinder", "train", "train.csv")
 STATE_CSV = os.path.join(PROJECT_ROOT, "data", "petfinder", "StateLabels.csv")
+BREED_CSV = os.path.join(PROJECT_ROOT, "data", "petfinder", "BreedLabels.csv")
 OUT_DIR = os.path.join(PROJECT_ROOT, "ui", "assets", "data")
 os.makedirs(OUT_DIR, exist_ok=True)
 
@@ -151,6 +152,30 @@ def run_tabular_eda():
         'proportions': [[round(float(v), 4) for v in row] for row in ct.values]
     }, 'tabular_health.json')
 
+    # 9 — Breed vs Adoption Speed
+    breeds_df = pd.read_csv(BREED_CSV)
+    breed_map_local = dict(zip(breeds_df['BreedID'], breeds_df['BreedName']))
+    df_b = df.copy()
+    df_b['BreedName'] = df_b['Breed1'].map(breed_map_local).fillna('Mixed Breed')
+    df_b['TypeName'] = df_b['Type'].map(TYPE_MAP)
+
+    breed_speed = {}
+    for type_name in ['Dog', 'Cat']:
+        type_df = df_b[df_b['TypeName'] == type_name]
+        top_breeds = type_df['BreedName'].value_counts().head(15).index.tolist()
+        type_top = type_df[type_df['BreedName'].isin(top_breeds)]
+        ct = pd.crosstab(type_top['BreedName'], type_top['AdoptionSpeed'], normalize='index')
+        ct = ct.reindex(top_breeds).fillna(0)
+        breed_speed[type_name] = {
+            'breeds': top_breeds,
+            'speed_proportions': {
+                str(s): [round(float(v), 4) for v in (ct[s] if s in ct.columns else [0] * len(top_breeds))]
+                for s in range(5)
+            },
+            'counts': [int((type_df['BreedName'] == b).sum()) for b in top_breeds],
+        }
+    save_json(breed_speed, 'tabular_breed_speed.json')
+
     # 8 — Vaccination crosstab
     df_v = df.copy()
     df_v['Vaccinated'] = df_v['Vaccinated'].map(VACC_MAP)
@@ -160,6 +185,142 @@ def run_tabular_eda():
         'speed_labels': [int(x) for x in vct.columns],
         'proportions': [[round(float(v), 4) for v in row] for row in vct.values]
     }, 'tabular_vaccination.json')
+
+    # ── Helper: build proportional stacked-bar data ──────────────────────────
+    def _prop_crosstab(series, label_map=None):
+        """Return {labels, proportions: {speed: [values]}} for a categorical series."""
+        mapped = series.map(label_map).fillna('Unknown') if label_map else series.astype(str)
+        ct = pd.crosstab(mapped, df['AdoptionSpeed'], normalize='index')
+        labels = ct.index.tolist()
+        props = {
+            str(s): [round(float(ct[s][lbl]) if s in ct.columns and lbl in ct.index else 0, 4)
+                     for lbl in labels]
+            for s in range(5)
+        }
+        counts = [int((mapped == lbl).sum()) for lbl in labels]
+        return {'labels': labels, 'proportions': props, 'counts': counts}
+
+    # ── T7: State vs Adoption Speed ───────────────────────────────────────────
+    df_s2 = df.copy()
+    df_s2['StateName'] = df_s2['State'].map(state_map).fillna('Unknown')
+    top10_states = df_s2['StateName'].value_counts().head(10).index.tolist()
+    df_s2 = df_s2[df_s2['StateName'].isin(top10_states)]
+    ct_state = pd.crosstab(df_s2['StateName'], df_s2['AdoptionSpeed'], normalize='index')
+    ct_state = ct_state.reindex(top10_states).fillna(0)
+    save_json({
+        'states': top10_states,
+        'speed_proportions': {
+            str(s): [round(float(ct_state[s][st]) if s in ct_state.columns else 0, 4)
+                     for st in top10_states]
+            for s in range(5)
+        },
+        'counts': [int((df_s2['StateName'] == st).sum()) for st in top10_states],
+    }, 'tabular_state_speed.json')
+
+    # ── T8: Pet Profile (HasName, Type, PureBreed) vs Adoption Speed ──────────
+    df_p = df.copy()
+    df_p['HasName'] = df_p['Name'].isna().map({True: 'No Name', False: 'Has Name'})
+    df_p['TypeName'] = df_p['Type'].map(TYPE_MAP)
+    df_p['PureBreed'] = np.where(df_p['Breed2'] == 0, 'Pure Breed', 'Not Pure Breed')
+    save_json({
+        'hasname': _prop_crosstab(df_p['HasName']),
+        'type_speed': _prop_crosstab(df_p['TypeName']),
+        'purebreed': _prop_crosstab(df_p['PureBreed']),
+    }, 'tabular_profile_speed.json')
+
+    # ── T9: Age vs Adoption Speed by Type ─────────────────────────────────────
+    MAX_PER_BUCKET = 500
+    age_speed = {}
+    for type_key, type_val in [(1, 'dog'), (2, 'cat')]:
+        buckets = {}
+        for s in range(5):
+            vals = df[(df['Type'] == type_key) & (df['AdoptionSpeed'] == s)]['Age'].dropna()
+            if len(vals) > MAX_PER_BUCKET:
+                vals = vals.sample(MAX_PER_BUCKET, random_state=42)
+            buckets[str(s)] = [float(v) for v in vals.tolist()]
+        age_speed[type_val] = buckets
+    save_json(age_speed, 'tabular_age_speed.json')
+
+    # ── T10: Quantity, MaturitySize, Gender vs Adoption Speed ─────────────────
+    df_g = df.copy()
+    top7_qty = df_g['Quantity'].value_counts().head(7).index.tolist()
+    df_g['QuantityGroup'] = df_g['Quantity'].apply(
+        lambda x: str(int(x)) if x in top7_qty else 'Other')
+    qty_order = [str(q) for q in sorted([q for q in top7_qty], key=int)] + ['Other']
+
+    # Quantity proportional
+    ct_qty = pd.crosstab(df_g['QuantityGroup'], df_g['AdoptionSpeed'], normalize='index')
+    ct_qty = ct_qty.reindex([q for q in qty_order if q in ct_qty.index]).fillna(0)
+    qty_labels = ct_qty.index.tolist()
+
+    # MaturitySize by type
+    def _maturity_by_type(type_val):
+        sub = df_g[df_g['Type'] == type_val].copy()
+        sub['MaturityName'] = sub['MaturitySize'].map(MATURITY_MAP).fillna('Unknown')
+        order = ['Small', 'Medium', 'Large', 'Extra Large', 'Not Specified']
+        ct_m = pd.crosstab(sub['MaturityName'], sub['AdoptionSpeed'], normalize='index')
+        ct_m = ct_m.reindex([o for o in order if o in ct_m.index]).fillna(0)
+        labels = ct_m.index.tolist()
+        return {
+            'labels': labels,
+            'proportions': {
+                str(s): [round(float(ct_m[s][l]) if s in ct_m.columns else 0, 4) for l in labels]
+                for s in range(5)
+            },
+            'counts': [int((sub['MaturityName'] == l).sum()) for l in labels],
+        }
+
+    save_json({
+        'quantity': {
+            'labels': qty_labels,
+            'proportions': {
+                str(s): [round(float(ct_qty[s][l]) if s in ct_qty.columns else 0, 4)
+                         for l in qty_labels]
+                for s in range(5)
+            },
+            'counts': [int((df_g['QuantityGroup'] == l).sum()) for l in qty_labels],
+        },
+        'maturity_dog': _maturity_by_type(1),
+        'maturity_cat': _maturity_by_type(2),
+        'gender': _prop_crosstab(df['Gender'], GENDER_MAP),
+    }, 'tabular_group_speed.json')
+
+    # ── T11: Care Status (Dewormed, Sterilized) vs Adoption Speed ─────────────
+    save_json({
+        'dewormed': _prop_crosstab(df['Dewormed'], DEWORMED_MAP),
+        'sterilized': _prop_crosstab(df['Sterilized'], STERILIZED_MAP),
+    }, 'tabular_care_speed.json')
+
+    # ── T12: Fee & Description Length vs Adoption Speed ───────────────────────
+    df_f = df.copy()
+    top10_fees = df_f['Fee'].value_counts().head(10).index.tolist()
+    df_f['FeeGroup'] = df_f['Fee'].apply(
+        lambda x: str(int(x)) if x in top10_fees else 'Other')
+    fee_order = ['0'] + [str(int(f)) for f in sorted(top10_fees) if f != 0] + ['Other']
+    ct_fee = pd.crosstab(df_f['FeeGroup'], df_f['AdoptionSpeed'], normalize='index')
+    ct_fee = ct_fee.reindex([f for f in fee_order if f in ct_fee.index]).fillna(0)
+    fee_labels = ct_fee.index.tolist()
+
+    df_f['DescLength'] = df_f['Description'].fillna('').apply(len)
+    desc_by_speed = {}
+    for s in range(5):
+        vals = df_f[df_f['AdoptionSpeed'] == s]['DescLength'].dropna()
+        if len(vals) > MAX_PER_BUCKET:
+            vals = vals.sample(MAX_PER_BUCKET, random_state=42)
+        desc_by_speed[str(s)] = [float(v) for v in vals.tolist()]
+
+    save_json({
+        'fee': {
+            'labels': fee_labels,
+            'proportions': {
+                str(s): [round(float(ct_fee[s][l]) if s in ct_fee.columns else 0, 4)
+                         for l in fee_labels]
+                for s in range(5)
+            },
+            'counts': [int((df_f['FeeGroup'] == l).sum()) for l in fee_labels],
+        },
+        'desc_length': desc_by_speed,
+    }, 'tabular_fee_desc_speed.json')
 
     logger.info("Tabular EDA data extraction complete.")
 

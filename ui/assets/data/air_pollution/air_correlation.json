@@ -1,0 +1,98 @@
+{
+  "labels": [
+    "AQI Value",
+    "CO AQI Value",
+    "Ozone AQI Value",
+    "NO2 AQI Value",
+    "PM2.5 AQI Value"
+  ],
+  "matrix": [
+    [
+      1.0,
+      0.4296,
+      0.4051,
+      0.2308,
+      0.9845
+    ],
+    [
+      0.4296,
+      1.0,
+      0.1448,
+      0.4876,
+      0.4378
+    ],
+    [
+      0.4051,
+      0.1448,
+      1.0,
+      -0.1829,
+      0.3405
+    ],
+    [
+      0.2308,
+      0.4876,
+      -0.1829,
+      1.0,
+      0.2591
+    ],
+    [
+      0.9845,
+      0.4378,
+      0.3405,
+      0.2591,
+      1.0
+    ]
+  ],
+  "top_pairs": [
+    {
+      "feature1": "AQI Value",
+      "feature2": "PM2.5 AQI Value",
+      "correlation": 0.9845
+    },
+    {
+      "feature1": "CO AQI Value",
+      "feature2": "NO2 AQI Value",
+      "correlation": 0.4876
+    },
+    {
+      "feature1": "CO AQI Value",
+      "feature2": "PM2.5 AQI Value",
+      "correlation": 0.4378
+    },
+    {
+      "feature1": "AQI Value",
+      "feature2": "CO AQI Value",
+      "correlation": 0.4296
+    },
+    {
+      "feature1": "AQI Value",
+      "feature2": "Ozone AQI Value",
+      "correlation": 0.4051
+    },
+    {
+      "feature1": "Ozone AQI Value",
+      "feature2": "PM2.5 AQI Value",
+      "correlation": 0.3405
+    },
+    {
+      "feature1": "NO2 AQI Value",
+      "feature2": "PM2.5 AQI Value",
+      "correlation": 0.2591
+    },
+    {
+      "feature1": "AQI Value",
+      "feature2": "NO2 AQI Value",
+      "correlation": 0.2308
+    },
+    {
+      "feature1": "Ozone AQI Value",
+      "feature2": "NO2 AQI Value",
+      "correlation": -0.1829
+    },
+    {
+      "feature1": "CO AQI Value",
+      "feature2": "Ozone AQI Value",
+      "correlation": 0.1448
+    }
+  ]
+}

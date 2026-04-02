@@ -1,0 +1,86 @@
+{
+  "type": {
+    "labels": [
+      "Dog",
+      "Cat"
+    ],
+    "counts": [
+      8132,
+      6861
+    ]
+  },
+  "gender": {
+    "labels": [
+      "Female",
+      "Male",
+      "Mixed"
+    ],
+    "counts": [
+      7277,
+      5536,
+      2180
+    ]
+  },
+  "vaccinated": {
+    "labels": [
+      "No",
+      "Yes",
+      "Not Sure"
+    ],
+    "counts": [
+      7227,
+      5898,
+      1868
+    ]
+  },
+  "sterilized": {
+    "labels": [
+      "No",
+      "Yes",
+      "Not Sure"
+    ],
+    "counts": [
+      10077,
+      3101,
+      1815
+    ]
+  },
+  "dewormed": {
+    "labels": [
+      "Yes",
+      "No",
+      "Not Sure"
+    ],
+    "counts": [
+      8397,
+      4815,
+      1781
+    ]
+  },
+  "fur_length": {
+    "labels": [
+      "Short",
+      "Medium",
+      "Long"
+    ],
+    "counts": [
+      8808,
+      5361,
+      824
+    ]
+  },
+  "maturity_size": {
+    "labels": [
+      "Medium",
+      "Small",
+      "Large",
+      "Extra Large"
+    ],
+    "counts": [
+      10305,
+      3395,
+      1260,
+      33
+    ]
+  }
+}

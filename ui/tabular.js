@@ -54,14 +54,17 @@ function renderOverview(data) {
 }
 
 function renderAdoption(data) {
-    const labels = data.labels.map((l, i) => `Speed ${l} — ${data.speed_names[i]}`);
-    Plotly.newPlot('chart-adoption-bar', [{
-        x: labels, y: data.counts, type: 'bar',
-        marker: { color: COLORS.speedColors },
-        text: data.counts.map(c => c.toLocaleString()), textposition: 'outside',
-    }], plotlyLayout('Adoption Speed Distribution', {
-        xaxis: { title: 'Adoption Speed', tickangle: -15 },
-        yaxis: { title: 'Count' }
+    const traces = data.labels.map((l, i) => ({
+        x: [`Speed ${l}`], y: [data.counts[i]], type: 'bar',
+        name: `Speed ${l} — ${data.speed_names[i]}`,
+        marker: { color: COLORS.speedColors[i] },
+        text: [data.counts[i].toLocaleString()], textposition: 'outside',
+        showlegend: true,
+    }));
+    Plotly.newPlot('chart-adoption-bar', traces, plotlyLayout('Adoption Speed Distribution', {
+        xaxis: { title: 'Adoption Speed' },
+        yaxis: { title: 'Count' },
+        legend: { orientation: 'h', y: -0.2, x: 0.5, xanchor: 'center' },
     }), PLOTLY_CONFIG);
 
     Plotly.newPlot('chart-type-pie', [{

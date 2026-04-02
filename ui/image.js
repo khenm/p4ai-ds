@@ -8,22 +8,21 @@ let GALLERY_BREED = null;
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         const [
-            overview, adoption, demographics, ageFee, stateDist, correlation, health, vaccination,
-            imgOverview, dims, photoCount, scatter, colorSpace, qualTable, composite, bestWorst, dominantColors, pca, tsne, cross, gallery,
+            overview, adoption, correlation, health, vaccination,
+            ageSpeed, feeDescSpeed,
+            imgOverview, dims, photoCount, qualTable, composite, bestWorst, dominantColors, pca, tsne, cross, gallery,
+            breedClusters,
         ] = await Promise.all([
             loadJSON('tabular_overview.json'),
             loadJSON('tabular_adoption_dist.json'),
-            loadJSON('tabular_demographics.json'),
-            loadJSON('tabular_age_fee.json'),
-            loadJSON('tabular_state_dist.json'),
             loadJSON('tabular_correlation.json'),
             loadJSON('tabular_health.json'),
             loadJSON('tabular_vaccination.json'),
+            loadJSON('tabular_age_speed.json').catch(() => null),
+            loadJSON('tabular_fee_desc_speed.json').catch(() => null),
             loadJSON('image_overview.json'),
             loadJSON('image_dimensions.json'),
             loadJSON('image_photo_count.json'),
-            loadJSON('image_quality_scatter.json'),
-            loadJSON('image_color_space.json'),
             loadJSON('image_quality_table.json'),
             loadJSON('image_quality_composite.json'),
             loadJSON('image_best_worst.json'),
@@ -32,24 +31,23 @@ document.addEventListener('DOMContentLoaded', async () => {
             loadJSON('image_tsne.json'),
             loadJSON('image_cross_modality.json'),
             loadJSON('image_gallery.json'),
+            loadJSON('image_breed_clusters.json').catch(() => null),
         ]);
 
         // Tabular
         renderOverview(overview);
         renderAdoption(adoption);
-        renderDemographics(demographics);
-        renderAgeFee(ageFee);
-        renderState(stateDist);
         renderCorrelation(correlation);
         renderHealth(health);
         renderVaccination(vaccination);
+        if (ageSpeed) renderAgeSpeed(ageSpeed);
+        if (feeDescSpeed) renderFeeDescSpeed(feeDescSpeed);
 
         // Image
+        if (breedClusters) renderBreedClusters(breedClusters);
         renderImgOverview(imgOverview);
         renderDimensions(dims);
         renderPhotoCount(photoCount);
-        renderQualityScatter(scatter);
-        renderRGBScatter(colorSpace);
         renderQualityTable(qualTable);
         renderComposite(composite);
         renderBestWorst(bestWorst);
@@ -96,14 +94,17 @@ function renderOverview(data) {
 }
 
 function renderAdoption(data) {
-    const labels = data.labels.map((l, i) => `Speed ${l} — ${data.speed_names[i]}`);
-    Plotly.newPlot('chart-adoption-bar', [{
-        x: labels, y: data.counts, type: 'bar',
-        marker: { color: COLORS.speedColors },
-        text: data.counts.map(c => c.toLocaleString()), textposition: 'outside',
-    }], plotlyLayout('Adoption Speed Distribution', {
-        xaxis: { title: 'Adoption Speed', tickangle: -15 },
+    const traces = data.labels.map((l, i) => ({
+        x: [`Speed ${l}`], y: [data.counts[i]], type: 'bar',
+        name: `Speed ${l} — ${data.speed_names[i]}`,
+        marker: { color: COLORS.speedColors[i] },
+        text: [data.counts[i].toLocaleString()], textposition: 'outside',
+        showlegend: true,
+    }));
+    Plotly.newPlot('chart-adoption-bar', traces, plotlyLayout('Adoption Speed Distribution', {
+        xaxis: { title: 'Adoption Speed' },
         yaxis: { title: 'Count' },
+        legend: { orientation: 'h', y: -0.2, x: 0.5, xanchor: 'center' },
     }), PLOTLY_CONFIG);
 
     Plotly.newPlot('chart-type-pie', [{
@@ -252,6 +253,342 @@ function renderVaccination(data) {
     }), PLOTLY_CONFIG);
 }
 
+function renderBreedSpeed(data) {
+    ['Dog', 'Cat'].forEach(type => {
+        const d = data[type];
+        const chartId = `chart-breed-${type.toLowerCase()}`;
+        const traces = [];
+        for (let s = 0; s < 5; s++) {
+            traces.push({
+                y: d.breeds,
+                x: d.speed_proportions[String(s)].map(v => +(v * 100).toFixed(1)),
+                type: 'bar',
+                orientation: 'h',
+                name: `Speed ${s} — ${COLORS.speedNames[s]}`,
+                marker: { color: COLORS.speedColors[s] },
+                hovertemplate: '%{y}: %{x:.1f}%<extra>Speed ' + s + '</extra>',
+            });
+        }
+        Plotly.newPlot(chartId, traces, plotlyLayout(`${type} — Top 15 Breeds by Adoption Speed`, {
+            barmode: 'stack',
+            xaxis: { title: 'Proportion (%)', range: [0, 100] },
+            yaxis: { title: '', automargin: true, tickfont: { size: 11 } },
+            margin: { l: 160, r: 20, t: 50, b: 50 },
+            height: 480,
+            legend: { orientation: 'h', y: -0.15, x: 0.5, xanchor: 'center' },
+        }), PLOTLY_CONFIG);
+    });
+
+    // Derive simple insights from the Dog data
+    const dog = data['Dog'];
+    const fastestBreed = dog.breeds.reduce((best, breed, i) => {
+        const fast = (dog.speed_proportions['0'][i] || 0) + (dog.speed_proportions['1'][i] || 0);
+        return fast > best.val ? { name: breed, val: fast } : best;
+    }, { name: '', val: 0 });
+    const slowestBreed = dog.breeds.reduce((best, breed, i) => {
+        const slow = dog.speed_proportions['4'][i] || 0;
+        return slow > best.val ? { name: breed, val: slow } : best;
+    }, { name: '', val: 0 });
+    document.getElementById('breed-speed-insights').innerHTML = `
+        <li>Fastest-adopted dog breed: <strong>${fastestBreed.name}</strong> (${(fastestBreed.val * 100).toFixed(1)}% adopted within first week)</li>
+        <li>Highest "no adoption" rate among dogs: <strong>${slowestBreed.name}</strong> (${(slowestBreed.val * 100).toFixed(1)}% Speed 4)</li>
+        <li>Mixed Breed dogs and cats typically show average adoption rates, reflecting the dataset's diversity</li>
+        <li>Breed alone is a weak predictor — photo count remains stronger across all breeds</li>`;
+}
+
+/* ── Shared helper: proportional horizontal stacked bar ── */
+function _propHBar(divId, title, labels, propsObj, height) {
+    const traces = [];
+    for (let s = 0; s < 5; s++) {
+        traces.push({
+            y: labels,
+            x: (propsObj[String(s)] || []).map(v => +(v * 100).toFixed(1)),
+            type: 'bar', orientation: 'h',
+            name: `Speed ${s} — ${COLORS.speedNames[s]}`,
+            marker: { color: COLORS.speedColors[s] },
+            hovertemplate: '%{y}: %{x:.1f}%<extra>Speed ' + s + '</extra>',
+        });
+    }
+    Plotly.newPlot(divId, traces, plotlyLayout(title, {
+        barmode: 'stack',
+        xaxis: { title: 'Proportion (%)', range: [0, 100] },
+        yaxis: { title: '', automargin: true, tickfont: { size: 11 } },
+        margin: { l: 160, r: 20, t: 50, b: 50 },
+        height: height || 320,
+        legend: { orientation: 'h', y: -0.2, x: 0.5, xanchor: 'center' },
+    }), PLOTLY_CONFIG);
+}
+
+/* ── Shared helper: proportional vertical stacked bar ── */
+function _propVBar(divId, title, labels, propsObj) {
+    const traces = [];
+    for (let s = 0; s < 5; s++) {
+        traces.push({
+            x: labels,
+            y: (propsObj[String(s)] || []).map(v => +(v * 100).toFixed(1)),
+            type: 'bar',
+            name: `Speed ${s} — ${COLORS.speedNames[s]}`,
+            marker: { color: COLORS.speedColors[s] },
+            hovertemplate: '%{x}: %{y:.1f}%<extra>Speed ' + s + '</extra>',
+        });
+    }
+    Plotly.newPlot(divId, traces, plotlyLayout(title, {
+        barmode: 'stack',
+        xaxis: { title: '' },
+        yaxis: { title: 'Proportion (%)' },
+        legend: { orientation: 'h', y: -0.2, x: 0.5, xanchor: 'center' },
+    }), PLOTLY_CONFIG);
+}
+
+function renderStateSpeed(data) {
+    _propHBar('chart-state-speed', 'State vs Adoption Speed (Top 10)',
+        data.states.slice().reverse(),
+        Object.fromEntries(Object.entries(data.speed_proportions)
+            .map(([k, v]) => [k, v.slice().reverse()])), 420);
+
+    const fastest = data.states.reduce((best, s, i) => {
+        const fast = (data.speed_proportions['0'][i] || 0) + (data.speed_proportions['1'][i] || 0);
+        return fast > best.val ? { name: s, val: fast } : best;
+    }, { name: '', val: 0 });
+    const slowest = data.states.reduce((best, s, i) => {
+        const slow = data.speed_proportions['4'][i] || 0;
+        return slow > best.val ? { name: s, val: slow } : best;
+    }, { name: '', val: 0 });
+    document.getElementById('state-speed-insights').innerHTML = `
+        <li>Fastest-adopting state: <strong>${fastest.name}</strong> (${(fastest.val * 100).toFixed(1)}% adopted within first week)</li>
+        <li>Highest "no adoption" rate: <strong>${slowest.name}</strong> (${(slowest.val * 100).toFixed(1)}% Speed 4)</li>
+        <li>Selangor and Kuala Lumpur account for the largest share of listings — urban areas dominate</li>`;
+}
+
+function renderProfileSpeed(data) {
+    _propVBar('chart-hasname-speed', 'Has Name vs Adoption Speed',
+        data.hasname.labels, data.hasname.proportions);
+    _propVBar('chart-type-speed', 'Pet Type vs Adoption Speed',
+        data.type_speed.labels, data.type_speed.proportions);
+    _propVBar('chart-purebreed-speed', 'Pure Breed vs Adoption Speed',
+        data.purebreed.labels, data.purebreed.proportions);
+}
+
+function renderAgeSpeed(data) {
+    ['dog', 'cat'].forEach(type => {
+        const divId = `chart-age-speed-${type}`;
+        const traces = [];
+        for (let s = 0; s < 5; s++) {
+            const vals = (data[type][String(s)] || []).filter(v => v <= 120);
+            traces.push({
+                y: vals, type: 'box',
+                name: `Speed ${s}`,
+                marker: { color: COLORS.speedColors[s] },
+                boxpoints: false,
+            });
+        }
+        Plotly.newPlot(divId, traces, plotlyLayout(
+            `Age vs Adoption Speed — ${type.charAt(0).toUpperCase() + type.slice(1)}`, {
+            yaxis: { title: 'Age (months)', range: [0, 60] },
+            xaxis: { title: 'Adoption Speed' },
+        }), PLOTLY_CONFIG);
+    });
+}
+
+function renderGroupSpeed(data) {
+    _propHBar('chart-quantity-speed', 'Quantity Group vs Adoption Speed',
+        data.quantity.labels, data.quantity.proportions, 360);
+    _propVBar('chart-gender-speed', 'Gender vs Adoption Speed',
+        data.gender.labels, data.gender.proportions);
+    _propHBar('chart-maturity-dog', 'Maturity Size vs Adoption Speed — Dog',
+        data.maturity_dog.labels, data.maturity_dog.proportions, 300);
+    _propHBar('chart-maturity-cat', 'Maturity Size vs Adoption Speed — Cat',
+        data.maturity_cat.labels, data.maturity_cat.proportions, 300);
+}
+
+function renderCareSpeed(data) {
+    _propVBar('chart-dewormed-speed', 'Dewormed vs Adoption Speed',
+        data.dewormed.labels, data.dewormed.proportions);
+    _propVBar('chart-sterilized-speed', 'Sterilized vs Adoption Speed',
+        data.sterilized.labels, data.sterilized.proportions);
+}
+
+function renderFeeDescSpeed(data) {
+    _propHBar('chart-fee-speed2', 'Fee Group vs Adoption Speed',
+        data.fee.labels, data.fee.proportions, 360);
+}
+
+function renderBreedClusters(data) {
+    const CLUSTER_COLORS = ['#E76F51', '#2A9D8F', '#E9C46A', '#264653', '#A8DADC'];
+
+    ['Dog', 'Cat'].forEach(type => {
+        const d = data[type];
+        if (!d) return;
+        const tl = type.toLowerCase();
+        const { breeds, similarity, cluster_labels, n_clusters, cluster_breeds,
+                cluster_speed, breed_speed, feature_names, cluster_profiles } = d;
+
+        // ── 1. Similarity heatmap ─────────────────────────────────────────
+        // Sort rows/cols by cluster label so similar breeds appear adjacent
+        const order = breeds.map((_, i) => i).sort((a, b) => cluster_labels[a] - cluster_labels[b]);
+        const ordBreeds = order.map(i => breeds[i]);
+        const ordSim = order.map(ri => order.map(ci => similarity[ri][ci]));
+
+        Plotly.newPlot(`chart-breed-sim-${tl}`, [{
+            z: ordSim.slice().reverse(),
+            x: ordBreeds,
+            y: ordBreeds.slice().reverse(),
+            type: 'heatmap',
+            colorscale: [[0, '#264653'], [0.5, '#E9C46A'], [1, '#E76F51']],
+            zmin: -1, zmax: 1,
+            hoverongaps: false,
+            hovertemplate: '%{y} × %{x}: %{z:.3f}<extra></extra>',
+        }], plotlyLayout(`${type} Breed Image Similarity`, {
+            height: 460,
+            margin: { l: 150, b: 140, t: 50, r: 20 },
+            xaxis: { tickangle: -45, tickfont: { size: 10 } },
+            yaxis: { tickfont: { size: 10 } },
+        }), PLOTLY_CONFIG);
+
+        // ── 2. Cluster vs Adoption Speed ─────────────────────────────────
+        const clusterNames = Array.from({ length: n_clusters }, (_, c) => `Cluster ${c + 1}`);
+        const clTraces = [];
+        for (let s = 0; s < 5; s++) {
+            clTraces.push({
+                x: clusterNames,
+                y: Array.from({ length: n_clusters }, (_, c) =>
+                    +((cluster_speed[String(c)]?.[s] || 0) * 100).toFixed(1)),
+                type: 'bar',
+                name: `Speed ${s} — ${COLORS.speedNames[s]}`,
+                marker: { color: COLORS.speedColors[s] },
+                hovertemplate: '%{x}: %{y:.1f}%<extra>Speed ' + s + '</extra>',
+            });
+        }
+        Plotly.newPlot(`chart-cluster-speed-${tl}`, clTraces, plotlyLayout(
+            `${type} Visual Clusters vs Adoption Speed`, {
+            barmode: 'stack',
+            xaxis: { title: 'Visual Cluster' },
+            yaxis: { title: 'Proportion (%)' },
+            legend: { orientation: 'h', y: -0.2, x: 0.5, xanchor: 'center' },
+        }), PLOTLY_CONFIG);
+
+        // ── 3. Cluster composition table ──────────────────────────────────
+        let html = `<table class="data-table"><thead><tr><th>Cluster</th><th>Breeds</th>`;
+        feature_names.forEach(f => { html += `<th>${f}</th>`; });
+        html += `</tr></thead><tbody>`;
+        for (let c = 0; c < n_clusters; c++) {
+            const breedList = (cluster_breeds[String(c)] || []).join(', ');
+            const prof = cluster_profiles[String(c)] || {};
+            const dot = `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${CLUSTER_COLORS[c]};margin-right:6px;"></span>`;
+            html += `<tr><td>${dot}Cluster ${c + 1}</td><td>${breedList}</td>`;
+            feature_names.forEach(f => {
+                const v = prof[f];
+                html += `<td class="num">${v != null ? v.toFixed(2) : '—'}</td>`;
+            });
+            html += `</tr>`;
+        }
+        html += `</tbody></table>`;
+        document.getElementById(`cluster-table-${tl}`).innerHTML = html;
+
+        // ── 4. Breed vs adoption speed (image-sampled) ────────────────────
+        const bsTraces = [];
+        for (let s = 0; s < 5; s++) {
+            bsTraces.push({
+                y: breeds,
+                x: (breed_speed[String(s)] || []).map(v => +(v * 100).toFixed(1)),
+                type: 'bar', orientation: 'h',
+                name: `Speed ${s} — ${COLORS.speedNames[s]}`,
+                marker: { color: COLORS.speedColors[s] },
+                hovertemplate: '%{y}: %{x:.1f}%<extra>Speed ' + s + '</extra>',
+            });
+        }
+        Plotly.newPlot(`chart-breed-img-speed-${tl}`, bsTraces, plotlyLayout(
+            `${type} Breed vs Adoption Speed (Image Sample)`, {
+            barmode: 'stack',
+            xaxis: { title: 'Proportion (%)', range: [0, 100] },
+            yaxis: { automargin: true, tickfont: { size: 11 } },
+            margin: { l: 160, r: 20, t: 50, b: 50 },
+            height: 480,
+            legend: { orientation: 'h', y: -0.15, x: 0.5, xanchor: 'center' },
+        }), PLOTLY_CONFIG);
+    });
+
+    // ── Cross-correlation heatmap: Dog × Cat ─────────────────────────────
+    const cross = data.cross_similarity;
+    if (cross) {
+        Plotly.newPlot('chart-cross-sim', [{
+            z: cross.similarity.slice().reverse(),
+            x: cross.cat_breeds,
+            y: cross.dog_breeds.slice().reverse(),
+            type: 'heatmap',
+            colorscale: [[0, '#264653'], [0.5, '#E9C46A'], [1, '#E76F51']],
+            zmin: -1, zmax: 1,
+            hoverongaps: false,
+            hovertemplate: 'Dog: %{y}<br>Cat: %{x}<br>Similarity: %{z:.3f}<extra></extra>',
+        }], plotlyLayout('Cross-Correlation: Dog Breeds × Cat Breeds', {
+            height: 500,
+            margin: { l: 160, b: 160, t: 50, r: 20 },
+            xaxis: { tickangle: -45, tickfont: { size: 10 }, title: 'Cat Breeds' },
+            yaxis: { tickfont: { size: 10 }, title: 'Dog Breeds' },
+        }), PLOTLY_CONFIG);
+    }
+
+    // ── Combined clustering chart ─────────────────────────────────────────
+    const comb = data.combined;
+    if (comb) {
+        const { breeds, types, n_clusters, cluster_breeds, cluster_speed } = comb;
+
+        // Cluster vs adoption speed
+        const clNames = Array.from({ length: n_clusters }, (_, c) => `Cluster ${c + 1}`);
+        const combSpeedTraces = [];
+        for (let s = 0; s < 5; s++) {
+            combSpeedTraces.push({
+                x: clNames,
+                y: Array.from({ length: n_clusters }, (_, c) =>
+                    +((cluster_speed[String(c)]?.[s] || 0) * 100).toFixed(1)),
+                type: 'bar',
+                name: `Speed ${s} — ${COLORS.speedNames[s]}`,
+                marker: { color: COLORS.speedColors[s] },
+            });
+        }
+        Plotly.newPlot('chart-combined-speed', combSpeedTraces,
+            plotlyLayout('Combined Clusters vs Adoption Speed', {
+                barmode: 'stack',
+                xaxis: { title: 'Cluster' },
+                yaxis: { title: 'Proportion (%)' },
+                legend: { orientation: 'h', y: -0.2, x: 0.5, xanchor: 'center' },
+            }), PLOTLY_CONFIG);
+
+        // Cluster composition table
+        let html = `<table class="data-table"><thead><tr><th>Cluster</th><th>Dogs</th><th>Cats</th></tr></thead><tbody>`;
+        for (let c = 0; c < n_clusters; c++) {
+            const members = cluster_breeds[String(c)] || [];
+            const dogs = members.filter(m => m.type === 'Dog').map(m => m.breed).join(', ') || '—';
+            const cats = members.filter(m => m.type === 'Cat').map(m => m.breed).join(', ') || '—';
+            html += `<tr><td><strong>Cluster ${c + 1}</strong></td>
+                <td><span style="color:#4A90D9">${dogs}</span></td>
+                <td><span style="color:#E76F51">${cats}</span></td></tr>`;
+        }
+        html += `</tbody></table>`;
+        document.getElementById('combined-cluster-table').innerHTML = html;
+    }
+
+    // ── Insights ────────────────────────────────────────────────────────
+    const dog = data['Dog'];
+    if (dog) {
+        const fastestCluster = comb
+            ? Object.entries(comb.cluster_speed).reduce((best, [c, speeds]) => {
+                const fast = (speeds[0] || 0) + (speeds[1] || 0);
+                return fast > best.val ? { c: Number(c) + 1, val: fast } : best;
+            }, { c: 1, val: 0 }) : { c: 1, val: 0 };
+        const mixedClusters = comb
+            ? Object.entries(comb.cluster_breeds).filter(([, members]) =>
+                members.some(m => m.type === 'Dog') && members.some(m => m.type === 'Cat')).length
+            : 0;
+        document.getElementById('breed-cluster-insights').innerHTML = `
+            <li>Clusters reflect shared image quality profiles (brightness, sharpness, contrast) — not physical appearance</li>
+            <li><strong>${mixedClusters}</strong> of ${comb?.n_clusters || 0} combined clusters contain both dog and cat breeds, showing cross-species visual overlap</li>
+            <li>Combined Cluster ${fastestCluster.c} has the fastest adoption profile (Speed 0–1: ${(fastestCluster.val * 100).toFixed(1)}%)</li>
+            <li>Cross-correlation map reveals which dog and cat breeds share a similar photographic style</li>
+            <li>Cosine similarity near 1 = nearly identical image quality profiles across species</li>`;
+    }
+}
+
 /* ═══════════════════════════════════════════════════════ */
 /*  IMAGE RENDERERS                                       */
 /* ═══════════════════════════════════════════════════════ */
@@ -321,38 +658,10 @@ function renderPhotoCount(d) {
         yaxis: { title: 'Number of Photos', range: [0, 15] }, xaxis: { title: '' },
     }), PLOTLY_CONFIG);
 
-    document.getElementById('photo-stats').innerHTML = `
-        <div class="stat-card stat-green"><div class="stat-label">Avg Photos (Fast Adopted)</div><div class="stat-value">${d.fast_adopted_avg}</div><div class="stat-sub">Speed 0 &ndash; 1</div></div>
-        <div class="stat-card stat-red"><div class="stat-label">Avg Photos (Slow/Not Adopted)</div><div class="stat-value">${d.slow_adopted_avg}</div><div class="stat-sub">Speed 3 &ndash; 4</div></div>
-        <div class="stat-card stat-brown"><div class="stat-label">Correlation (r)</div><div class="stat-value">${d.correlation}</div><div class="stat-sub">PhotoAmt vs AdoptionSpeed</div></div>`;
-
     document.getElementById('photo-insights').innerHTML = `
-        <li><strong>Pets with more photos get adopted faster</strong> — fast-adopted avg: ${d.fast_adopted_avg} vs slow: ${d.slow_adopted_avg}</li>
-        <li>Correlation coefficient: r = ${d.correlation} (negative = more photos lead to faster adoption)</li>
-        <li>Photo count is the <strong>strongest visual predictor</strong> from this dataset</li>
-        <li>Encourage shelters to upload multiple high-quality photos per listing</li>`;
-}
-
-function renderQualityScatter(d) {
-    const dogIdx = d.types.map((t, i) => t === 'Dog' ? i : -1).filter(i => i >= 0);
-    const catIdx = d.types.map((t, i) => t === 'Cat' ? i : -1).filter(i => i >= 0);
-
-    Plotly.newPlot('chart-quality-scatter', [
-        { x: dogIdx.map(i => d.sharpness[i]), y: dogIdx.map(i => d.contrast[i]), mode: 'markers', name: 'Dog', marker: { color: COLORS.qualitative[0], size: 3, opacity: 0.4 } },
-        { x: catIdx.map(i => d.sharpness[i]), y: catIdx.map(i => d.contrast[i]), mode: 'markers', name: 'Cat', marker: { color: COLORS.qualitative[2], size: 3, opacity: 0.4 } },
-    ], plotlyLayout('Image Quality: Sharpness vs Contrast', {
-        xaxis: { title: 'Sharpness (Laplacian Var)' }, yaxis: { title: 'Contrast (Std Dev)' },
-    }), PLOTLY_CONFIG);
-}
-
-function renderRGBScatter(d) {
-    Plotly.newPlot('chart-rgb-scatter', [{
-        x: d.r, y: d.g, z: d.b, mode: 'markers', type: 'scatter3d',
-        marker: { size: 2, color: d.brightness, colorscale: 'Viridis', opacity: 0.6, colorbar: { title: 'Brightness' } },
-    }], plotlyLayout('RGB Color Space Distribution', {
-        scene: { xaxis: { title: 'Red' }, yaxis: { title: 'Green' }, zaxis: { title: 'Blue' } },
-        margin: { l: 0, r: 0, t: 50, b: 0 }, height: 450,
-    }), PLOTLY_CONFIG);
+        <li>Overall, pets with <strong>no adoption (Speed 4)</strong> tend to have fewer photo views — listings with more photos attract more attention</li>
+        <li>Photo count is the <strong>strongest visual predictor</strong> of adoption outcome in this dataset</li>
+        <li>Encourage shelters to upload multiple high-quality photos per listing to improve adoption chances</li>`;
 }
 
 function renderQualityTable(d) {
@@ -529,11 +838,72 @@ function renderGallery() {
     const limit = parseInt(document.getElementById('gallery-count').value, 10);
     const images = (GALLERY_DATA[GALLERY_TYPE][GALLERY_BREED] || []).slice(0, limit);
 
-    grid.innerHTML = images.map(img => `
-        <div>
-            <img src="${img.path}" alt="${img.name || img.pet_id}" loading="lazy">
+    grid.innerHTML = images.map(img => {
+        const hasBbox = !!img.bbox_pct;
+        const bboxData = hasBbox ? `data-bbox='${JSON.stringify(img.bbox_pct)}' data-bbox-label="${img.bbox_label || ''}"` : '';
+        return `
+        <div class="gallery-item-wrapper">
+            <div class="image-area" ${bboxData}>
+                <img src="${img.path}" alt="${img.name || img.pet_id}" loading="lazy">
+            </div>
             <span class="speed-badge speed-${img.speed}">${img.speed}</span>
             <div class="img-label">${img.name || img.pet_id} &middot; ${img.age}mo</div>
         </div>
-    `).join('');
+        `;
+    }).join('');
+
+    grid.querySelectorAll('.image-area[data-bbox]').forEach(area => {
+        const imgEl = area.querySelector('img');
+        const applyBbox = () => {
+            const bboxPct = JSON.parse(area.dataset.bbox);
+            const label = area.dataset.bboxLabel || '';
+            const [bx, by, bw, bh] = bboxPct;
+
+            const natW = imgEl.naturalWidth;
+            const natH = imgEl.naturalHeight;
+            const rendW = imgEl.offsetWidth;
+            const rendH = imgEl.offsetHeight;
+
+            if (!natW || !natH || !rendW || !rendH) return;
+
+            // Compute the actual rendered image size inside the contain box
+            const scale = Math.min(rendW / natW, rendH / natH);
+            const rendImgW = natW * scale;
+            const rendImgH = natH * scale;
+            const offsetX = (rendW - rendImgW) / 2;
+            const offsetY = (rendH - rendImgH) / 2;
+
+            // Map bbox percentages to pixel coords within the rendered image
+            const pxX = (bx / 100) * rendImgW + offsetX;
+            const pxY = (by / 100) * rendImgH + offsetY;
+            const pxW = (bw / 100) * rendImgW;
+            const pxH = (bh / 100) * rendImgH;
+
+            // Clamp to the actual image area (not the letterbox padding)
+            const clampedLeft = Math.max(offsetX, pxX);
+            const clampedTop = Math.max(offsetY, pxY);
+            const clampedRight = Math.min(offsetX + rendImgW, pxX + pxW);
+            const clampedBottom = Math.min(offsetY + rendImgH, pxY + pxH);
+            const clampedW = clampedRight - clampedLeft;
+            const clampedH = clampedBottom - clampedTop;
+
+            if (clampedW <= 0 || clampedH <= 0) return;
+
+            area.querySelector('.image-bbox')?.remove();
+            const div = document.createElement('div');
+            div.className = 'image-bbox';
+            div.title = label;
+            div.style.cssText = `left:${clampedLeft}px; top:${clampedTop}px; width:${clampedW}px; height:${clampedH}px;`;
+            if (label) {
+                div.innerHTML = `<span class="bbox-label">${label}</span>`;
+            }
+            area.appendChild(div);
+        };
+
+        if (imgEl.complete && imgEl.naturalWidth) {
+            requestAnimationFrame(applyBbox);
+        } else {
+            imgEl.addEventListener('load', applyBbox, { once: true });
+        }
+    });
 }

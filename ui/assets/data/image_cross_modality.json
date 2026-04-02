@@ -1,0 +1,81 @@
+{
+  "heatmap": {
+    "x_labels": [
+      "Very Low",
+      "Low",
+      "Medium",
+      "Good",
+      "High"
+    ],
+    "y_labels": [
+      "1",
+      "2",
+      "3",
+      "4-5",
+      "6-10",
+      "10+"
+    ],
+    "values": [
+      [
+        2.36,
+        2.59,
+        2.57,
+        2.58,
+        null
+      ],
+      [
+        2.76,
+        2.51,
+        2.51,
+        2.38,
+        3.5
+      ],
+      [
+        2.52,
+        2.4,
+        2.46,
+        2.5,
+        4.0
+      ],
+      [
+        2.18,
+        2.43,
+        2.48,
+        2.45,
+        2.33
+      ],
+      [
+        2.27,
+        2.41,
+        2.42,
+        2.62,
+        4.0
+      ],
+      [
+        2.57,
+        2.38,
+        2.45,
+        2.42,
+        null
+      ]
+    ]
+  },
+  "type_quality": {
+    "Dog": {
+      "Brightness": 122.69,
+      "Blurriness": 773.93,
+      "Contrast": 57.33,
+      "Colorfulness": 27.64,
+      "Saturation": 57.43,
+      "QualityScore": 0.3097
+    },
+    "Cat": {
+      "Brightness": 116.22,
+      "Blurriness": 538.75,
+      "Contrast": 56.84,
+      "Colorfulness": 24.63,
+      "Saturation": 57.95,
+      "QualityScore": 0.2975
+    }
+  }
+}

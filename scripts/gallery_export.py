@@ -1,7 +1,6 @@
 """Generate gallery data JSON with breed info for the image gallery view."""
 import json
 import logging
-import random
 import shutil
 from pathlib import Path
 
@@ -10,9 +9,44 @@ import pandas as pd
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
-SRC_DIR = Path("data/petfinder/train_images")
+SRC_DIR = Path("data/images/train")
 OUT_DIR = Path("ui/assets/samples")
 DATA_DIR = Path("ui/assets/data")
+TRAIN_ANNOTATIONS = Path("data/images/train_annotations.json")
+
+
+def _build_bbox_index():
+    """Build {file_name: {bbox_pct, label}} from COCO annotations."""
+    if not TRAIN_ANNOTATIONS.exists():
+        logger.warning("No train_annotations.json found — skipping bbox data")
+        return {}
+
+    with open(TRAIN_ANNOTATIONS) as f:
+        coco = json.load(f)
+
+    img_lookup = {img["id"]: img for img in coco["images"]}
+    index = {}
+    for ann in coco["annotations"]:
+        img = img_lookup.get(ann["image_id"])
+        if not img:
+            continue
+        fname = img["file_name"]
+        if fname in index:
+            continue
+        x, y, w, h = ann["bbox"]
+        iw, ih = img["width"], img["height"]
+        top_label = ann["labels"][0]["description"] if ann.get("labels") else ""
+        index[fname] = {
+            "bbox_pct": [
+                round(x / iw * 100, 2),
+                round(y / ih * 100, 2),
+                round(w / iw * 100, 2),
+                round(h / ih * 100, 2),
+            ],
+            "label": top_label,
+        }
+    logger.info("Built bbox index with %d entries", len(index))
+    return index
 
 
 def run_gallery_export():
@@ -24,6 +58,8 @@ def run_gallery_export():
 
     df["BreedName"] = df["Breed1"].map(breed_map).fillna("Mixed Breed")
     df["TypeName"] = df["Type"].map({1: "Dog", 2: "Cat"})
+
+    bbox_index = _build_bbox_index()
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -50,7 +86,7 @@ def run_gallery_export():
                 if not dst_path.exists():
                     shutil.copy2(src_path, dst_path)
 
-                breed_entries.append({
+                entry = {
                     "pet_id": pet_id,
                     "path": f"assets/samples/{dst_name}",
                     "speed": int(row["AdoptionSpeed"]),
@@ -58,7 +94,14 @@ def run_gallery_export():
                     "type": type_name,
                     "age": int(row["Age"]),
                     "name": str(row["Name"]) if pd.notna(row["Name"]) else "",
-                })
+                }
+
+                bbox_info = bbox_index.get(img_name)
+                if bbox_info:
+                    entry["bbox_pct"] = bbox_info["bbox_pct"]
+                    entry["bbox_label"] = bbox_info["label"]
+
+                breed_entries.append(entry)
 
             if breed_entries:
                 gallery[type_name][breed] = breed_entries

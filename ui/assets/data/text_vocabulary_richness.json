@@ -1,0 +1,71 @@
+{
+  "total_tokens": 3433442,
+  "unique_tokens": 98314,
+  "type_token_ratio": 0.0286,
+  "hapax_count": 39496,
+  "hapax_ratio": 0.4017,
+  "dislegomena_count": 13143,
+  "avg_unique_per_article": 15.21,
+  "top_unique_words": [
+    {
+      "word": "trump",
+      "count": 16506
+    },
+    {
+      "word": "photos",
+      "count": 11424
+    },
+    {
+      "word": "most",
+      "count": 9452
+    },
+    {
+      "word": "world",
+      "count": 7903
+    },
+    {
+      "word": "know",
+      "count": 7679
+    },
+    {
+      "word": "video",
+      "count": 7516
+    },
+    {
+      "word": "best",
+      "count": 7496
+    },
+    {
+      "word": "donald",
+      "count": 6884
+    },
+    {
+      "word": "love",
+      "count": 6842
+    },
+    {
+      "word": "years",
+      "count": 6757
+    },
+    {
+      "word": "women",
+      "count": 6499
+    },
+    {
+      "word": "need",
+      "count": 6339
+    },
+    {
+      "word": "president",
+      "count": 5981
+    },
+    {
+      "word": "health",
+      "count": 5728
+    },
+    {
+      "word": "home",
+      "count": 5161
+    }
+  ]
+}

@@ -1,0 +1,193 @@
+{
+  "total_records": 23463,
+  "feature_count": 12,
+  "country_count": 175,
+  "city_count": 23462,
+  "columns": [
+    {
+      "name": "Country",
+      "dtype": "str",
+      "non_null": 23036,
+      "missing": 427,
+      "missing_pct": 1.82
+    },
+    {
+      "name": "City",
+      "dtype": "str",
+      "non_null": 23462,
+      "missing": 1,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "AQI Value",
+      "dtype": "int64",
+      "non_null": 23463,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "AQI Category",
+      "dtype": "str",
+      "non_null": 23463,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "CO AQI Value",
+      "dtype": "int64",
+      "non_null": 23463,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "CO AQI Category",
+      "dtype": "str",
+      "non_null": 23463,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "Ozone AQI Value",
+      "dtype": "int64",
+      "non_null": 23463,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "Ozone AQI Category",
+      "dtype": "str",
+      "non_null": 23463,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "NO2 AQI Value",
+      "dtype": "int64",
+      "non_null": 23463,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "NO2 AQI Category",
+      "dtype": "str",
+      "non_null": 23463,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "PM2.5 AQI Value",
+      "dtype": "int64",
+      "non_null": 23463,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "PM2.5 AQI Category",
+      "dtype": "str",
+      "non_null": 23463,
+      "missing": 0,
+      "missing_pct": 0.0
+    }
+  ],
+  "sample_rows": [
+    {
+      "Country": "Russian Federation",
+      "City": "Praskoveya",
+      "AQI Value": 51,
+      "AQI Category": "Moderate",
+      "CO AQI Value": 1,
+      "PM2.5 AQI Value": 51,
+      "NO2 AQI Value": 0
+    },
+    {
+      "Country": "Brazil",
+      "City": "Presidente Dutra",
+      "AQI Value": 41,
+      "AQI Category": "Good",
+      "CO AQI Value": 1,
+      "PM2.5 AQI Value": 41,
+      "NO2 AQI Value": 1
+    },
+    {
+      "Country": "Italy",
+      "City": "Priolo Gargallo",
+      "AQI Value": 66,
+      "AQI Category": "Moderate",
+      "CO AQI Value": 1,
+      "PM2.5 AQI Value": 66,
+      "NO2 AQI Value": 2
+    },
+    {
+      "Country": "Poland",
+      "City": "Przasnysz",
+      "AQI Value": 34,
+      "AQI Category": "Good",
+      "CO AQI Value": 1,
+      "PM2.5 AQI Value": 20,
+      "NO2 AQI Value": 0
+    },
+    {
+      "Country": "France",
+      "City": "Punaauia",
+      "AQI Value": 22,
+      "AQI Category": "Good",
+      "CO AQI Value": 0,
+      "PM2.5 AQI Value": 6,
+      "NO2 AQI Value": 0
+    },
+    {
+      "Country": "United States of America",
+      "City": "Punta Gorda",
+      "AQI Value": 54,
+      "AQI Category": "Moderate",
+      "CO AQI Value": 1,
+      "PM2.5 AQI Value": 54,
+      "NO2 AQI Value": 11
+    },
+    {
+      "Country": "Germany",
+      "City": "Puttlingen",
+      "AQI Value": 62,
+      "AQI Category": "Moderate",
+      "CO AQI Value": 1,
+      "PM2.5 AQI Value": 62,
+      "NO2 AQI Value": 3
+    },
+    {
+      "Country": "Belgium",
+      "City": "Puurs",
+      "AQI Value": 64,
+      "AQI Category": "Moderate",
+      "CO AQI Value": 1,
+      "PM2.5 AQI Value": 64,
+      "NO2 AQI Value": 7
+    },
+    {
+      "Country": "Russian Federation",
+      "City": "Pyatigorsk",
+      "AQI Value": 54,
+      "AQI Category": "Moderate",
+      "CO AQI Value": 1,
+      "PM2.5 AQI Value": 54,
+      "NO2 AQI Value": 1
+    },
+    {
+      "Country": "Egypt",
+      "City": "Qalyub",
+      "AQI Value": 142,
+      "AQI Category": "Unhealthy for Sensitive Groups",
+      "CO AQI Value": 3,
+      "PM2.5 AQI Value": 142,
+      "NO2 AQI Value": 9
+    }
+  ],
+  "display_columns": [
+    "Country",
+    "City",
+    "AQI Value",
+    "AQI Category",
+    "CO AQI Value",
+    "PM2.5 AQI Value",
+    "NO2 AQI Value"
+  ]
+}

@@ -1,0 +1,288 @@
+{
+  "total_listings": 14993,
+  "feature_count": 24,
+  "dog_count": 8132,
+  "cat_count": 6861,
+  "columns": [
+    {
+      "name": "Type",
+      "dtype": "int64",
+      "non_null": 14993,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "Name",
+      "dtype": "str",
+      "non_null": 13728,
+      "missing": 1265,
+      "missing_pct": 8.44
+    },
+    {
+      "name": "Age",
+      "dtype": "int64",
+      "non_null": 14993,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "Breed1",
+      "dtype": "int64",
+      "non_null": 14993,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "Breed2",
+      "dtype": "int64",
+      "non_null": 14993,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "Gender",
+      "dtype": "int64",
+      "non_null": 14993,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "Color1",
+      "dtype": "int64",
+      "non_null": 14993,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "Color2",
+      "dtype": "int64",
+      "non_null": 14993,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "Color3",
+      "dtype": "int64",
+      "non_null": 14993,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "MaturitySize",
+      "dtype": "int64",
+      "non_null": 14993,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "FurLength",
+      "dtype": "int64",
+      "non_null": 14993,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "Vaccinated",
+      "dtype": "int64",
+      "non_null": 14993,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "Dewormed",
+      "dtype": "int64",
+      "non_null": 14993,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "Sterilized",
+      "dtype": "int64",
+      "non_null": 14993,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "Health",
+      "dtype": "int64",
+      "non_null": 14993,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "Quantity",
+      "dtype": "int64",
+      "non_null": 14993,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "Fee",
+      "dtype": "int64",
+      "non_null": 14993,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "State",
+      "dtype": "int64",
+      "non_null": 14993,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "RescuerID",
+      "dtype": "str",
+      "non_null": 14993,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "VideoAmt",
+      "dtype": "int64",
+      "non_null": 14993,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "Description",
+      "dtype": "str",
+      "non_null": 14980,
+      "missing": 13,
+      "missing_pct": 0.09
+    },
+    {
+      "name": "PetID",
+      "dtype": "str",
+      "non_null": 14993,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "PhotoAmt",
+      "dtype": "float64",
+      "non_null": 14993,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "AdoptionSpeed",
+      "dtype": "int64",
+      "non_null": 14993,
+      "missing": 0,
+      "missing_pct": 0.0
+    }
+  ],
+  "sample_rows": [
+    {
+      "PetID": "86e1089a3",
+      "Type": "Cat",
+      "Name": "Nibble",
+      "Age": 3,
+      "Gender": "Male",
+      "Fee": 100,
+      "PhotoAmt": 1.0,
+      "AdoptionSpeed": 2
+    },
+    {
+      "PetID": "6296e909a",
+      "Type": "Cat",
+      "Name": "No Name Yet",
+      "Age": 1,
+      "Gender": "Male",
+      "Fee": 0,
+      "PhotoAmt": 2.0,
+      "AdoptionSpeed": 0
+    },
+    {
+      "PetID": "3422e4906",
+      "Type": "Dog",
+      "Name": "Brisco",
+      "Age": 1,
+      "Gender": "Male",
+      "Fee": 0,
+      "PhotoAmt": 7.0,
+      "AdoptionSpeed": 3
+    },
+    {
+      "PetID": "5842f1ff5",
+      "Type": "Dog",
+      "Name": "Miko",
+      "Age": 4,
+      "Gender": "Female",
+      "Fee": 150,
+      "PhotoAmt": 8.0,
+      "AdoptionSpeed": 2
+    },
+    {
+      "PetID": "850a43f90",
+      "Type": "Dog",
+      "Name": "Hunter",
+      "Age": 1,
+      "Gender": "Male",
+      "Fee": 0,
+      "PhotoAmt": 3.0,
+      "AdoptionSpeed": 2
+    },
+    {
+      "PetID": "d24c30b4b",
+      "Type": "Cat",
+      "Name": "N/A",
+      "Age": 3,
+      "Gender": "Female",
+      "Fee": 0,
+      "PhotoAmt": 2.0,
+      "AdoptionSpeed": 2
+    },
+    {
+      "PetID": "1caa6fcdb",
+      "Type": "Cat",
+      "Name": "BULAT",
+      "Age": 12,
+      "Gender": "Male",
+      "Fee": 300,
+      "PhotoAmt": 3.0,
+      "AdoptionSpeed": 1
+    },
+    {
+      "PetID": "97aa9eeac",
+      "Type": "Dog",
+      "Name": "Siu Pak & Her 6 Puppies",
+      "Age": 0,
+      "Gender": "Female",
+      "Fee": 0,
+      "PhotoAmt": 9.0,
+      "AdoptionSpeed": 3
+    },
+    {
+      "PetID": "c06d167ca",
+      "Type": "Cat",
+      "Name": "N/A",
+      "Age": 2,
+      "Gender": "Female",
+      "Fee": 0,
+      "PhotoAmt": 6.0,
+      "AdoptionSpeed": 1
+    },
+    {
+      "PetID": "7a0942d61",
+      "Type": "Cat",
+      "Name": "Kitty",
+      "Age": 12,
+      "Gender": "Female",
+      "Fee": 0,
+      "PhotoAmt": 2.0,
+      "AdoptionSpeed": 4
+    }
+  ],
+  "display_columns": [
+    "PetID",
+    "Type",
+    "Name",
+    "Age",
+    "Gender",
+    "Fee",
+    "PhotoAmt",
+    "AdoptionSpeed"
+  ]
+}

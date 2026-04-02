@@ -1,0 +1,36 @@
+{
+  "missing": [
+    {
+      "column": "headline",
+      "missing": 6,
+      "missing_pct": 0.0
+    },
+    {
+      "column": "short_description",
+      "missing": 19712,
+      "missing_pct": 9.41
+    },
+    {
+      "column": "authors",
+      "missing": 37418,
+      "missing_pct": 17.86
+    },
+    {
+      "column": "link",
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "column": "category",
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "column": "date",
+      "missing": 0,
+      "missing_pct": 0.0
+    }
+  ],
+  "duplicate_records": 106,
+  "duplicate_links": 41
+}

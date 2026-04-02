@@ -1,0 +1,86 @@
+{
+  "stopwords": [
+    {
+      "word": "the",
+      "count": 273458
+    },
+    {
+      "word": "to",
+      "count": 171642
+    },
+    {
+      "word": "a",
+      "count": 138907
+    },
+    {
+      "word": "of",
+      "count": 133472
+    },
+    {
+      "word": "and",
+      "count": 124030
+    },
+    {
+      "word": "in",
+      "count": 101093
+    },
+    {
+      "word": "is",
+      "count": 68339
+    },
+    {
+      "word": "for",
+      "count": 67147
+    },
+    {
+      "word": "that",
+      "count": 50983
+    },
+    {
+      "word": "on",
+      "count": 50110
+    },
+    {
+      "word": "you",
+      "count": 46240
+    },
+    {
+      "word": "with",
+      "count": 42018
+    },
+    {
+      "word": "it",
+      "count": 39298
+    },
+    {
+      "word": "are",
+      "count": 35201
+    },
+    {
+      "word": "this",
+      "count": 30703
+    },
+    {
+      "word": "be",
+      "count": 29767
+    },
+    {
+      "word": "your",
+      "count": 28909
+    },
+    {
+      "word": "we",
+      "count": 28343
+    },
+    {
+      "word": "as",
+      "count": 27300
+    },
+    {
+      "word": "at",
+      "count": 27089
+    }
+  ],
+  "total_stopword_tokens": 2586283,
+  "stopword_share_top20": 58.54
+}

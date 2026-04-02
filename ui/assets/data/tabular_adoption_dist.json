@@ -1,0 +1,30 @@
+{
+  "labels": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "counts": [
+    410,
+    3090,
+    4037,
+    3259,
+    4197
+  ],
+  "speed_names": [
+    "Same Day",
+    "First Week",
+    "First Month",
+    "2nd-3rd Month",
+    "No Adoption"
+  ],
+  "max_count": 4197,
+  "min_count": 410,
+  "imbalance_ratio": 10.24,
+  "type_counts": {
+    "Dog": 8132,
+    "Cat": 6861
+  }
+}

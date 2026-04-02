@@ -1,0 +1,55 @@
+{
+  "labels": [
+    "POLITICS",
+    "WELLNESS",
+    "ENTERTAINMENT",
+    "TRAVEL",
+    "STYLE & BEAUTY",
+    "PARENTING",
+    "HEALTHY LIVING",
+    "QUEER VOICES",
+    "FOOD & DRINK",
+    "BUSINESS"
+  ],
+  "counts": [
+    35602,
+    17945,
+    17362,
+    9900,
+    9814,
+    8791,
+    6694,
+    6347,
+    6340,
+    5992
+  ],
+  "shares": [
+    16.99,
+    8.56,
+    8.29,
+    4.72,
+    4.68,
+    4.2,
+    3.19,
+    3.03,
+    3.03,
+    2.86
+  ],
+  "smallest_labels": [
+    "ARTS & CULTURE",
+    "COLLEGE",
+    "LATINO VOICES",
+    "CULTURE & ARTS",
+    "EDUCATION"
+  ],
+  "smallest_counts": [
+    1339,
+    1144,
+    1130,
+    1074,
+    1014
+  ],
+  "max_count": 35602,
+  "min_count": 1014,
+  "imbalance_ratio": 35.11
+}

@@ -1,0 +1,234 @@
+{
+  "categories": [
+    "POLITICS",
+    "WELLNESS",
+    "ENTERTAINMENT",
+    "TRAVEL",
+    "STYLE & BEAUTY",
+    "PARENTING"
+  ],
+  "groups": [
+    {
+      "category": "POLITICS",
+      "terms": [
+        {
+          "word": "trump",
+          "count": 11889
+        },
+        {
+          "word": "donald",
+          "count": 4638
+        },
+        {
+          "word": "president",
+          "count": 3507
+        },
+        {
+          "word": "gop",
+          "count": 2673
+        },
+        {
+          "word": "trump's",
+          "count": 2664
+        },
+        {
+          "word": "house",
+          "count": 2439
+        },
+        {
+          "word": "clinton",
+          "count": 2383
+        },
+        {
+          "word": "obama",
+          "count": 2027
+        }
+      ]
+    },
+    {
+      "category": "WELLNESS",
+      "terms": [
+        {
+          "word": "health",
+          "count": 2301
+        },
+        {
+          "word": "study",
+          "count": 1758
+        },
+        {
+          "word": "sleep",
+          "count": 1355
+        },
+        {
+          "word": "cancer",
+          "count": 1306
+        },
+        {
+          "word": "most",
+          "count": 1238
+        },
+        {
+          "word": "know",
+          "count": 1117
+        },
+        {
+          "word": "love",
+          "count": 1100
+        },
+        {
+          "word": "weight",
+          "count": 1096
+        }
+      ]
+    },
+    {
+      "category": "ENTERTAINMENT",
+      "terms": [
+        {
+          "word": "star",
+          "count": 929
+        },
+        {
+          "word": "film",
+          "count": 894
+        },
+        {
+          "word": "show",
+          "count": 868
+        },
+        {
+          "word": "trump",
+          "count": 862
+        },
+        {
+          "word": "movie",
+          "count": 827
+        },
+        {
+          "word": "music",
+          "count": 661
+        },
+        {
+          "word": "actor",
+          "count": 594
+        },
+        {
+          "word": "video",
+          "count": 560
+        }
+      ]
+    },
+    {
+      "category": "TRAVEL",
+      "terms": [
+        {
+          "word": "travel",
+          "count": 1831
+        },
+        {
+          "word": "photos",
+          "count": 1798
+        },
+        {
+          "word": "best",
+          "count": 1072
+        },
+        {
+          "word": "most",
+          "count": 1070
+        },
+        {
+          "word": "world",
+          "count": 1040
+        },
+        {
+          "word": "city",
+          "count": 748
+        },
+        {
+          "word": "hotel",
+          "count": 687
+        },
+        {
+          "word": "where",
+          "count": 657
+        }
+      ]
+    },
+    {
+      "category": "STYLE & BEAUTY",
+      "terms": [
+        {
+          "word": "photos",
+          "count": 4559
+        },
+        {
+          "word": "style",
+          "count": 2169
+        },
+        {
+          "word": "fashion",
+          "count": 2015
+        },
+        {
+          "word": "check",
+          "count": 1238
+        },
+        {
+          "word": "sure",
+          "count": 946
+        },
+        {
+          "word": "dress",
+          "count": 884
+        },
+        {
+          "word": "beauty",
+          "count": 860
+        },
+        {
+          "word": "twitter",
+          "count": 858
+        }
+      ]
+    },
+    {
+      "category": "PARENTING",
+      "terms": [
+        {
+          "word": "kids",
+          "count": 2016
+        },
+        {
+          "word": "children",
+          "count": 1480
+        },
+        {
+          "word": "parents",
+          "count": 1376
+        },
+        {
+          "word": "child",
+          "count": 974
+        },
+        {
+          "word": "baby",
+          "count": 931
+        },
+        {
+          "word": "mom",
+          "count": 805
+        },
+        {
+          "word": "know",
+          "count": 696
+        },
+        {
+          "word": "parenting",
+          "count": 657
+        }
+      ]
+    }
+  ]
+}
