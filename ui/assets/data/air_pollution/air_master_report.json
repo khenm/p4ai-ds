@@ -1,7 +1,7 @@
 {
   "title": "Global Air Pollution \u2014 Comprehensive EDA Summary",
   "dataset": {
-    "records": 23036,
+    "records": 23035,
     "countries": 175,
     "cities": 23035,
     "features": 12
@@ -15,7 +15,7 @@
   },
   "category_distribution": {
     "Good": 9688,
-    "Moderate": 9088,
+    "Moderate": 9087,
     "Unhealthy": 2215,
     "Unhealthy for Sensitive Groups": 1568,
     "Very Unhealthy": 286,

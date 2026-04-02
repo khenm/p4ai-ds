@@ -7,6 +7,7 @@
     {
       "name": "Country",
       "dtype": "str",
+      "feature_type": "Categorical",
       "non_null": 23036,
       "missing": 427,
       "missing_pct": 1.82
@@ -14,6 +15,7 @@
     {
       "name": "City",
       "dtype": "str",
+      "feature_type": "Categorical",
       "non_null": 23462,
       "missing": 1,
       "missing_pct": 0.0
@@ -21,6 +23,7 @@
     {
       "name": "AQI Value",
       "dtype": "int64",
+      "feature_type": "Target",
       "non_null": 23463,
       "missing": 0,
       "missing_pct": 0.0
@@ -28,6 +31,7 @@
     {
       "name": "AQI Category",
       "dtype": "str",
+      "feature_type": "Categorical",
       "non_null": 23463,
       "missing": 0,
       "missing_pct": 0.0
@@ -35,6 +39,7 @@
     {
       "name": "CO AQI Value",
       "dtype": "int64",
+      "feature_type": "Numerical",
       "non_null": 23463,
       "missing": 0,
       "missing_pct": 0.0
@@ -42,6 +47,7 @@
     {
       "name": "CO AQI Category",
       "dtype": "str",
+      "feature_type": "Categorical",
       "non_null": 23463,
       "missing": 0,
       "missing_pct": 0.0
@@ -49,6 +55,7 @@
     {
       "name": "Ozone AQI Value",
       "dtype": "int64",
+      "feature_type": "Numerical",
       "non_null": 23463,
       "missing": 0,
       "missing_pct": 0.0
@@ -56,6 +63,7 @@
     {
       "name": "Ozone AQI Category",
       "dtype": "str",
+      "feature_type": "Categorical",
       "non_null": 23463,
       "missing": 0,
       "missing_pct": 0.0
@@ -63,6 +71,7 @@
     {
       "name": "NO2 AQI Value",
       "dtype": "int64",
+      "feature_type": "Numerical",
       "non_null": 23463,
       "missing": 0,
       "missing_pct": 0.0
@@ -70,6 +79,7 @@
     {
       "name": "NO2 AQI Category",
       "dtype": "str",
+      "feature_type": "Categorical",
       "non_null": 23463,
       "missing": 0,
       "missing_pct": 0.0
@@ -77,6 +87,7 @@
     {
       "name": "PM2.5 AQI Value",
       "dtype": "int64",
+      "feature_type": "Numerical",
       "non_null": 23463,
       "missing": 0,
       "missing_pct": 0.0
@@ -84,6 +95,7 @@
     {
       "name": "PM2.5 AQI Category",
       "dtype": "str",
+      "feature_type": "Categorical",
       "non_null": 23463,
       "missing": 0,
       "missing_pct": 0.0
@@ -96,8 +108,13 @@
       "AQI Value": 51,
       "AQI Category": "Moderate",
       "CO AQI Value": 1,
+      "CO AQI Category": "Good",
+      "Ozone AQI Value": 36,
+      "Ozone AQI Category": "Good",
+      "NO2 AQI Value": 0,
+      "NO2 AQI Category": "Good",
       "PM2.5 AQI Value": 51,
-      "NO2 AQI Value": 0
+      "PM2.5 AQI Category": "Moderate"
     },
     {
       "Country": "Brazil",
@@ -105,8 +122,13 @@
       "AQI Value": 41,
       "AQI Category": "Good",
       "CO AQI Value": 1,
+      "CO AQI Category": "Good",
+      "Ozone AQI Value": 5,
+      "Ozone AQI Category": "Good",
+      "NO2 AQI Value": 1,
+      "NO2 AQI Category": "Good",
       "PM2.5 AQI Value": 41,
-      "NO2 AQI Value": 1
+      "PM2.5 AQI Category": "Good"
     },
     {
       "Country": "Italy",
@@ -114,8 +136,13 @@
       "AQI Value": 66,
       "AQI Category": "Moderate",
       "CO AQI Value": 1,
+      "CO AQI Category": "Good",
+      "Ozone AQI Value": 39,
+      "Ozone AQI Category": "Good",
+      "NO2 AQI Value": 2,
+      "NO2 AQI Category": "Good",
       "PM2.5 AQI Value": 66,
-      "NO2 AQI Value": 2
+      "PM2.5 AQI Category": "Moderate"
     },
     {
       "Country": "Poland",
@@ -123,8 +150,13 @@
       "AQI Value": 34,
       "AQI Category": "Good",
       "CO AQI Value": 1,
+      "CO AQI Category": "Good",
+      "Ozone AQI Value": 34,
+      "Ozone AQI Category": "Good",
+      "NO2 AQI Value": 0,
+      "NO2 AQI Category": "Good",
       "PM2.5 AQI Value": 20,
-      "NO2 AQI Value": 0
+      "PM2.5 AQI Category": "Good"
     },
     {
       "Country": "France",
@@ -132,8 +164,13 @@
       "AQI Value": 22,
       "AQI Category": "Good",
       "CO AQI Value": 0,
+      "CO AQI Category": "Good",
+      "Ozone AQI Value": 22,
+      "Ozone AQI Category": "Good",
+      "NO2 AQI Value": 0,
+      "NO2 AQI Category": "Good",
       "PM2.5 AQI Value": 6,
-      "NO2 AQI Value": 0
+      "PM2.5 AQI Category": "Good"
     },
     {
       "Country": "United States of America",
@@ -141,8 +178,13 @@
       "AQI Value": 54,
       "AQI Category": "Moderate",
       "CO AQI Value": 1,
+      "CO AQI Category": "Good",
+      "Ozone AQI Value": 14,
+      "Ozone AQI Category": "Good",
+      "NO2 AQI Value": 11,
+      "NO2 AQI Category": "Good",
       "PM2.5 AQI Value": 54,
-      "NO2 AQI Value": 11
+      "PM2.5 AQI Category": "Moderate"
     },
     {
       "Country": "Germany",
@@ -150,8 +192,13 @@
       "AQI Value": 62,
       "AQI Category": "Moderate",
       "CO AQI Value": 1,
+      "CO AQI Category": "Good",
+      "Ozone AQI Value": 35,
+      "Ozone AQI Category": "Good",
+      "NO2 AQI Value": 3,
+      "NO2 AQI Category": "Good",
       "PM2.5 AQI Value": 62,
-      "NO2 AQI Value": 3
+      "PM2.5 AQI Category": "Moderate"
     },
     {
       "Country": "Belgium",
@@ -159,8 +206,13 @@
       "AQI Value": 64,
       "AQI Category": "Moderate",
       "CO AQI Value": 1,
+      "CO AQI Category": "Good",
+      "Ozone AQI Value": 29,
+      "Ozone AQI Category": "Good",
+      "NO2 AQI Value": 7,
+      "NO2 AQI Category": "Good",
       "PM2.5 AQI Value": 64,
-      "NO2 AQI Value": 7
+      "PM2.5 AQI Category": "Moderate"
     },
     {
       "Country": "Russian Federation",
@@ -168,8 +220,13 @@
       "AQI Value": 54,
       "AQI Category": "Moderate",
       "CO AQI Value": 1,
+      "CO AQI Category": "Good",
+      "Ozone AQI Value": 41,
+      "Ozone AQI Category": "Good",
+      "NO2 AQI Value": 1,
+      "NO2 AQI Category": "Good",
       "PM2.5 AQI Value": 54,
-      "NO2 AQI Value": 1
+      "PM2.5 AQI Category": "Moderate"
     },
     {
       "Country": "Egypt",
@@ -177,8 +234,13 @@
       "AQI Value": 142,
       "AQI Category": "Unhealthy for Sensitive Groups",
       "CO AQI Value": 3,
+      "CO AQI Category": "Good",
+      "Ozone AQI Value": 89,
+      "Ozone AQI Category": "Moderate",
+      "NO2 AQI Value": 9,
+      "NO2 AQI Category": "Good",
       "PM2.5 AQI Value": 142,
-      "NO2 AQI Value": 9
+      "PM2.5 AQI Category": "Unhealthy for Sensitive Groups"
     }
   ],
   "display_columns": [
@@ -187,7 +249,12 @@
     "AQI Value",
     "AQI Category",
     "CO AQI Value",
+    "CO AQI Category",
+    "Ozone AQI Value",
+    "Ozone AQI Category",
+    "NO2 AQI Value",
+    "NO2 AQI Category",
     "PM2.5 AQI Value",
-    "NO2 AQI Value"
+    "PM2.5 AQI Category"
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "summary": "The dataset spans 23,036 city-level readings across 175 countries, combining AQI categories with pollutant-specific readings.",
+  "summary": "The dataset spans 23,035 city-level readings across 175 countries, combining AQI categories with pollutant-specific readings.",
   "key_findings": [
     "'Good' is the most prevalent AQI category, covering 42.1% of cities.",
     "Republic of Korea exhibits the highest average AQI, highlighting critical mitigation needs.",
