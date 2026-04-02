@@ -9,7 +9,7 @@ import pandas as pd
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
-SRC_DIR = Path("data/images/train")
+SRC_DIR = Path("data/petfinder/train_images")
 OUT_DIR = Path("ui/assets/samples")
 DATA_DIR = Path("ui/assets/data")
 TRAIN_ANNOTATIONS = Path("data/images/train_annotations.json")
@@ -66,7 +66,7 @@ def run_gallery_export():
     gallery = {"Dog": {}, "Cat": {}}
     for type_name in ["Dog", "Cat"]:
         type_df = df[df["TypeName"] == type_name]
-        top_breeds = type_df["BreedName"].value_counts().head(15).index.tolist()
+        top_breeds = type_df["BreedName"].value_counts().index.tolist()
 
         for breed in top_breeds:
             breed_df = type_df[type_df["BreedName"] == breed]
