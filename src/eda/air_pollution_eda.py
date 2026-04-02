@@ -57,14 +57,15 @@ def run_air_pollution_eda() -> Dict[str, Any]:
 
     # Basic cleaning for analysis (retain raw copy for overview/sample)
     df = df_raw.copy()
-    df = df.dropna(subset=['Country'])
+    df = df.dropna(subset=['Country', 'City'])
     df = df.drop_duplicates()
 
     logger.info("Generating dataset overview...")
-    display_cols = ['Country', 'City', 'AQI Value', 'AQI Category', 'CO AQI Value', 'PM2.5 AQI Value', 'NO2 AQI Value']
+    display_cols = ['Country', 'City', 'AQI Value', 'AQI Category', 'CO AQI Value', 'CO AQI Category', 'Ozone AQI Value', 'Ozone AQI Category', 'NO2 AQI Value', 'NO2 AQI Category', 'PM2.5 AQI Value', 'PM2.5 AQI Category']
     col_info = [{
         'name': col,
         'dtype': str(df_raw[col].dtype),
+        'feature_type': "Target" if col == "AQI Value" else ("Categorical" if str(df[col].dtype) in ['object', 'category', 'str'] else "Numerical"),
         'non_null': int(df_raw[col].notna().sum()),
         'missing': int(df_raw[col].isna().sum()),
         'missing_pct': round(float(df_raw[col].isna().mean() * 100), 2)
