@@ -72,7 +72,8 @@ body {
 }
 .nav-inner {
     max-width: 1200px; margin: 0 auto;
-    display: flex; align-items: center; justify-content: space-between;
+    display: grid; align-items: center;
+    grid-template-columns: 1fr auto 1fr;
     height: 56px;
 }
 .nav-brand {
@@ -81,7 +82,7 @@ body {
     text-decoration: none;
 }
 .nav-brand i { font-size: 1.1rem; }
-.nav-links { display: flex; gap: 4px; }
+.nav-links { display: flex; gap: 4px; justify-self: center; }
 .nav-links a {
     padding: 7px 16px; border-radius: 24px;
     text-decoration: none; font-weight: 500; font-size: 0.85rem;

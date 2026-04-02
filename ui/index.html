@@ -15,11 +15,9 @@
         <a href="index.html" class="nav-brand"><i class="fa-solid fa-flask"></i> P4AI-DS</a>
         <div class="nav-links">
             <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="air-analysis.html"><i class="fa-solid fa-table"></i> Tabular</a>
             <a href="text.html"><i class="fa-solid fa-font"></i> Text</a>
             <a href="image.html"><i class="fa-solid fa-microscope"></i> Image</a>
-        </div>
-        <div class="nav-actions">
-            <button class="theme-toggle" onclick="document.body.classList.toggle('dark')"><i class="fa-solid fa-palette"></i> Theme</button>
         </div>
     </div>
 </nav>
@@ -28,40 +26,30 @@
 
     <section class="hero" id="hero">
         <h1>Exploratory Data Analysis</h1>
-        <p>A comprehensive exploratory data analysis dashboard for the P4AI-DS (CO3135) course — examining tabular demographics, image quality metrics, and visual attributes to understand adoption speed patterns.</p>
+        <p>This landing page presents Assignment 1 for P4AI-DS (CO3135): an exploratory data analysis project spanning three data modalities, where each report focuses on loading, summarizing, visualizing, and interpreting a different type of dataset.</p>
     </section>
-
-    <div class="stats-grid">
-        <div class="stat-card stat-orange">
-            <div class="stat-label">Pet Listings</div>
-            <div class="stat-value">14,993</div>
-            <div class="stat-sub">Training dataset</div>
-        </div>
-        <div class="stat-card stat-brown">
-            <div class="stat-label">Total Images</div>
-            <div class="stat-value">58,311</div>
-            <div class="stat-sub">Across all pets</div>
-        </div>
-        <div class="stat-card stat-green">
-            <div class="stat-label">Adoption Speeds</div>
-            <div class="stat-value">5</div>
-            <div class="stat-sub">Categories (0 &ndash; 4)</div>
-        </div>
-        <div class="stat-card stat-amber">
-            <div class="stat-label">Animal Types</div>
-            <div class="stat-value">2</div>
-            <div class="stat-sub">Dog &amp; Cat</div>
-        </div>
-    </div>
 
     <div class="about-box">
         <h2><i class="fa-solid fa-circle-info"></i> About This Project</h2>
-        <p>This project analyzes the <strong>PetFinder.my Adoption Prediction</strong> dataset from Kaggle. The goal is to understand what factors influence how quickly a pet gets adopted — from tabular features like age, breed, vaccination status, and health condition, to image-level attributes like photo quality, brightness, resolution, and the number of photos per listing.</p>
-        <p style="margin-top: 0.75rem;">The workspace also includes a <strong>Text EDA</strong> pipeline for the News Category dataset, covering schema inspection, class distribution, missing values, text length statistics, timeline shifts, and dominant content terms.</p>
+        <p>The objective of this project is to perform <strong>Exploratory Data Analysis (EDA)</strong> on datasets of different modalities so students can practice understanding data before building downstream AI and data science solutions. The assignment requires coverage of <strong>tabular</strong>, <strong>text</strong>, and <strong>image</strong> data, with one dataset analyzed for each modality.</p>
+        <p style="margin-top: 0.75rem;">For each report, the work follows the core EDA tasks stated in the brief: inspect dataset size and schema, review sample records, compute basic statistics such as distributions, missing values, and duplicates, create meaningful visualizations, and summarize notable findings or potential issues such as imbalance, noise, or preprocessing needs.</p>
     </div>
 
     <h2 class="section-title-inline"><i class="fa-solid fa-folder-open"></i> Reports</h2>
     <div class="reports-grid">
+        <div class="report-card">
+            <span class="badge badge-tabular"><i class="fa-solid fa-table"></i> Tabular EDA</span>
+            <h3>Global Air Pollution Report</h3>
+            <p>Exploratory data analysis for the Global Air Pollution dataset, focused on AQI distributions, pollutant statistics, regional hotspots, and correlation patterns.</p>
+            <ul>
+                <li>Dataset overview, schema, and coverage across countries</li>
+                <li>AQI category balance and pollutant summary statistics</li>
+                <li>Country and city hotspots for air quality risk</li>
+                <li>Correlation structure across AQI and pollutant measures</li>
+                <li>Actionable environmental insights from the dataset</li>
+            </ul>
+            <a href="air-analysis.html" class="btn-report">View Report <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
         <div class="report-card">
             <span class="badge badge-tabular"><i class="fa-solid fa-font"></i> Text Analysis</span>
             <h3>News Category Text Report</h3>
@@ -93,7 +81,7 @@
 </div>
 
 <footer class="site-footer">
-    <p>P4AI-DS (CO3135) | Dataset: <a href="https://www.kaggle.com/c/petfinder-adoption-prediction" target="_blank">Kaggle PetFinder.my</a></p>
+    <p>P4AI-DS (CO3135)</p>
     <p class="footer-members">Group Members: [To be filled]</p>
 </footer>
 
