@@ -1,15 +1,10 @@
 {
-  "total_images": 72776,
-  "avg_photos_per_pet": 3.84,
+  "total_images": 58311,
+  "avg_photos_per_pet": 3.89,
   "median_photos_per_pet": 3.0,
   "median_width": 400,
   "median_height": 400,
   "median_resolution": "400\u00d7400",
-  "total_size_gb": 2.0,
-  "avg_file_size_kb": 27.5,
-  "train_images": 58311,
-  "test_images": 14465,
-  "train_listings": 14993,
-  "test_listings": 3972,
-  "total_listings": 18965
+  "total_size_gb": 1.48,
+  "avg_file_size_kb": 26.7
 }
