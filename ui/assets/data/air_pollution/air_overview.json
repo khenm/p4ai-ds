@@ -23,7 +23,7 @@
     {
       "name": "AQI Value",
       "dtype": "int64",
-      "feature_type": "Numerical",
+      "feature_type": "Target",
       "non_null": 23463,
       "missing": 0,
       "missing_pct": 0.0
@@ -31,7 +31,7 @@
     {
       "name": "AQI Category",
       "dtype": "str",
-      "feature_type": "Target",
+      "feature_type": "Categorical",
       "non_null": 23463,
       "missing": 0,
       "missing_pct": 0.0
