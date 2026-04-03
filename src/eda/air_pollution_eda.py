@@ -65,7 +65,7 @@ def run_air_pollution_eda() -> Dict[str, Any]:
     col_info = [{
         'name': col,
         'dtype': str(df_raw[col].dtype),
-        'feature_type': "Target" if col == "AQI Category" else ("Categorical" if str(df[col].dtype) in ['object', 'category', 'str'] else "Numerical"),
+        'feature_type': "Target" if col == "AQI Value" else ("Categorical" if (str(df[col].dtype) in ['object', 'category', 'str'] or col == "AQI Category") else "Numerical"),
         'non_null': int(df_raw[col].notna().sum()),
         'missing': int(df_raw[col].isna().sum()),
         'missing_pct': round(float(df_raw[col].isna().mean() * 100), 2)
