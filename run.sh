@@ -16,7 +16,7 @@ uv run python scripts/eda_text.py
 
 echo ""
 echo "[2/5] Running tabular EDA export..."
-uv run python scripts/eda_air.py
+uv run python scripts/eda_salary.py
 
 echo ""
 echo "[3/5] Running EDA data export..."

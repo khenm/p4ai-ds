@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Salary EDA — P4AI-DS</title>
+    <meta name="description" content="Exploratory data analysis of Job Salary features including correlations, distributions, and educational impacts.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+</head>
+<body>
+
+<nav class="site-nav">
+    <div class="nav-inner">
+        <a href="index.html" class="nav-brand"><i class="fa-solid fa-flask"></i> P4AI-DS</a>
+        <div class="nav-links">
+            <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="salary_dashboard.html" class="active"><i class="fa-solid fa-table"></i> Tabular</a>
+            <a href="text.html"><i class="fa-solid fa-font"></i> Text</a>
+            <a href="image.html"><i class="fa-solid fa-microscope"></i> Image</a>
+        </div>
+    </div>
+</nav>
+
+<div class="page-container">
+    <section class="hero">
+        <h1>Job Salary Prediction — Exploratory Data Analysis</h1>
+        <p>A comprehensive overview investigating the interplay between salaries, education levels, experience, and different job features within the labor market.</p>
+    </section>
+
+    <div class="page-controls">
+        <button class="btn" onclick="expandAll()"><i class="fa-solid fa-angles-down"></i> Expand All</button>
+        <button class="btn" onclick="collapseAll()"><i class="fa-solid fa-angles-up"></i> Collapse All</button>
+    </div>
+
+    <!-- Dataset Overview -->
+    <div class="eda-section" id="section-overview">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-table-list"></i> Dataset Overview</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div id="overview-stats" class="stats-grid"></div>
+            <div class="desc-box" id="overview-desc">Loading dataset description...</div>
+            <h3 class="section-title-inline"><i class="fa-solid fa-table-cells"></i> Sample Rows</h3>
+            <div class="data-table-wrap"><table class="data-table" id="sample-table"></table></div>
+            <h3 class="section-title-inline"><i class="fa-solid fa-list-check"></i> Data Types &amp; Missing Values</h3>
+            <div class="data-table-wrap"><table class="data-table" id="dtypes-table"></table></div>
+        </div>
+    </div>
+
+    <!-- Salary Distribution -->
+    <div class="eda-section" id="section-distribution">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-chart-column"></i> Salary Distribution</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="chart-container" style="display: flex; justify-content: center;">
+                <img src="assets/data/jobsalary/salary_distribution.png" alt="Salary Distribution Histogram" style="max-width: 100%; height: auto; border-radius: 8px;">
+            </div>
+            <div class="insight-box">
+                <h4><i class="fa-solid fa-lightbulb"></i> Insights</h4>
+                <p>The salary distribution exhibits a right-skewed pattern, heavily concentrated in entry-level to mid-range brackets. The presence of a "long tail" at higher income levels reflects the scarcity of senior or C-level positions in the labor market.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ordinal Factors -->
+    <div class="eda-section" id="section-ordinal">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-layer-group"></i> Hierarchical Factors (Education & Company Size)</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="charts-row">
+                <div class="chart-container">
+                    <div class="chart-box" id="chart-education-boxplot"></div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-box" id="chart-company_size-boxplot"></div>
+                </div>
+            </div>
+            <div class="insight-box">
+                <h4><i class="fa-solid fa-lightbulb"></i> Insights</h4>
+                <p style="margin-bottom: 8px;"><strong>Education:</strong> Advanced educational degrees (Master's or PhD) raise the median salary and considerably widen the variance, confirming they are often tied to highly specialized or strategic management roles.</p>
+                <p><strong>Company Size:</strong> Enterprise and Large companies consistently offer higher compensation bands and greater salary ceilings compared to Startups and Small businesses.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Multivariate Interaction -->
+    <div class="eda-section" id="section-interaction">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-code-branch"></i> Multivariate Interaction Analysis</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="chart-container">
+                <div class="chart-box" id="chart-education-company-interaction"></div>
+            </div>
+            <div class="insight-box">
+                <h4><i class="fa-solid fa-lightbulb"></i> Insights</h4>
+                <p>By crossing Education Level with Company Size, we observe nuanced salary boundaries. For instance, obtaining a higher degree (Master/PhD) effectively multiplies earning potential significantly more within Enterprise environments than in Startups.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nominal Factors -->
+    <div class="eda-section" id="section-nominal">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-briefcase"></i> Role & Industry Benchmarks</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="charts-row">
+                <div class="chart-container">
+                    <div class="chart-box" id="chart-job_title-boxplot"></div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-box" id="chart-industry-boxplot"></div>
+                </div>
+            </div>
+            <div class="insight-box">
+                <h4><i class="fa-solid fa-lightbulb"></i> Insights</h4>
+                <p style="margin-bottom: 8px;"><strong>Job Titles:</strong> Specialized or technical roles typically command higher median salaries, indicating market demand for niche technical skill sets over generalist positions.</p>
+                <p><strong>Industries:</strong> High-margin sectors like Finance and Technology strongly dominate the top-paying tiers, reflecting their reliance on data-driven or tech-savvy professionals.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Class Imbalance Tracking -->
+    <div class="eda-section" id="section-imbalance">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-scale-unbalanced"></i> Category Frequency & Class Imbalance</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="chart-container">
+                <div class="chart-box" id="chart-job-title-freq"></div>
+            </div>
+            <div class="insight-box">
+                <h4><i class="fa-solid fa-lightbulb"></i> Insights</h4>
+                <p>This dual-axis chart maps the frequency underlying median salaries. It highlights areas where extremely high statistical limits may be derived from a tiny subsample of employees (Class Imbalance). Being aware of these rare high-leverage outliers prevents ML models from becoming overconfident.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Environment Factors -->
+    <div class="eda-section" id="section-environment">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-earth-americas"></i> Work Environment & Location</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="charts-row">
+                <div class="chart-container">
+                    <div class="chart-box" id="chart-remote_work-boxplot"></div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-box" id="chart-location-boxplot"></div>
+                </div>
+            </div>
+            <div class="insight-box">
+                <h4><i class="fa-solid fa-lightbulb"></i> Insights</h4>
+                <p style="margin-bottom: 8px;"><strong>Remote Work:</strong> Fully remote and hybrid roles frequently capture competitive salaries matching or exceeding traditional on-site jobs, suggesting strong remote compensation parity.</p>
+                <p><strong>Location:</strong> Developed markets (e.g., USA, UK, Germany) showcase a significantly higher baseline for compensation due to elevated living costs and robust talent ecosystems.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Experience vs Salary Scatter -->
+    <div class="eda-section" id="section-scatter">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-chart-line"></i> Experience vs Salary Tracking</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="chart-container">
+                <div class="chart-box" id="chart-experience-scatter"></div>
+            </div>
+            <div class="insight-box">
+                <h4><i class="fa-solid fa-lightbulb"></i> Insights</h4>
+                <p>The scatter plot illustrates a strong, positive linear relationship between years of experience and salary. As experience increases, compensation consistently trends upward, reaffirming that seniority and time in the industry are among the most reliable predictors of higher earning potential.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Correlation Heatmap -->
+    <div class="eda-section" id="section-correlation">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-diagram-project"></i> Feature Correlation & Independence Matrix</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="charts-row">
+                <div class="chart-container">
+                    <h3 class="section-title-inline" style="text-align: center;">Numerical Correlation (Pearson)</h3>
+                    <div class="chart-box" id="chart-numerical-correlation"></div>
+                </div>
+                <div class="chart-container">
+                    <h3 class="section-title-inline" style="text-align: center;">Categorical Correlation (Cramér's V)</h3>
+                    <div class="chart-box" id="chart-categorical-correlation"></div>
+                </div>
+            </div>
+            <div class="insight-box">
+                <h4><i class="fa-solid fa-lightbulb"></i> Insights</h4>
+                <p><strong>Numerical:</strong> Years of experience maintain the strongest linear correlation with overall salary, whereas skills or certifications act as competitive catalysts but not primary drivers.<br>
+                <strong>Categorical:</strong> We track Cramér's V to identify redundant text variables. High correlation (>0.8) between two categorical columns (e.g., Job Title and Industry) may require dimensionality reduction to avoid multicollinearity in predictive models.</p>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="eda-section" id="section-summary" style="background-color: var(--card-cream); border-top: 4px solid var(--primary);">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-clipboard-check"></i> Executive Summary: Salary Drivers</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="desc-box" style="font-size: 1.05rem; line-height: 1.6; text-align: justify;">
+                <p>Based on the comprehensive Exploratory Data Analysis (EDA) and Statistical Testing (Pearson, Cramér's V) performed, we conclude that the following core factors shape compensation in the labor market:</p>
+                <ul style="margin-left: 20px; margin-top: 15px;">
+                    <li style="margin-bottom: 10px;"><strong>Linear Drivers:</strong> <code>Years of Experience</code> stands as the most robust baseline metric. Compensation scales linearly and consistently with active field experience, vastly overshadowing surface-level factors like the sheer count of skills or certifications.</li>
+                    <li style="margin-bottom: 10px;"><strong>Exponential Multipliers:</strong> Holding an <code>Advanced Degree (Master's/PhD)</code> combined with working at an <code>Enterprise-scale Company</code> creates a massive leverage effect. These factors do not just bump the baseline salary - they dramatically stretch the salary ceiling to dimensions exclusively reserved for senior management and highly specialized domains.</li>
+                    <li style="margin-bottom: 10px;"><strong>Role & Industry Specifics:</strong> Positioning oneself in high-margin sectors (Tech, Finance) or securing niche, highly technical roles (Data Scientist, ML Engineer) fundamentally guarantees a much higher income baseline compared to generalist positions.</li>
+                    <li style="margin-bottom: 10px;"><strong>Work Environment Parity:</strong> Data thoroughly debunks the remote-work "pay cut" myth. <code>Remote/Hybrid</code> professionals are capturing compensation packages strictly equal to, if not exceeding, traditional On-site workers. Additionally, securing roles stationed across developed Western markets (USA, Canada, EU) serves as a rigid guarantee for top-percentile salary tiers.</li>
+                </ul>
+                <div class="insight-box" style="margin-top: 15px; background-color: var(--surface); border-left-color: var(--primary-dark);">
+                    <h4 style="color: var(--primary-dark);"><i class="fa-solid fa-bullseye"></i> Data Modeling Directives (Phase 2)</h4>
+                    <p style="margin: 0; color: #333;">Transitioning into the Machine Learning prediction phase, models must be configured to prioritize primary pillars (Experience, Education, Company Size). Concurrently, aggressive Feature Engineering is required to consolidate highly-fragmented "Job Titles", neutralizing Class Imbalance risks that would otherwise induce severe overfitting on hyper-specific outlier records.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<footer class="site-footer">
+    <p>P4AI-DS (CO3135) | Dataset: Custom Job Salary Prediction</p>
+</footer>
+
+<script src="script.js"></script>
+<script src="salary_dashboard.js"></script>
+</body>
+</html>

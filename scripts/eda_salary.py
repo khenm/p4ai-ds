@@ -14,17 +14,15 @@ logger = logging.getLogger(__name__)
 
 def main():
     logger.info("=" * 60)
-    logger.info("Global Air Pollution EDA — Data Export Pipeline")
+    logger.info("Salary EDA — Data Export Pipeline")
     logger.info("=" * 60)
 
-    from src.eda.air_pollution_eda import run_air_pollution_eda
+    from src.eda.salary_eda import run_salary_eda
 
-    result = run_air_pollution_eda()
-    logger.info("Records analyzed: %s", f"{result['records']:,}")
-    logger.info("Countries covered: %s", result['countries'])
-    logger.info("Cities covered: %s", f"{result['cities']:,}")
+    run_salary_eda()
+    
     logger.info("=" * 60)
-    logger.info("Air pollution EDA export complete! JSON saved under ui/assets/data/air_pollution/")
+    logger.info("Salary EDA export complete! JSON saved under ui/assets/data/jobsalary/")
     logger.info("=" * 60)
 
 
