@@ -10,7 +10,7 @@ Exploratory Data Analysis dashboard for **Assignment 1 — P4AI-DS (CO3135)**. C
 
 | Modality | Dataset | Source |
 |---|---|---|
-| Tabular | Global Air Pollution Dataset | [Kaggle](https://www.kaggle.com/datasets/hasibalmuzdadid/global-air-pollution-dataset) |
+| Tabular | Job Salary Prediction Dataset | [Kaggle](https://www.kaggle.com/datasets/nalisha/job-salary-prediction-dataset) |
 | Text | News Category Dataset v3 | [Kaggle](https://www.kaggle.com/datasets/rmisra/news-category-dataset) |
 | Image | PetFinder Adoption Prediction | [Kaggle](https://www.kaggle.com/competitions/petfinder-adoption-prediction/data) |
 
@@ -34,7 +34,7 @@ Open `http://localhost:8081` in your browser.
 
 ```bash
 uv run python scripts/eda_text.py       # Text EDA  → ui/assets/data/
-uv run python scripts/eda_air.py        # Air pollution EDA → ui/assets/data/air_pollution/
+uv run python scripts/eda_salary.py     # Salary EDA → ui/assets/data/jobsalary/
 uv run python scripts/eda_image.py      # PetFinder EDA (4 phases) → ui/assets/data/ + ui/assets/samples/
 uv run python scripts/gallery_export.py # Breed gallery → ui/assets/data/image_gallery.json
 
@@ -55,11 +55,11 @@ petfinder-analysis/
 ├── data/                      # Raw datasets (not tracked in git)
 │   ├── petfinder/             # train.csv, train_images/, BreedLabels.csv, ColorLabels.csv
 │   ├── newscategory/          # News_Category_Dataset_v3.json
-│   └── globalairpollution/    # global_air_pollution_dataset.csv
+│   └── jobsalary/             # job_salary_prediction_dataset.csv
 ├── scripts/
 │   ├── eda_image.py           # PetFinder EDA entry point (4 phases)
 │   ├── eda_text.py            # News Category EDA entry point
-│   ├── eda_air.py             # Air Pollution EDA entry point
+│   ├── eda_salary.py          # Salary EDA entry point
 │   ├── gallery_export.py      # Breed gallery image export
 │   └── preprocess.py          # Image preprocessing & COCO annotations
 ├── src/
@@ -70,18 +70,18 @@ petfinder-analysis/
 │       ├── image_quality.py   # Quality metrics on 3K-image sample (Phase 3)
 │       ├── image_advanced.py  # PCA, t-SNE, dominant colors (Phase 4)
 │       ├── text_context.py    # News Category text analysis
-│       ├── air_pollution_eda.py # Air pollution analysis
+│       ├── salary_eda.py      # Salary EDA analysis
 │       └── theme.py           # Shared pastel color palette
 ├── ui/                        # Static web dashboard (vanilla HTML/CSS/JS)
 │   ├── index.html             # Landing page
+│   ├── salary_dashboard.html  # Salary EDA report
+│   ├── salary_dashboard.js    # Salary chart rendering
 │   ├── image.html             # PetFinder EDA report
+│   ├── image.js               # PetFinder chart rendering & gallery
 │   ├── text.html              # News Category report
-│   ├── air-analysis.html      # Air Pollution report
-│   ├── tabular.html           # Tabular EDA report
+│   ├── text.js                # News Category chart rendering
 │   ├── style.css              # Warm pastel theme
 │   ├── script.js              # Shared utilities & Plotly config
-│   ├── image.js               # PetFinder chart rendering & gallery
-│   ├── tabular.js             # Tabular chart rendering
 │   └── assets/                # Generated JSON + sample images (not tracked)
 ├── run.sh                     # One-command pipeline + server
 ├── pyproject.toml
@@ -92,11 +92,12 @@ petfinder-analysis/
 
 ## Dashboard Reports
 
-### Tabular — Global Air Pollution
-- Dataset overview, schema, and country/city coverage
-- AQI category balance and pollutant summary statistics
-- Regional hotspots and country-level risk rankings
-- Correlation structure across AQI and pollutant measures
+### Tabular — Job Salary Prediction Dataset
+- Dataset schema, missing values, and feature validation
+- Multivariate interactions between Education Level and Company Size
+- Category frequency tracking and Class Imbalance mapping for Job Titles
+- Cramér's V categorical redundancy and Pearson correlation matrices
+- Actionable insights for Machine Learning feature engineering
 
 ### Text — News Category
 - Dataset overview, schema, and sample records
