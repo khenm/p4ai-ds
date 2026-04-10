@@ -1,0 +1,162 @@
+{
+  "total_listings": 250000,
+  "feature_count": 10,
+  "num_features": 4,
+  "cat_features": 6,
+  "columns": [
+    {
+      "name": "job_title",
+      "feature_type": "Categorical",
+      "dtype": "str",
+      "non_null": 250000,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "experience_years",
+      "feature_type": "Numerical",
+      "dtype": "int64",
+      "non_null": 250000,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "education_level",
+      "feature_type": "Categorical",
+      "dtype": "str",
+      "non_null": 250000,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "skills_count",
+      "feature_type": "Numerical",
+      "dtype": "int64",
+      "non_null": 250000,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "industry",
+      "feature_type": "Categorical",
+      "dtype": "str",
+      "non_null": 250000,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "company_size",
+      "feature_type": "Categorical",
+      "dtype": "str",
+      "non_null": 250000,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "location",
+      "feature_type": "Categorical",
+      "dtype": "str",
+      "non_null": 250000,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "remote_work",
+      "feature_type": "Categorical",
+      "dtype": "str",
+      "non_null": 250000,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "certifications",
+      "feature_type": "Numerical",
+      "dtype": "int64",
+      "non_null": 250000,
+      "missing": 0,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "salary",
+      "feature_type": "Target",
+      "dtype": "int64",
+      "non_null": 250000,
+      "missing": 0,
+      "missing_pct": 0.0
+    }
+  ],
+  "sample_rows": [
+    {
+      "job_title": "AI Engineer",
+      "experience_years": 10,
+      "education_level": "Bachelor",
+      "skills_count": 2,
+      "industry": "Healthcare",
+      "company_size": "Medium",
+      "location": "India",
+      "remote_work": "Hybrid",
+      "certifications": 2,
+      "salary": 109413
+    },
+    {
+      "job_title": "Data Analyst",
+      "experience_years": 5,
+      "education_level": "Bachelor",
+      "skills_count": 17,
+      "industry": "Telecom",
+      "company_size": "Small",
+      "location": "Australia",
+      "remote_work": "No",
+      "certifications": 0,
+      "salary": 93764
+    },
+    {
+      "job_title": "Frontend Developer",
+      "experience_years": 18,
+      "education_level": "PhD",
+      "skills_count": 4,
+      "industry": "Media",
+      "company_size": "Medium",
+      "location": "Singapore",
+      "remote_work": "No",
+      "certifications": 1,
+      "salary": 148123
+    },
+    {
+      "job_title": "Business Analyst",
+      "experience_years": 19,
+      "education_level": "PhD",
+      "skills_count": 13,
+      "industry": "Retail",
+      "company_size": "Medium",
+      "location": "Canada",
+      "remote_work": "Yes",
+      "certifications": 0,
+      "salary": 189123
+    },
+    {
+      "job_title": "Product Manager",
+      "experience_years": 15,
+      "education_level": "Bachelor",
+      "skills_count": 7,
+      "industry": "Manufacturing",
+      "company_size": "Large",
+      "location": "Sweden",
+      "remote_work": "Yes",
+      "certifications": 0,
+      "salary": 165069
+    }
+  ],
+  "display_columns": [
+    "job_title",
+    "experience_years",
+    "education_level",
+    "skills_count",
+    "industry",
+    "company_size",
+    "location",
+    "remote_work",
+    "certifications",
+    "salary"
+  ]
+}
