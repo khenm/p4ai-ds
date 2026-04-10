@@ -1,0 +1,17 @@
+{
+  "remote_work": {
+    "f_statistic": 564.7059,
+    "p_value": 2.012188601838192e-245,
+    "significant": true
+  },
+  "education_level": {
+    "f_statistic": 6624.7914,
+    "p_value": 0.0,
+    "significant": true
+  },
+  "company_size": {
+    "f_statistic": 12346.8692,
+    "p_value": 0.0,
+    "significant": true
+  }
+}
