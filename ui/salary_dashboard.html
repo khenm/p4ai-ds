@@ -162,10 +162,7 @@
                 </div>
                 <div class="insight-box">
                     <h4><i class="fa-solid fa-lightbulb"></i> Insights</h4>
-                    <p>This dual-axis chart maps the frequency underlying median salaries. It highlights areas where
-                        extremely high statistical limits may be derived from a tiny subsample of employees (Class
-                        Imbalance). Being aware of these rare high-leverage outliers prevents ML models from becoming
-                        overconfident.</p>
+                    <p>This dual-axis chart maps the frequency capacity underlying median salaries. The blue bars confirm that this dataset is highly stratified and perfectly balanced (~20,000 records per job title). This uniform distribution is an ideal scenario for Machine Learning, as it systematically eliminates Class Imbalance risks and ensures the model will not become biased toward any single dominating majority class.</p>
                 </div>
             </div>
         </div>
@@ -240,9 +237,7 @@
                     <p><strong>Numerical:</strong> Years of experience maintain the strongest linear correlation with
                         overall salary, whereas skills or certifications act as competitive catalysts but not primary
                         drivers.<br>
-                        <strong>Categorical:</strong> We track Cramér's V to identify redundant text variables. High
-                        correlation (>0.8) between two categorical columns (e.g., Job Title and Industry) may require
-                        dimensionality reduction to avoid multicollinearity in predictive models.
+                        <strong>Categorical:</strong> The Cramér's V heatmap reveals that all correlation values are near zero (&lt; 0.05). This confirms there is absolutely no categorical redundancy or overlap in the dataset. All 6 features are completely independent and can be safely utilized together in the Machine Learning training pipeline without any risk of multicollinearity.
                     </p>
                 </div>
             </div>
@@ -290,9 +285,7 @@
                                 Directives (Phase 2)</h4>
                             <p style="margin: 0; color: #333;">Transitioning into the Machine Learning phase, models
                                 must be configured to prioritize primary pillars (Experience, Education, Company Size).
-                                Concurrently, aggressive Feature Engineering is required to consolidate
-                                highly-fragmented "Job Titles", neutralizing Class Imbalance risks that induce severe
-                                overfitting.</p>
+                                Fortunately, our analysis confirmed that Job Titles are perfectly stratified (~20k records each), completely eliminating Class Imbalance risks and providing an ideal foundation for training robust, unbiased algorithms.</p>
                         </div>
                         <div class="insight-box"
                             style="margin-top: 0; background-color: var(--surface); border-left-color: #D98A4E;">
@@ -311,7 +304,7 @@
     </div>
 
     <footer class="site-footer">
-        <p>P4AI-DS (CO3135) | Dataset: Custom Job Salary Prediction</p>
+        <p>P4AI-DS (CO3135) | Dataset: Job Salary Prediction</p>
     </footer>
 
     <script src="script.js"></script>
