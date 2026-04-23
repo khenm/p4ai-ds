@@ -1,0 +1,8 @@
+defaults:
+  - dataset@data: petfinder
+  - _self_
+
+exp_name: train_lgbm_petfinder_001
+seed_value: 42
+batch_size: 64
+num_workers: 4

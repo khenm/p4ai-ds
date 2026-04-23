@@ -1,0 +1,10 @@
+dataset:
+  csv_path: "data/petfinder/train/train.csv"
+  img_dir: "data/petfinder/train_images"
+  img_size: 224
+
+training:
+  batch_size: 32
+  epochs: 3
+  learning_rate: 3e-4
+  num_workers: 4
