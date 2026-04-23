@@ -20,6 +20,17 @@ def load_config(config_path: str | Path) -> Dict[str, Any]:
         
     base_dir = config_file.parent
     
+    # Parse Hydra-style defaults block if present
+    if 'defaults' in cfg:
+        for item in cfg['defaults']:
+            if isinstance(item, dict):
+                for k, v in item.items():
+                    if k.startswith('dataset@data') or k == 'data':
+                        cfg['data'] = v
+                    elif k.startswith('model'):
+                        cfg['model'] = v
+    
+    
     if isinstance(cfg.get('model'), str):
         model_name = cfg['model']
         model_config_path = base_dir / 'models' / f"{model_name}.yaml"
