@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabular ML Dashboard — Job Salary</title>
+    <meta name="description" content="Machine Learning evaluation metrics and Feature Importances for the Job Salary Prediction task.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+</head>
+<body>
+
+    <nav class="site-nav">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-brand"><i class="fa-solid fa-flask"></i> P4AI-DS</a>
+            <div class="nav-links">
+                <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+                <a href="salary_dashboard.html"><i class="fa-solid fa-table"></i> Tabular</a>
+                <a href="salary_ml_dashboard.html" class="active"><i class="fa-solid fa-robot"></i> Tabular ML</a>
+                <a href="text.html"><i class="fa-solid fa-font"></i> Text</a>
+                <a href="image.html"><i class="fa-solid fa-microscope"></i> Image</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-container">
+        <section class="hero">
+            <h1>Job Salary Prediction — Machine Learning Dashboard</h1>
+            <p>Interactive visualization tracking predictive performance and dominant feature signals extracted from Tree-based models.</p>
+        </section>
+
+        <!-- Train/Test Split Overview -->
+        <div class="eda-section" id="section-split">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2><i class="fa-solid fa-code-branch"></i> Train/Test Split Configuration</h2>
+                <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+            </div>
+            <div class="section-body">
+                <div class="stats-grid" style="margin-bottom: 0;">
+                    <div class="stat-card stat-blue">
+                        <div class="stat-label">Training Set (80%)</div>
+                        <div class="stat-value">200,000</div>
+                    </div>
+                    <div class="stat-card stat-green">
+                        <div class="stat-label">Testing Set (20%)</div>
+                        <div class="stat-value">50,000</div>
+                    </div>
+                    <div class="stat-card stat-brown">
+                        <div class="stat-label">Total Records</div>
+                        <div class="stat-value">250,000</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Selection Insight -->
+        <div class="eda-section" id="section-feature-selection" style="background-color: var(--card-cream);">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2><i class="fa-solid fa-list-check"></i> Feature Selection Strategy</h2>
+                <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+            </div>
+            <div class="section-body">
+                <div class="desc-box" style="font-size: 1.05rem; line-height: 1.6; text-align: justify;">
+                    <p style="margin-top: 0;">During the Exploratory Data Analysis phase, we evaluated the interactions between all variables via <strong>Cramér's V</strong> and numerical <strong>Correlation Matrices</strong>. We empirically proved that there is <strong>zero redundancy</strong> between the attributes (all inter-feature correlation scores were extremely low, practically establishing pure independence).</p>
+                    <p style="margin-top: 10px;">Consequently, our Feature Selection strategy deliberately <strong>retains all 8 predictor features</strong> to train the algorithms, preventing any loss of variance matrix dimensionality:</p>
+                    <ul style="margin-top: 10px; margin-left: 20px;">
+                        <li style="margin-bottom: 5px;"><strong>Numerical Predictors:</strong> <code>experience_years</code>, <code>skills_count</code></li>
+                        <li style="margin-bottom: 5px;"><strong>Categorical Nominative:</strong> <code>job_title</code>, <code>industry</code>, <code>location</code>, <code>remote_work</code></li>
+                        <li><strong>Categorical Ordinal:</strong> <code>education_level</code>, <code>company_size</code></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preprocessing Pipeline Overview -->
+        <div class="eda-section" id="section-preprocessing">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2><i class="fa-solid fa-filter"></i> Data Preprocessing Pipeline</h2>
+                <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+            </div>
+            <div class="section-body">
+                <div class="charts-row" style="margin-bottom: 2rem;">
+                    <div class="chart-container">
+                        <h3 class="section-title-inline"><i class="fa-solid fa-sort-numeric-up"></i> Ordinal Encoding Mappings</h3>
+                        <div class="chart-box" id="chart-ordinal" style="height: 380px;"></div>
+                        <p class="chart-description">Hierarchical categorical columns cleanly mapped to integer step increments to establish mathematical magnitude boundaries.</p>
+                    </div>
+                    <div class="chart-container">
+                        <h3 class="section-title-inline" style="color: #4CAF50;"><i class="fa-solid fa-bullseye"></i> Target Encoding: Job Titles</h3>
+                        <div class="chart-box" id="chart-target" style="height: 380px;"></div>
+                        <p class="chart-description">Instead of inefficient Sparse OHE Matrices, complex Nominal categories are immediately mapped directly into their statistically expected Salary value from the Training Split.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Model Metrics -->
+        <div class="eda-section" id="section-metrics">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2><i class="fa-solid fa-ranking-star"></i> Algorithm Performance Benchmark</h2>
+                <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+            </div>
+            <div class="section-body">
+                <div class="chart-container">
+                    <div class="chart-box" id="chart-model-metrics"></div>
+                </div>
+                <div class="insight-box">
+                    <h4><i class="fa-solid fa-lightbulb"></i> Insights (Proving the "Exponential Multiplier")</h4>
+                    <p>Standard Linear Regression serves as a robust baseline but underperforms severely when estimating the long tail of top earners. <strong>XGBoost</strong> and <strong>LightGBM</strong> successfully map out non-linear exponential interactions (such as having an Advanced Degree inside an Enterprise), leading to significantly higher R² Accuracy and massively reduced Root Mean Square Error (RMSE).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Importance -->
+        <div class="eda-section" id="section-importance">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2><i class="fa-solid fa-sitemap"></i> Feature Importance Mapping</h2>
+                <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+            </div>
+            <div class="section-body">
+                <div class="gallery-controls" style="margin-bottom: 20px;">
+                    <label for="model-selector" style="font-weight: bold; font-size: 1.1rem; margin-right: 15px;"><i class="fa-solid fa-filter"></i> Select Architecture:</label>
+                    <select id="model-selector" onchange="renderFeatureImportance()" style="padding: 10px; font-size: 1.05rem; border: 2px solid var(--primary); border-radius: 6px; cursor: pointer; background-color: var(--surface); color: var(--text);">
+                        <option value="XGBoost" selected>XGBoost (Best Performer)</option>
+                        <option value="LightGBM">LightGBM</option>
+                        <option value="Random Forest">Random Forest</option>
+                    </select>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-box" id="chart-feature-importance"></div>
+                </div>
+                <div class="insight-box">
+                    <h4><i class="fa-solid fa-lightbulb"></i> Insights</h4>
+                    <p>The Feature Importance layout explicitly mirrors the linear and categorical findings from our EDA visually. <code>Location</code>, <code>Experience</code>, and <code>Company Size</code> reliably establish themselves as the primary pillars determining the final structural salary boundaries. Surface-level metrics like short-term certifications barely influence the Tree splits.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="site-footer">
+        <p>P4AI-DS (CO3135) | Machine Learning Track</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="salary_ml_dashboard.js"></script>
+</body>
+</html>
