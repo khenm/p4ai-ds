@@ -1,4 +1,4 @@
 name: "petfinder"
-raw_dir: "./data/petfinder"
-images_dir: "./data/images"
+raw_dir: "/kaggle/input/competitions/petfinder-adoption-prediction"
+# images_dir: "./data/images"
 img_size: 224

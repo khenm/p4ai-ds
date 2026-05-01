@@ -2,6 +2,17 @@ import torch
 import torch.nn as nn
 from torchvision.models import resnet18, ResNet18_Weights
 
+class BaselineResNet(nn.Module):
+    def __init__(self, num_classes=5):
+        super(BaselineResNet, self).__init__()
+        weights = ResNet18_Weights.DEFAULT
+        self.backbone = resnet18(weights=weights)
+        self.num_ftrs = self.backbone.fc.in_features
+        self.backbone.fc = nn.Linear(self.num_ftrs, num_classes)
+
+    def forward(self, x):
+        return self.backbone(x)
+
 class TwoStageResNet(nn.Module):
     def __init__(self, extract_features=False):
         super(TwoStageResNet, self).__init__()
