@@ -69,12 +69,12 @@ class TwoStageResNet(nn.Module):
             for param in head.parameters():
                 param.requires_grad = True
 
-    def forward(self, x):
+    def forward(self, x, stage: int = 2):
         features = self.backbone(x)
-        
+
         if self.extract_features:
             return features
-            
+
         # Stage 1: Tabular Predictions
         out_type = self.head_type(features)
         out_fur = self.head_furlength(features)
@@ -86,17 +86,8 @@ class TwoStageResNet(nn.Module):
         out_sterilized = self.head_sterilized(features)
         out_gender = self.head_gender(features)
         out_color1 = self.head_color1(features)
-        
-        # Stage 2: Concatenate and predict AdoptionSpeed
-        concat_features = torch.cat([
-            features, out_type, out_fur, out_maturity, out_breed1, 
-            out_health, out_vaccinated, out_dewormed, out_sterilized, 
-            out_gender, out_color1
-        ], dim=1)
-        
-        out_adoption = self.head_adoption_speed(concat_features)
-        
-        return {
+
+        tabular_outputs = {
             'Type': out_type,
             'FurLength': out_fur,
             'MaturitySize': out_maturity,
@@ -107,5 +98,18 @@ class TwoStageResNet(nn.Module):
             'Sterilized': out_sterilized,
             'Gender': out_gender,
             'Color1': out_color1,
-            'AdoptionSpeed': out_adoption
         }
+
+        if stage == 1:
+            return tabular_outputs
+
+        # Stage 2: Concatenate and predict AdoptionSpeed
+        concat_features = torch.cat([
+            features, out_type, out_fur, out_maturity, out_breed1,
+            out_health, out_vaccinated, out_dewormed, out_sterilized,
+            out_gender, out_color1
+        ], dim=1)
+
+        out_adoption = self.head_adoption_speed(concat_features)
+
+        return {**tabular_outputs, 'AdoptionSpeed': out_adoption}
