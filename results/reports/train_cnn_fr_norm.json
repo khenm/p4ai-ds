@@ -1,0 +1,83 @@
+{
+  "exp_name": "train_cnn_petfinder_001",
+  "stage1_final_val_accuracies": {
+    "Type": 95.97,
+    "FurLength": 59.06,
+    "MaturitySize": 65.34,
+    "Breed1": 58.55,
+    "Health": 96.28,
+    "Vaccinated": 55.99,
+    "Dewormed": 53.46,
+    "Sterilized": 59.6,
+    "Gender": 44.29,
+    "Color1": 56.81
+  },
+  "stage1_final_val_qwks": {
+    "Type": 0.9185,
+    "FurLength": 0.2888,
+    "MaturitySize": 0.1124,
+    "Breed1": 0.2752,
+    "Health": 0.0123,
+    "Vaccinated": 0.1519,
+    "Dewormed": 0.1336,
+    "Sterilized": 0.1079,
+    "Gender": 0.1819,
+    "Color1": 0.4464
+  },
+  "stage1_final_task_weights": {
+    "Type": 0.651,
+    "FurLength": 1.6479,
+    "MaturitySize": 1.1746,
+    "Breed1": 0.8001,
+    "Health": 0.6591,
+    "Vaccinated": 1.0356,
+    "Dewormed": 0.8313,
+    "Sterilized": 0.7743,
+    "Gender": 1.5618,
+    "Color1": 0.8643
+  },
+  "stage2": {
+    "classification_report": "              precision    recall  f1-score   support\n\n     Speed 0       0.00      0.00      0.00        83\n     Speed 1       0.30      0.32      0.31       603\n     Speed 2       0.32      0.38      0.35       846\n     Speed 3       0.25      0.01      0.03       622\n     Speed 4       0.38      0.60      0.46       777\n\n    accuracy                           0.34      2931\n   macro avg       0.25      0.26      0.23      2931\nweighted avg       0.31      0.34      0.29      2931\n",
+    "confusion_matrix": [
+      [
+        0,
+        28,
+        29,
+        0,
+        26
+      ],
+      [
+        0,
+        193,
+        218,
+        4,
+        188
+      ],
+      [
+        0,
+        208,
+        323,
+        13,
+        302
+      ],
+      [
+        0,
+        106,
+        250,
+        9,
+        257
+      ],
+      [
+        0,
+        117,
+        186,
+        10,
+        464
+      ]
+    ],
+    "accuracy": 33.74,
+    "qwk": 0.2189
+  },
+  "config": "train_cnn",
+  "timestamp": "2026-04-24T07:24:10.818555"
+}

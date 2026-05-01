@@ -1,0 +1,45 @@
+{
+  "exp_name": "train_baseline_petfinder_001",
+  "classification_report": "              precision    recall  f1-score   support\n\n     Speed 0       0.03      0.02      0.03        83\n     Speed 1       0.25      0.29      0.26       603\n     Speed 2       0.30      0.42      0.35       846\n     Speed 3       0.22      0.16      0.18       622\n     Speed 4       0.38      0.26      0.31       777\n\n    accuracy                           0.28      2931\n   macro avg       0.23      0.23      0.23      2931\nweighted avg       0.28      0.28      0.28      2931\n",
+  "confusion_matrix": [
+    [
+      2,
+      28,
+      26,
+      12,
+      15
+    ],
+    [
+      11,
+      173,
+      241,
+      90,
+      88
+    ],
+    [
+      20,
+      215,
+      354,
+      129,
+      128
+    ],
+    [
+      13,
+      148,
+      258,
+      100,
+      103
+    ],
+    [
+      15,
+      139,
+      291,
+      131,
+      201
+    ]
+  ],
+  "accuracy": 28.32,
+  "qwk": 0.114,
+  "config": "train_baseline",
+  "timestamp": "2026-04-24T06:40:19.180796"
+}

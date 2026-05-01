@@ -4,7 +4,12 @@ defaults:
 
 exp_name: train_cnn_petfinder_001
 seed_value: 42
-max_epochs: 3
+max_epochs: 10
 batch_size: 32
 num_workers: 4
 learning_rate: 0.0003
+use_gradnorm: true
+gradnorm_alpha: 1.5
+gradnorm_lr: 0.01
+freeze_stage1: true
+distributed: false  # false / ddp / fsdp

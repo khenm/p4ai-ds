@@ -1,0 +1,10 @@
+defaults:
+  - dataset@data: petfinder
+  - _self_
+
+exp_name: train_baseline_petfinder_001
+seed_value: 42
+max_epochs: 10
+batch_size: 32
+num_workers: 4
+learning_rate: 0.0003
