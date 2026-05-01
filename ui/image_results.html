@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Results — Image Pipeline · P4AI-DS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        /* ── Page-local overrides ─────────────────────────────── */
+        .sub-tabs {
+            display: flex; gap: 6px;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 30px; padding: 5px;
+            width: fit-content; margin: 0 auto 2rem;
+        }
+        .sub-tab {
+            padding: 7px 22px; border-radius: 24px;
+            font-size: 0.85rem; font-weight: 500;
+            color: var(--text-secondary); text-decoration: none;
+            transition: var(--transition);
+        }
+        .sub-tab:hover { background: var(--surface-warm); color: var(--primary); }
+        .sub-tab.active { background: var(--primary); color: #fff; }
+
+        /* Hero metric cards */
+        .metric-hero { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+        .metric-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 1.25rem 1.5rem;
+            text-align: center; box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+        .metric-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .metric-card .mc-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); margin-bottom: .35rem; }
+        .metric-card .mc-value { font-size: 2rem; font-weight: 700; color: var(--primary); font-family: var(--font-mono); line-height: 1; }
+        .metric-card .mc-sub { font-size: 0.78rem; color: var(--text-secondary); margin-top: .3rem; }
+        .metric-card.best { border-color: var(--accent-green); background: #F0FAF0; }
+        .metric-card.best .mc-value { color: var(--accent-green); }
+
+        /* Model selector tabs */
+        .model-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
+        .model-tab {
+            padding: 6px 18px; border-radius: 20px;
+            font-size: 0.82rem; font-weight: 500; cursor: pointer;
+            border: 1.5px solid var(--border); background: var(--surface);
+            color: var(--text-secondary); transition: var(--transition);
+        }
+        .model-tab:hover { border-color: var(--primary-light); color: var(--primary); }
+        .model-tab.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+        /* Comparison table */
+        .cmp-table { width: 100%; border-collapse: collapse; font-size: 0.87rem; }
+        .cmp-table th {
+            background: var(--surface-warm); padding: 10px 14px;
+            font-weight: 600; text-align: left; font-size: 0.78rem;
+            text-transform: uppercase; letter-spacing: .05em; color: var(--text-secondary);
+            border-bottom: 2px solid var(--border);
+        }
+        .cmp-table td { padding: 10px 14px; border-bottom: 1px solid var(--border-light); }
+        .cmp-table tr:hover td { background: var(--surface-warm); }
+        .cmp-table tr:last-child td { border-bottom: none; }
+        .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+        .badge-cnn { background: var(--card-sky); color: var(--accent-blue); }
+        .badge-gbm { background: var(--card-mint); color: var(--accent-green); }
+        .badge-best { background: var(--card-mint); color: var(--accent-green); }
+        .rank-1 { color: #C9A227; font-weight: 700; }
+        .rank-2 { color: #9E9E9E; font-weight: 600; }
+        .rank-3 { color: #A0522D; font-weight: 600; }
+
+        /* Feature accuracy table */
+        .feat-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        .feat-table th {
+            background: var(--surface-warm); padding: 9px 12px;
+            font-weight: 600; font-size: 0.76rem; text-transform: uppercase;
+            letter-spacing: .05em; color: var(--text-secondary);
+            border-bottom: 2px solid var(--border); text-align: center;
+        }
+        .feat-table th:first-child { text-align: left; }
+        .feat-table td { padding: 9px 12px; border-bottom: 1px solid var(--border-light); text-align: center; }
+        .feat-table td:first-child { text-align: left; font-weight: 500; }
+        .feat-table tr:hover td { background: var(--surface-warm); }
+        .heat-high { background: #D4EDDA; color: #155724; font-weight: 600; border-radius: 6px; }
+        .heat-mid  { background: #FFF3CD; color: #856404; border-radius: 6px; }
+        .heat-low  { background: #F8D7DA; color: #721C24; border-radius: 6px; }
+        .best-cell { outline: 2px solid var(--accent-green); border-radius: 6px; }
+
+        /* Ablation table */
+        .abl-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+        .abl-table th {
+            background: var(--surface-warm); padding: 9px 14px;
+            font-weight: 600; font-size: 0.76rem; text-transform: uppercase;
+            letter-spacing: .05em; color: var(--text-secondary);
+            border-bottom: 2px solid var(--border);
+        }
+        .abl-table td { padding: 9px 14px; border-bottom: 1px solid var(--border-light); }
+        .abl-table tr:hover td { background: var(--surface-warm); }
+        .tag-group {
+            display: inline-flex; gap: 4px; flex-wrap: wrap;
+        }
+        .tag {
+            display: inline-block; padding: 2px 8px; border-radius: 10px;
+            font-size: 0.72rem; font-weight: 600;
+            background: var(--card-lavender); color: #4a3f8a;
+        }
+        .tag.tag-image { background: var(--card-sky); color: #1a4a7a; }
+        .delta-neg { color: #B94A48; font-weight: 600; font-family: var(--font-mono); }
+        .delta-pos { color: var(--accent-green); font-weight: 600; font-family: var(--font-mono); }
+        .delta-neu { color: var(--text-secondary); font-family: var(--font-mono); }
+
+        /* Conclusion winner cards */
+        .winner-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        .winner-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 1.4rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .winner-card .wc-crown { margin-bottom: .6rem; line-height: 1; }
+        .winner-card .wc-cat { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--text-muted); margin-bottom: .3rem; }
+        .winner-card .wc-model { font-size: 1.05rem; font-weight: 700; color: var(--text); margin-bottom: .4rem; }
+        .winner-card .wc-metric { font-size: 0.82rem; color: var(--text-secondary); }
+        .winner-card .wc-metric span { font-family: var(--font-mono); font-weight: 600; color: var(--primary); }
+        .winner-card.gold { border-color: #C9A227; background: #FFFBF0; }
+        .winner-card.silver { border-color: #9E9E9E; background: #FAFAFA; }
+        .winner-card.insight { border-color: var(--accent-blue); background: var(--card-sky); }
+
+        .charts-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .chart-box { min-height: 340px; }
+        @media (max-width: 768px) {
+            .metric-hero { grid-template-columns: repeat(2, 1fr); }
+            .charts-2col { grid-template-columns: 1fr; }
+            .winner-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="site-nav"><div class="nav-inner">
+    <a href="index.html" class="nav-brand"><i class="fa-solid fa-flask"></i> P4AI-DS</a>
+    <div class="nav-links">
+        <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="salary_dashboard.html"><i class="fa-solid fa-table"></i> Tabular</a>
+        <a href="text.html"><i class="fa-solid fa-font"></i> Text</a>
+        <a href="image.html" class="active"><i class="fa-solid fa-microscope"></i> Image</a>
+    </div>
+</div></nav>
+
+<div class="page-container">
+    <section class="hero">
+        <h1>ML Training Results</h1>
+        <p>PetFinder AdoptionSpeed prediction — comparing Baseline ResNet, Two-Stage ResNet, and LightGBM pipeline across accuracy, QWK, feature attribution, and ablation.</p>
+    </section>
+
+    <!-- Sub-tabs: EDA / Results -->
+    <div class="sub-tabs">
+        <a href="image.html" class="sub-tab"><i class="fa-solid fa-chart-area"></i> EDA</a>
+        <a href="image_results.html" class="sub-tab active"><i class="fa-solid fa-trophy"></i> Results</a>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- S1: Model Leaderboard                                  -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="eda-section" id="section-leaderboard">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-ranking-star"></i> Preliminary Results — Model Leaderboard</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+
+            <div class="metric-hero">
+                <div class="metric-card">
+                    <div class="mc-label">Best Accuracy</div>
+                    <div class="mc-value">36.3%</div>
+                    <div class="mc-sub">LightGBM Pipeline</div>
+                </div>
+                <div class="metric-card best">
+                    <div class="mc-label">Best QWK</div>
+                    <div class="mc-value">0.2616</div>
+                    <div class="mc-sub">LightGBM Pipeline</div>
+                </div>
+                <div class="metric-card">
+                    <div class="mc-label">Models Evaluated</div>
+                    <div class="mc-value">4</div>
+                    <div class="mc-sub">Baseline · 2×ResNet · LightGBM</div>
+                </div>
+                <div class="metric-card">
+                    <div class="mc-label">Val Set Size</div>
+                    <div class="mc-value">2 931</div>
+                    <div class="mc-sub">20% stratified split</div>
+                </div>
+            </div>
+
+            <!-- Comparison table -->
+            <div class="data-table-wrap" style="margin-bottom:1.5rem;">
+                <table class="cmp-table">
+                    <thead><tr>
+                        <th>Rank</th><th>Model</th><th>Type</th>
+                        <th>Val Accuracy</th><th>QWK</th><th>Notes</th>
+                    </tr></thead>
+                    <tbody id="leaderboard-tbody"></tbody>
+                </table>
+            </div>
+
+            <!-- Charts row -->
+            <div class="charts-2col">
+                <div class="chart-container">
+                    <div class="chart-box" id="chart-model-acc"></div>
+                    <p class="chart-description">Validation accuracy and QWK for each model. LightGBM leads both metrics.</p>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-box" id="chart-model-radar"></div>
+                    <p class="chart-description">Multi-axis comparison scaled 0–1. Accuracy (×100), QWK (×10 for visibility).</p>
+                </div>
+            </div>
+
+            <div class="insight-box">
+                <h4><i class="fa-solid fa-lightbulb"></i> Key Findings</h4>
+                <ul>
+                    <li>LightGBM outperforms all ResNet variants on both accuracy (+0.9 pp over best ResNet) and QWK (+0.019).</li>
+                    <li>TwoStage ResNet + GradNorm (35.4%, QWK 0.243) now slightly beats the No-Norm variant (34.66%, QWK 0.2148), suggesting GradNorm converged well.</li>
+                    <li>Baseline ResNet (image-only, 28.32%, QWK 0.114) confirms that visual features alone are insufficient — multi-task pre-training and tabular integration are essential.</li>
+                    <li>All models struggle with Speed 0 (same-day adoptions) — a highly imbalanced class with only 83 val samples.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- S2: Confusion Matrix                                   -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="eda-section" id="section-cm">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-border-all"></i> Confusion Matrix — AdoptionSpeed</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="model-tabs" id="cm-model-tabs"></div>
+            <div class="charts-2col">
+                <div class="chart-container">
+                    <div class="chart-box" id="chart-cm-raw"></div>
+                    <p class="chart-description">Raw prediction counts per (true class, predicted class).</p>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-box" id="chart-cm-norm"></div>
+                    <p class="chart-description">Row-normalised recall matrix — each row sums to 1.0. Diagonal = per-class recall.</p>
+                </div>
+            </div>
+            <div class="insight-box">
+                <h4><i class="fa-solid fa-lightbulb"></i> Pattern Analysis</h4>
+                <ul>
+                    <li><strong>Speed 4 (No adoption)</strong> has the highest recall across all models — the most common and distinct class.</li>
+                    <li><strong>Speed 0 (Same day)</strong> is systematically misclassified as Speed 2 or Speed 4 by ResNet models. LightGBM handles it marginally better.</li>
+                    <li>ResNet models collapse most predictions into Speed 2 and Speed 4, missing Speed 3 almost entirely.</li>
+                    <li>LightGBM distributes predictions more evenly across classes, explaining the higher QWK.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- S3: Stage 1 Feature Prediction                         -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="eda-section" id="section-stage1">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-layer-group"></i> Stage 1 — Feature Prediction Accuracy</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <p style="margin-bottom:1rem;color:var(--text-secondary);font-size:.9rem;">
+                Stage 1 trains each model to predict tabular attributes from the image alone. High accuracy means the visual signal contains enough information to infer the attribute.
+            </p>
+
+            <!-- Feature accuracy table -->
+            <div class="data-table-wrap" style="margin-bottom:1.5rem;">
+                <table class="feat-table" id="feat-acc-table">
+                    <thead><tr>
+                        <th>Feature</th>
+                        <th># Classes</th>
+                        <th>ResNet (No Norm)</th>
+                        <th>ResNet (GradNorm)</th>
+                        <th>LightGBM</th>
+                        <th>Best</th>
+                    </tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <!-- Feature accuracy bar chart -->
+            <div class="chart-box" id="chart-feat-acc" style="min-height:420px;"></div>
+            <p class="chart-description" style="margin-top:.5rem;">Per-feature validation accuracy across three Stage-1 configurations. Features with >90% accuracy (Type, Health) are easily inferred from images; Breed1 and Gender are hardest.</p>
+
+            <div class="insight-box" style="margin-top:1rem;">
+                <h4><i class="fa-solid fa-lightbulb"></i> Insights</h4>
+                <ul>
+                    <li><strong>Type</strong> (Dog/Cat) and <strong>Health</strong> are visually obvious — all models exceed 95%.</li>
+                    <li><strong>Breed1</strong> is the hardest attribute. ResNet models (~60–61%) are nearly 2× better than LightGBM (31%), likely because the ResNet learns breed-specific visual features during multi-task training.</li>
+                    <li><strong>Gender</strong> is the weakest non-breed feature. GradNorm ResNet (47.7%) outperforms No-Norm (50.8%) here, showing adaptive weighting helps the hardest head.</li>
+                    <li>LightGBM leads on 7 of 10 features despite using only a 512-dim linear embedding — no fine-grained visual feature learning.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- S4: Ablation Analysis                                  -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="eda-section" id="section-ablation">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-flask-vial"></i> Ablation Analysis — Feature Group Importance</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <p style="margin-bottom:1rem;color:var(--text-secondary);font-size:.9rem;">
+                Combinatorial ablation on the LightGBM Stage-2 classifier (298 subsets, max combo size 3). Each group is zeroed out; ΔQWK measures the impact relative to the full baseline (QWK = 0.2616).
+            </p>
+
+            <!-- Single-feature importance -->
+            <h3 class="section-title-inline"><i class="fa-solid fa-list-ol"></i> Single-Feature QWK Impact</h3>
+            <div class="charts-2col" style="margin-bottom:1.5rem;">
+                <div class="chart-container">
+                    <div class="chart-box" id="chart-abl-single"></div>
+                    <p class="chart-description">ΔQWK when each feature group is individually zeroed. Negative = harmful to remove; positive = redundant.</p>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-box" id="chart-abl-scatter"></div>
+                    <p class="chart-description">All 298 ablation combinations plotted by combo size. Each point is one subset; colour encodes ΔQWK magnitude.</p>
+                </div>
+            </div>
+
+            <!-- Worst combos table -->
+            <h3 class="section-title-inline"><i class="fa-solid fa-skull"></i> Most Harmful Combinations (Worst 5)</h3>
+            <div class="data-table-wrap" style="margin-bottom:1.5rem;">
+                <table class="abl-table" id="abl-worst-table">
+                    <thead><tr><th>Features Ablated</th><th>n</th><th>Accuracy</th><th>QWK</th><th>ΔACC</th><th>ΔQWK</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <!-- Best combos table -->
+            <h3 class="section-title-inline"><i class="fa-solid fa-feather"></i> Most Redundant Combinations (Best 5 — removing helps or barely hurts)</h3>
+            <div class="data-table-wrap" style="margin-bottom:1rem;">
+                <table class="abl-table" id="abl-best-table">
+                    <thead><tr><th>Features Ablated</th><th>n</th><th>Accuracy</th><th>QWK</th><th>ΔACC</th><th>ΔQWK</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="insight-box">
+                <h4><i class="fa-solid fa-lightbulb"></i> Ablation Insights</h4>
+                <ul>
+                    <li><strong>Image embeddings are by far the most critical feature</strong> — removing them alone drops QWK by 0.26 (to near-random, ≈ −0.001).</li>
+                    <li><strong>Sterilized</strong> is the most informative tabular head (ΔQWK = −0.074 when removed), more than PhotoAmt (−0.027).</li>
+                    <li><strong>Color1</strong> is the most redundant feature — removing it actually slightly <em>improves</em> QWK (+0.025), suggesting it adds noise rather than signal.</li>
+                    <li><strong>Gender + Color1</strong> together improve QWK by +0.033 when removed, making them a clean candidate for pruning in the next experiment.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- S5: Conclusion — Best Model Per Category              -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="eda-section" id="section-conclusion">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-award"></i> Conclusion — Best Model by Category</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="winner-grid" style="margin-bottom:1.5rem;">
+                <div class="winner-card gold">
+                    <div class="wc-crown"><i class="fa-solid fa-trophy" style="color:#C9A227;font-size:1.6rem;"></i></div>
+                    <div class="wc-cat">Best Overall</div>
+                    <div class="wc-model">LightGBM Pipeline</div>
+                    <div class="wc-metric">Accuracy <span>36.3%</span> · QWK <span>0.2616</span></div>
+                </div>
+                <div class="winner-card silver">
+                    <div class="wc-crown"><i class="fa-solid fa-medal" style="color:#9E9E9E;font-size:1.6rem;"></i></div>
+                    <div class="wc-cat">Best ResNet</div>
+                    <div class="wc-model">TwoStage ResNet + GradNorm</div>
+                    <div class="wc-metric">Accuracy <span>35.4%</span> · QWK <span>0.243</span></div>
+                </div>
+                <div class="winner-card silver">
+                    <div class="wc-crown"><i class="fa-solid fa-award" style="color:#A0522D;font-size:1.6rem;"></i></div>
+                    <div class="wc-cat">Best No-Norm ResNet</div>
+                    <div class="wc-model">TwoStage ResNet (No Norm)</div>
+                    <div class="wc-metric">Accuracy <span>34.66%</span> · QWK <span>0.2148</span></div>
+                </div>
+                <div class="winner-card insight">
+                    <div class="wc-crown"><i class="fa-solid fa-microscope" style="color:var(--accent-blue);font-size:1.6rem;"></i></div>
+                    <div class="wc-cat">Best Breed Prediction (Stage 1)</div>
+                    <div class="wc-model">TwoStage ResNet (either variant)</div>
+                    <div class="wc-metric">Breed1 Accuracy <span>~60–61%</span> vs LightGBM <span>31%</span></div>
+                </div>
+                <div class="winner-card insight">
+                    <div class="wc-crown"><i class="fa-solid fa-bolt" style="color:var(--accent-amber);font-size:1.6rem;"></i></div>
+                    <div class="wc-cat">Most Critical Feature</div>
+                    <div class="wc-model">Image Embeddings</div>
+                    <div class="wc-metric">Removing drops QWK by <span>−0.262</span> to near-random</div>
+                </div>
+                <div class="winner-card insight">
+                    <div class="wc-crown"><i class="fa-solid fa-scissors" style="color:var(--accent-rose);font-size:1.6rem;"></i></div>
+                    <div class="wc-cat">Recommended Prune</div>
+                    <div class="wc-model">Color1 + Gender heads</div>
+                    <div class="wc-metric">Removing improves QWK by <span>+0.033</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- S6: Supplementary — Experiment Setup                   -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="eda-section" id="section-setup">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-gear"></i> Supplementary — Experiment Setup</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-right"></i></span>
+        </div>
+        <div class="section-body" style="display:none;">
+
+            <!-- Dataset -->
+            <h3 class="section-title-inline"><i class="fa-solid fa-database"></i> Dataset</h3>
+            <div class="data-table-wrap" style="margin-bottom:1.5rem;">
+                <table class="feat-table">
+                    <thead><tr>
+                        <th style="text-align:left;">Property</th>
+                        <th style="text-align:left;">Value</th>
+                    </tr></thead>
+                    <tbody>
+                        <tr><td>Source</td><td>PetFinder.my Adoption Prediction (Kaggle)</td></tr>
+                        <tr><td>Target</td><td>AdoptionSpeed (5 ordinal classes: 0 = same day → 4 = no adoption)</td></tr>
+                        <tr><td>Image size</td><td>224 × 224 px (ResNet standard)</td></tr>
+                        <tr><td>Train / Val split</td><td>80 / 20 stratified by AdoptionSpeed · Seed 42</td></tr>
+                        <tr><td>Val set size</td><td>2 931 – 2 932 samples</td></tr>
+                        <tr><td>Class imbalance</td><td>Speed 0: 83 · Speed 1: 603 · Speed 2: 846 · Speed 3: 622 · Speed 4: 777</td></tr>
+                        <tr><td>Image filter</td><td>Only pets with a primary photo (<code>{PetID}-1.jpg</code>) are included</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Architecture cards -->
+            <h3 class="section-title-inline"><i class="fa-solid fa-diagram-project"></i> Model Architectures</h3>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;">
+
+                <div class="metric-card" style="text-align:left;padding:1.2rem;">
+                    <div class="mc-label" style="margin-bottom:.5rem;"><i class="fa-solid fa-image" style="margin-right:4px;"></i> Baseline ResNet</div>
+                    <ul style="margin:0;padding-left:1.1rem;font-size:.82rem;color:var(--text-secondary);line-height:1.7;">
+                        <li>ResNet18 backbone (ImageNet pretrained)</li>
+                        <li>Single head: Linear(512, 5) → AdoptionSpeed</li>
+                        <li>No multi-task pre-training</li>
+                        <li>Cross-entropy loss</li>
+                    </ul>
+                </div>
+
+                <div class="metric-card" style="text-align:left;padding:1.2rem;">
+                    <div class="mc-label" style="margin-bottom:.5rem;"><i class="fa-solid fa-layer-group" style="margin-right:4px;"></i> TwoStage ResNet</div>
+                    <ul style="margin:0;padding-left:1.1rem;font-size:.82rem;color:var(--text-secondary);line-height:1.7;">
+                        <li>ResNet18 backbone (shared)</li>
+                        <li><strong>Stage 1</strong>: 10 attribute heads (Type → Color1) — trained jointly with GradNorm</li>
+                        <li><strong>Stage 2</strong>: Linear(859, 5) — backbone frozen; input = 512-dim features ∥ 347-dim Stage-1 logits</li>
+                        <li>No-Norm variant uses equal loss weights</li>
+                    </ul>
+                </div>
+
+                <div class="metric-card" style="text-align:left;padding:1.2rem;">
+                    <div class="mc-label" style="margin-bottom:.5rem;"><i class="fa-solid fa-tree" style="margin-right:4px;"></i> LightGBM Pipeline</div>
+                    <ul style="margin:0;padding-left:1.1rem;font-size:.82rem;color:var(--text-secondary);line-height:1.7;">
+                        <li>ResNet18 feature extractor (frozen)</li>
+                        <li><strong>Stage 1</strong>: 10 independent LGBMClassifiers (one per tabular attribute)</li>
+                        <li><strong>Stage 2</strong>: LGBMClassifier on 860-dim vector (512 img ∥ 347 logits ∥ 1 PhotoAmt)</li>
+                        <li>Device: GPU (OpenCL) when available</li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Feature vector breakdown -->
+            <h3 class="section-title-inline"><i class="fa-solid fa-vector-square"></i> Stage-2 Feature Vector (LightGBM)</h3>
+            <div class="data-table-wrap" style="margin-bottom:1.5rem;">
+                <table class="feat-table">
+                    <thead><tr>
+                        <th>Component</th><th>Source</th><th>Dims</th><th>Cumulative</th>
+                    </tr></thead>
+                    <tbody>
+                        <tr><td>Image embedding</td><td>ResNet18 backbone (avgpool output)</td><td style="font-family:var(--font-mono);text-align:center;">512</td><td style="font-family:var(--font-mono);text-align:center;">512</td></tr>
+                        <tr><td>Type logits</td><td>Stage-1 LightGBM</td><td style="font-family:var(--font-mono);text-align:center;">2</td><td style="font-family:var(--font-mono);text-align:center;">514</td></tr>
+                        <tr><td>FurLength logits</td><td>Stage-1 LightGBM</td><td style="font-family:var(--font-mono);text-align:center;">4</td><td style="font-family:var(--font-mono);text-align:center;">518</td></tr>
+                        <tr><td>MaturitySize logits</td><td>Stage-1 LightGBM</td><td style="font-family:var(--font-mono);text-align:center;">5</td><td style="font-family:var(--font-mono);text-align:center;">523</td></tr>
+                        <tr><td>Breed1 logits</td><td>Stage-1 LightGBM</td><td style="font-family:var(--font-mono);text-align:center;">308</td><td style="font-family:var(--font-mono);text-align:center;">831</td></tr>
+                        <tr><td>Health / Vaccinated / Dewormed / Sterilized / Gender logits</td><td>Stage-1 LightGBM (×5 heads, 4 classes each)</td><td style="font-family:var(--font-mono);text-align:center;">20</td><td style="font-family:var(--font-mono);text-align:center;">851</td></tr>
+                        <tr><td>Color1 logits</td><td>Stage-1 LightGBM</td><td style="font-family:var(--font-mono);text-align:center;">8</td><td style="font-family:var(--font-mono);text-align:center;">859</td></tr>
+                        <tr><td>PhotoAmt</td><td>Raw tabular column</td><td style="font-family:var(--font-mono);text-align:center;">1</td><td style="font-family:var(--font-mono);text-align:center;font-weight:700;">860</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Hyperparameters -->
+            <h3 class="section-title-inline"><i class="fa-solid fa-sliders"></i> Training Hyperparameters</h3>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;">
+
+                <div class="data-table-wrap">
+                    <p style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:.5rem;">ResNet (both variants)</p>
+                    <table class="feat-table">
+                        <tbody>
+                            <tr><td>Epochs</td><td style="font-family:var(--font-mono);text-align:right;">10</td></tr>
+                            <tr><td>Batch size</td><td style="font-family:var(--font-mono);text-align:right;">32</td></tr>
+                            <tr><td>Optimizer</td><td style="font-family:var(--font-mono);text-align:right;">Adam · lr = 3×10⁻⁴</td></tr>
+                            <tr><td>GradNorm α</td><td style="font-family:var(--font-mono);text-align:right;">1.5</td></tr>
+                            <tr><td>GradNorm lr</td><td style="font-family:var(--font-mono);text-align:right;">0.01</td></tr>
+                            <tr><td>Stage-2 backbone</td><td style="font-family:var(--font-mono);text-align:right;">frozen</td></tr>
+                            <tr><td>Distributed</td><td style="font-family:var(--font-mono);text-align:right;">DDP</td></tr>
+                            <tr><td>Random seed</td><td style="font-family:var(--font-mono);text-align:right;">42</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="data-table-wrap">
+                    <p style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:.5rem;">LightGBM</p>
+                    <table class="feat-table">
+                        <tbody>
+                            <tr><td>Stage-1 estimators</td><td style="font-family:var(--font-mono);text-align:right;">10 (one per attribute)</td></tr>
+                            <tr><td>Stage-2 estimator</td><td style="font-family:var(--font-mono);text-align:right;">LGBMClassifier</td></tr>
+                            <tr><td>ResNet batch size</td><td style="font-family:var(--font-mono);text-align:right;">64</td></tr>
+                            <tr><td>Device</td><td style="font-family:var(--font-mono);text-align:right;">GPU (OpenCL) / CPU</td></tr>
+                            <tr><td>Objective</td><td style="font-family:var(--font-mono);text-align:right;">multiclass</td></tr>
+                            <tr><td>Random seed</td><td style="font-family:var(--font-mono);text-align:right;">42</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Evaluation -->
+            <h3 class="section-title-inline"><i class="fa-solid fa-ruler"></i> Evaluation Metrics</h3>
+            <div class="data-table-wrap" style="margin-bottom:1rem;">
+                <table class="feat-table">
+                    <thead><tr><th>Metric</th><th>Formula</th><th>Why used</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Accuracy</strong></td>
+                            <td style="font-family:var(--font-mono);">correct / total</td>
+                            <td style="font-size:.82rem;color:var(--text-secondary);">Baseline correctness; easy to interpret</td>
+                        </tr>
+                        <tr>
+                            <td><strong>QWK</strong> (Quadratic Weighted Kappa)</td>
+                            <td style="font-family:var(--font-mono);">Cohen's κ, quadratic weights</td>
+                            <td style="font-size:.82rem;color:var(--text-secondary);">Official Kaggle metric; penalises large ordinal errors more than small ones</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Confusion Matrix</strong></td>
+                            <td style="font-family:var(--font-mono);">raw + row-normalised</td>
+                            <td style="font-size:.82rem;color:var(--text-secondary);">Per-class recall and systematic bias analysis</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div><!-- .page-container -->
+
+<script>
+/* ── Data ────────────────────────────────────────────────── */
+const SPEED_LABELS = ['Speed 0\n(Same day)', 'Speed 1\n(1–7d)', 'Speed 2\n(8–30d)', 'Speed 3\n(31–90d)', 'Speed 4\n(No adopt)'];
+const SPEED_SHORT  = ['Speed 0', 'Speed 1', 'Speed 2', 'Speed 3', 'Speed 4'];
+
+const MODELS = [
+    { id:'baseline',     name:'Baseline ResNet',         type:'CNN', acc:28.32, qwk:0.114,
+      cm:[[2,28,26,12,15],[11,173,241,90,88],[20,215,354,129,128],[13,148,258,100,103],[15,139,291,131,201]],
+      notes:'Single-head ResNet18, direct AdoptionSpeed classification' },
+    { id:'cnn_no_norm',  name:'TwoStage ResNet (No Norm)', type:'CNN', acc:34.66, qwk:0.2148,
+      cm:[[0,17,38,1,27],[0,81,325,2,195],[0,104,464,9,269],[0,43,311,7,261],[0,45,264,4,464]],
+      notes:'Multi-task Stage 1 (equal loss weights), frozen Stage 2' },
+    { id:'cnn_norm',     name:'TwoStage ResNet + GradNorm', type:'CNN', acc:35.4,  qwk:0.243,
+      cm:[[0,27,39,1,16],[0,110,356,19,118],[0,108,526,31,182],[0,55,355,33,179],[0,55,337,16,369]],
+      notes:'Multi-task Stage 1 with GradNorm adaptive loss weighting' },
+    { id:'lgbm',         name:'LightGBM Pipeline',       type:'GBM', acc:36.3,  qwk:0.2616,
+      cm:[[1,25,27,4,24],[1,123,225,64,175],[0,124,305,91,284],[0,60,216,115,265],[0,63,156,63,520]],
+      notes:'ResNet embeddings + 10 Stage-1 LightGBM logits + PhotoAmt → LightGBM Stage 2' },
+];
+
+const FEATURES = ['Type','FurLength','MaturitySize','Breed1','Health','Vaccinated','Dewormed','Sterilized','Gender','Color1'];
+const FEAT_CLASSES = [2, 4, 5, 308, 4, 4, 4, 4, 4, 8];
+const STAGE1_ACC = {
+    cnn_no_norm: [96.25, 56.81, 62.67, 59.77, 96.11, 53.77, 54.66, 63.02, 50.77, 58.31],
+    cnn_norm:    [96.35, 59.65, 63.71, 61.02, 95.98, 57.74, 56.92, 67.02, 47.71, 56.45],
+    lgbm:        [96.52, 63.80, 68.78, 31.15, 96.55, 60.87, 59.88, 69.50, 52.03, 64.45],
+};
+
+const SINGLE_ABL = [
+    { group:'image',       dqwk:-0.2624, dacc:-0.3309 },
+    { group:'Sterilized',  dqwk:-0.0736, dacc:-0.0177 },
+    { group:'PhotoAmt',    dqwk:-0.0268, dacc:-0.0102 },
+    { group:'Type',        dqwk:-0.0075, dacc:-0.0014 },
+    { group:'MaturitySize',dqwk:-0.0059, dacc:-0.0092 },
+    { group:'FurLength',   dqwk:-0.0058, dacc: 0.0031 },
+    { group:'Breed1',      dqwk: 0.0004, dacc: 0.0003 },
+    { group:'Health',      dqwk: 0.0033, dacc: 0.0065 },
+    { group:'Vaccinated',  dqwk: 0.0042, dacc: 0.0007 },
+    { group:'Gender',      dqwk: 0.0058, dacc: 0.0020 },
+    { group:'Dewormed',    dqwk: 0.0071, dacc:-0.0096 },
+    { group:'Color1',      dqwk: 0.0245, dacc:-0.0024 },
+];
+
+const ABL_WORST = [
+    { ablated:['image','Gender','Color1'],       n:3, acc:0.0454, qwk:-0.0074, da:-0.3176, dq:-0.2690 },
+    { ablated:['image','Sterilized','Color1'],   n:3, acc:0.0525, qwk:-0.0056, da:-0.3105, dq:-0.2672 },
+    { ablated:['image','Health','Color1'],       n:3, acc:0.0413, qwk:-0.0052, da:-0.3217, dq:-0.2668 },
+    { ablated:['image','MaturitySize','Color1'], n:3, acc:0.0399, qwk:-0.0046, da:-0.3231, dq:-0.2662 },
+    { ablated:['image','MaturitySize','Gender'], n:3, acc:0.0430, qwk:-0.0045, da:-0.3200, dq:-0.2660 },
+];
+const ABL_BEST = [
+    { ablated:['Color1'],                      n:1, acc:0.3606, qwk:0.2861, da:-0.0024, dq: 0.0245 },
+    { ablated:['Health','Gender','Color1'],    n:3, acc:0.3617, qwk:0.2897, da:-0.0014, dq: 0.0281 },
+    { ablated:['Dewormed','Gender','Color1'],  n:3, acc:0.3490, qwk:0.2900, da:-0.0140, dq: 0.0285 },
+    { ablated:['Gender','Color1'],             n:2, acc:0.3623, qwk:0.2944, da:-0.0007, dq: 0.0328 },
+    { ablated:['Breed1','Gender','Color1'],    n:3, acc:0.3623, qwk:0.2944, da:-0.0007, dq: 0.0328 },
+];
+
+/* ── Helpers ─────────────────────────────────────────────── */
+const PASTEL = ['#DDE9F6','#D9F0E3','#FAE8D4','#E5E0F5','#F8E4E4','#FFF5E6'];
+const PLY_CFG = { responsive:true, displayModeBar:false };
+function normRow(cm) {
+    return cm.map(row => { const s = row.reduce((a,b)=>a+b,0); return row.map(v => s ? +(v/s).toFixed(3) : 0); });
+}
+function heatColor(v, lo=50, hi=98) {
+    if (v >= hi - (hi-lo)*0.15) return 'heat-high';
+    if (v <= lo + (hi-lo)*0.3)  return 'heat-low';
+    return 'heat-mid';
+}
+function deltaSpan(v, decimals=4) {
+    const s = (v > 0 ? '+' : '') + v.toFixed(decimals);
+    const cls = v < -0.001 ? 'delta-neg' : v > 0.001 ? 'delta-pos' : 'delta-neu';
+    return `<span class="${cls}">${s}</span>`;
+}
+function tagHtml(groups) {
+    return `<span class="tag-group">${groups.map(g => `<span class="tag${g==='image'?' tag-image':''}">${g}</span>`).join('')}</span>`;
+}
+
+/* ── Section 1: Leaderboard ──────────────────────────────── */
+function buildLeaderboard() {
+    const sorted = [...MODELS].sort((a,b) => b.qwk - a.qwk);
+    const ranks = ['rank-1','rank-2','rank-3',''];
+    const medals = ['🥇','🥈','🥉',''];
+    const tbody = document.getElementById('leaderboard-tbody');
+    sorted.forEach((m, i) => {
+        const isBest = i === 0;
+        tbody.innerHTML += `<tr>
+            <td class="${ranks[i]}">${medals[i]} ${i+1}</td>
+            <td><strong>${m.name}</strong></td>
+            <td><span class="badge badge-${m.type.toLowerCase()}">${m.type}</span></td>
+            <td>${isBest ? `<strong class="rank-1">${m.acc}%</strong>` : m.acc+'%'}</td>
+            <td>${isBest ? `<strong class="rank-1">${m.qwk}</strong>` : m.qwk}${isBest ? ' <span class="badge badge-best">BEST</span>' : ''}</td>
+            <td style="font-size:.8rem;color:var(--text-secondary)">${m.notes}</td>
+        </tr>`;
+    });
+
+    // Bar chart: Acc + QWK grouped
+    const names = MODELS.map(m => m.name.replace(' Pipeline','').replace('TwoStage ','2S-'));
+    Plotly.newPlot('chart-model-acc', [
+        { name:'Val Accuracy (%)', x:names, y:MODELS.map(m=>m.acc), type:'bar',
+          marker:{color:['#DDE9F6','#D9F0E3','#FAE8D4','#C9A227']}, text:MODELS.map(m=>m.acc+'%'), textposition:'outside' },
+        { name:'QWK (×100)', x:names, y:MODELS.map(m=>+(m.qwk*100).toFixed(1)), type:'bar',
+          marker:{color:['#B8CFE8','#A8D4BC','#C9B090','#8A6E18']}, text:MODELS.map(m=>m.qwk), textposition:'outside' },
+    ], {
+        barmode:'group', height:320, margin:{t:20,b:80,l:50,r:20},
+        paper_bgcolor:'transparent', plot_bgcolor:'transparent',
+        font:{family:'Inter',size:11}, yaxis:{title:'Value'},
+        legend:{orientation:'h',y:-0.3},
+        xaxis:{tickangle:-15}
+    }, PLY_CFG);
+
+    // Radar / polar chart
+    const cats = ['Accuracy (norm)','QWK (norm)','Stage1 Avg Acc (norm)'];
+    const maxAcc = Math.max(...MODELS.map(m=>m.acc));
+    const maxQwk = Math.max(...MODELS.map(m=>m.qwk));
+    const s1Avg = { baseline:null, cnn_no_norm: (STAGE1_ACC.cnn_no_norm.reduce((a,b)=>a+b)/10)/100,
+                    cnn_norm: (STAGE1_ACC.cnn_norm.reduce((a,b)=>a+b)/10)/100,
+                    lgbm: (STAGE1_ACC.lgbm.reduce((a,b)=>a+b)/10)/100 };
+    const maxS1 = Math.max(...Object.values(s1Avg).filter(Boolean));
+    const colors = ['#B8CFE8','#A8D4BC','#C9B090','#C9A227'];
+    const radarTraces = MODELS.map((m,i) => ({
+        type:'scatterpolar', name:m.name.replace(' Pipeline',''),
+        r:[m.acc/maxAcc, m.qwk/maxQwk, s1Avg[m.id] ? s1Avg[m.id]/maxS1 : 0],
+        theta:cats, fill:'toself',
+        line:{color:colors[i]}, fillcolor:colors[i]+'55'
+    }));
+    Plotly.newPlot('chart-model-radar', radarTraces, {
+        height:320, margin:{t:20,b:20,l:30,r:30},
+        paper_bgcolor:'transparent',
+        polar:{radialaxis:{visible:true,range:[0,1]}},
+        legend:{orientation:'h',y:-0.15},
+        font:{family:'Inter',size:11}
+    }, PLY_CFG);
+}
+
+/* ── Section 2: Confusion Matrix ─────────────────────────── */
+let activeCMModel = 'lgbm';
+function buildCMTabs() {
+    const wrap = document.getElementById('cm-model-tabs');
+    MODELS.forEach(m => {
+        const btn = document.createElement('button');
+        btn.className = 'model-tab' + (m.id === activeCMModel ? ' active' : '');
+        btn.textContent = m.name;
+        btn.onclick = () => { activeCMModel = m.id; document.querySelectorAll('#cm-model-tabs .model-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderCM(); };
+        wrap.appendChild(btn);
+    });
+}
+function renderCM() {
+    const m = MODELS.find(x => x.id === activeCMModel);
+    const cm = m.cm;
+    const norm = normRow(cm);
+    const commonLayout = {
+        height:330, margin:{t:30,b:60,l:70,r:20},
+        paper_bgcolor:'transparent', plot_bgcolor:'transparent',
+        font:{family:'Inter',size:11},
+        xaxis:{title:'Predicted', tickvals:[0,1,2,3,4], ticktext:SPEED_SHORT},
+        yaxis:{title:'True', tickvals:[0,1,2,3,4], ticktext:SPEED_SHORT, autorange:'reversed'},
+    };
+    Plotly.newPlot('chart-cm-raw', [{
+        z: cm, type:'heatmap', colorscale:'Blues',
+        text: cm.map(r=>r.map(String)), texttemplate:'%{text}',
+        textfont:{size:13}, hovertemplate:'True: %{y}<br>Pred: %{x}<br>Count: %{z}<extra></extra>'
+    }], {...commonLayout, title:{text:`${m.name} — Raw Counts`,font:{size:13}}}, PLY_CFG);
+
+    Plotly.newPlot('chart-cm-norm', [{
+        z: norm, type:'heatmap', colorscale:'RdYlGn', zmin:0, zmax:1,
+        text: norm.map(r=>r.map(v=>(v*100).toFixed(1)+'%')), texttemplate:'%{text}',
+        textfont:{size:12}, hovertemplate:'True: %{y}<br>Pred: %{x}<br>Recall: %{z:.3f}<extra></extra>'
+    }], {...commonLayout, title:{text:`${m.name} — Normalised (Recall)`,font:{size:13}}}, PLY_CFG);
+}
+
+/* ── Section 3: Stage 1 Feature Table + Chart ────────────── */
+function buildStage1() {
+    const tbody = document.querySelector('#feat-acc-table tbody');
+    FEATURES.forEach((feat, i) => {
+        const vals = {
+            cnn_no_norm: STAGE1_ACC.cnn_no_norm[i],
+            cnn_norm:    STAGE1_ACC.cnn_norm[i],
+            lgbm:        STAGE1_ACC.lgbm[i],
+        };
+        const best = Object.entries(vals).sort((a,b)=>b[1]-a[1])[0];
+        const cell = (key) => {
+            const v = vals[key];
+            const cls = heatColor(v, 44, 97);
+            const isBest = key === best[0];
+            return `<td><span class="${cls}${isBest?' best-cell':''}" style="display:inline-block;padding:3px 8px;min-width:58px;">${v.toFixed(1)}%</span></td>`;
+        };
+        const bestNames = { cnn_no_norm:'ResNet No Norm', cnn_norm:'ResNet GradNorm', lgbm:'LightGBM' };
+        tbody.innerHTML += `<tr>
+            <td><strong>${feat}</strong></td>
+            <td style="text-align:center;color:var(--text-muted)">${FEAT_CLASSES[i]}</td>
+            ${cell('cnn_no_norm')}${cell('cnn_norm')}${cell('lgbm')}
+            <td><span class="badge badge-${best[0]==='lgbm'?'gbm':'cnn'}">${bestNames[best[0]]}</span></td>
+        </tr>`;
+    });
+
+    // Grouped bar chart per feature
+    Plotly.newPlot('chart-feat-acc', [
+        { name:'ResNet (No Norm)', x:FEATURES, y:STAGE1_ACC.cnn_no_norm, type:'bar', marker:{color:'#B8CFE8'} },
+        { name:'ResNet (GradNorm)', x:FEATURES, y:STAGE1_ACC.cnn_norm,   type:'bar', marker:{color:'#C9B090'} },
+        { name:'LightGBM',      x:FEATURES, y:STAGE1_ACC.lgbm,         type:'bar', marker:{color:'#C9A227'} },
+    ], {
+        barmode:'group', height:400, margin:{t:20,b:80,l:50,r:20},
+        paper_bgcolor:'transparent', plot_bgcolor:'transparent',
+        font:{family:'Inter',size:11},
+        yaxis:{title:'Val Accuracy (%)', range:[25,100]},
+        xaxis:{tickangle:-20},
+        legend:{orientation:'h',y:-0.28},
+        shapes:[{type:'line',x0:-0.5,x1:9.5,y0:50,y1:50,line:{color:'#ccc',dash:'dot',width:1}}]
+    }, PLY_CFG);
+}
+
+/* ── Section 4: Ablation ──────────────────────────────────── */
+function buildAblation() {
+    // Sort single ablation by dqwk ascending
+    const sorted = [...SINGLE_ABL].sort((a,b) => a.dqwk - b.dqwk);
+    const colors = sorted.map(d => d.dqwk < 0 ? '#E07070' : '#6AAE88');
+
+    Plotly.newPlot('chart-abl-single', [{
+        type:'bar', orientation:'h',
+        y: sorted.map(d=>d.group),
+        x: sorted.map(d=>d.dqwk),
+        marker:{color:colors},
+        text: sorted.map(d=>(d.dqwk>0?'+':'')+d.dqwk.toFixed(4)),
+        textposition:'outside',
+        hovertemplate:'<b>%{y}</b><br>ΔQWK: %{x:.4f}<extra></extra>'
+    }], {
+        height:380, margin:{t:20,b:50,l:90,r:70},
+        paper_bgcolor:'transparent', plot_bgcolor:'transparent',
+        font:{family:'Inter',size:11},
+        xaxis:{title:'ΔQWK (vs baseline 0.2616)', zeroline:true, zerolinecolor:'#888'},
+        shapes:[{type:'line',x0:0,x1:0,y0:-0.5,y1:11.5,line:{color:'#666',width:1.5,dash:'dash'}}]
+    }, PLY_CFG);
+
+    // Scatter of all combos (use n_ablated from single/double/triple)
+    // Approximate from known data - scatter by n_ablated
+    const scatX = SINGLE_ABL.map(d=>1); // size
+    // We'll use the worst/best + singles data as scatter points
+    const allPts = [
+        ...SINGLE_ABL.map(d=>({n:1,dq:d.dqwk,label:d.group})),
+        ...ABL_WORST.map(d=>({n:d.n,dq:d.dq,label:d.ablated.join('+')})),
+        ...ABL_BEST.map(d=>({n:d.n,dq:d.dq,label:d.ablated.join('+')})),
+    ];
+    const jitter = n => (Math.random()-0.5)*0.3;
+    Plotly.newPlot('chart-abl-scatter', [{
+        type:'scatter', mode:'markers',
+        x: allPts.map(p=>p.n+(Math.random()-0.5)*0.2),
+        y: allPts.map(p=>p.dq),
+        text: allPts.map(p=>p.label),
+        marker:{
+            size:9, opacity:0.8,
+            color: allPts.map(p=>p.dq),
+            colorscale:'RdYlGn', showscale:true,
+            colorbar:{title:'ΔQWK',thickness:12,len:0.8}
+        },
+        hovertemplate:'<b>%{text}</b><br>n=%{x:.0f}<br>ΔQWK=%{y:.4f}<extra></extra>'
+    }], {
+        height:380, margin:{t:20,b:50,l:60,r:80},
+        paper_bgcolor:'transparent', plot_bgcolor:'transparent',
+        font:{family:'Inter',size:11},
+        xaxis:{title:'Combo size (n groups ablated)', tickvals:[1,2,3], dtick:1},
+        yaxis:{title:'ΔQWK', zeroline:true, zerolinecolor:'#888'},
+        shapes:[{type:'line',x0:0.5,x1:3.5,y0:0,y1:0,line:{color:'#666',width:1.5,dash:'dash'}}]
+    }, PLY_CFG);
+
+    // Worst table
+    const wTbody = document.querySelector('#abl-worst-table tbody');
+    ABL_WORST.forEach(r => {
+        wTbody.innerHTML += `<tr>
+            <td>${tagHtml(r.ablated)}</td>
+            <td style="text-align:center">${r.n}</td>
+            <td style="font-family:var(--font-mono)">${(r.acc*100).toFixed(1)}%</td>
+            <td style="font-family:var(--font-mono)">${r.qwk.toFixed(4)}</td>
+            <td>${deltaSpan(r.da, 4)}</td>
+            <td>${deltaSpan(r.dq, 4)}</td>
+        </tr>`;
+    });
+
+    // Best table
+    const bTbody = document.querySelector('#abl-best-table tbody');
+    ABL_BEST.forEach(r => {
+        bTbody.innerHTML += `<tr>
+            <td>${tagHtml(r.ablated)}</td>
+            <td style="text-align:center">${r.n}</td>
+            <td style="font-family:var(--font-mono)">${(r.acc*100).toFixed(1)}%</td>
+            <td style="font-family:var(--font-mono)">${r.qwk.toFixed(4)}</td>
+            <td>${deltaSpan(r.da, 4)}</td>
+            <td>${deltaSpan(r.dq, 4)}</td>
+        </tr>`;
+    });
+}
+
+/* ── Toggle helpers (re-use from image.html) ─────────────── */
+function toggleSection(header) {
+    const body = header.nextElementSibling;
+    const icon = header.querySelector('.collapse-icon i');
+    const isOpen = body.style.display !== 'none';
+    body.style.display = isOpen ? 'none' : 'block';
+    icon.className = isOpen ? 'fa-solid fa-chevron-right' : 'fa-solid fa-chevron-down';
+}
+function expandAll()   { document.querySelectorAll('.section-body').forEach(b=>b.style.display='block'); document.querySelectorAll('.collapse-icon i').forEach(i=>i.className='fa-solid fa-chevron-down'); }
+function collapseAll() { document.querySelectorAll('.section-body').forEach(b=>b.style.display='none'); document.querySelectorAll('.collapse-icon i').forEach(i=>i.className='fa-solid fa-chevron-right'); }
+
+/* ── Init ────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+    buildLeaderboard();
+    buildCMTabs();
+    renderCM();
+    buildStage1();
+    buildAblation();
+});
+</script>
+</body>
+</html>

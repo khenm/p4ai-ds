@@ -95,7 +95,7 @@ class GradCAM:
         h, w = image_tensor.shape[-2:]
 
         with torch.enable_grad():
-            x = image_tensor.detach().requires_grad_(False)
+            x = image_tensor.detach().requires_grad_(True)
             outputs = self.model(x)
             logits = outputs[target_key] if isinstance(outputs, dict) else outputs
 

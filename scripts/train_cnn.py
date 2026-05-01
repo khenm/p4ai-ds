@@ -94,7 +94,19 @@ def parse_args():
                         help='Override freeze_stage1 from config (--freeze_stage1 / --no-freeze_stage1)')
     parser.add_argument('--distributed', choices=['false', 'ddp', 'fsdp'], default=None,
                         help='Override distributed mode (false / ddp / fsdp)')
+    parser.add_argument('--checkpoint', type=str, default=None,
+                        help='Path to a saved stage-2 checkpoint; skips training and runs Grad-CAM only')
     return parser.parse_args()
+
+
+def _save_checkpoint(model: nn.Module, config: dict, stage: int, args) -> str:
+    config_stem = os.path.splitext(os.path.basename(args.config))[0]
+    ckpt_dir = os.path.join("results", "checkpoints", config_stem)
+    os.makedirs(ckpt_dir, exist_ok=True)
+    path = os.path.join(ckpt_dir, f"stage{stage}.pt")
+    torch.save(_unwrap(model).state_dict(), path)
+    logger.info(f"Checkpoint saved to {path}")
+    return path
 
 def main():
     args = parse_args()
@@ -149,6 +161,21 @@ def main():
     # 2. Model
     model = TwoStageResNet(extract_features=False).to(device)
 
+    # --checkpoint: load weights and jump straight to Grad-CAM
+    if args.checkpoint is not None:
+        if is_main_process():
+            logger.info(f"Loading checkpoint: {args.checkpoint}")
+        state = torch.load(args.checkpoint, map_location=device)
+        model.load_state_dict(state)
+        if is_main_process():
+            config_stem = os.path.splitext(os.path.basename(args.config))[0]
+            gradcam_dir = os.path.join("results", "gradcam", config_stem)
+            save_gradcam_samples(model, val_loader, device, gradcam_dir,
+                                 n_samples=config.get("gradcam_samples", 16),
+                                 target_key="AdoptionSpeed")
+        cleanup_dist()
+        return
+
     # 3. Optim & Loss — create before DDP wrap; parameter identity is preserved
     lr = float(config.get('learning_rate', 3e-4))
     optimizer_stage1 = AdamW(model.parameters(), lr=lr)
@@ -159,8 +186,9 @@ def main():
         from src.utils.dist import setup_fsdp
         model = setup_fsdp(model, device, config)
     elif is_dist:
-        model = nn.parallel.DistributedDataParallel(model, device_ids=[local_rank])
-    
+        model = nn.parallel.DistributedDataParallel(model, device_ids=[local_rank],
+                                                    find_unused_parameters=True)
+
     criterion_adoption = nn.CrossEntropyLoss()
 
     epochs = config.get('max_epochs', 10)
@@ -194,7 +222,7 @@ def main():
 
         for images, targets in pbar:
             images = images.to(device)
-            outputs = model(images)
+            outputs = model(images, stage=1)
 
             if use_gradnorm:
                 losses = torch.stack([criteria[k](outputs[k], targets[k].to(device)) for k in TABULAR_KEYS])
@@ -217,7 +245,7 @@ def main():
             for images, targets in tqdm(val_loader, desc=f"Stage 1 - Epoch {epoch+1}/{epochs} [Val]",
                                         disable=not is_main_process()):
                 images = images.to(device)
-                outputs = model(images)
+                outputs = model(images, stage=1)
                 total += images.size(0)
                 for k in TABULAR_KEYS:
                     _, pred = torch.max(outputs[k], 1)
@@ -248,6 +276,9 @@ def main():
                 weights_str = " | ".join(f"{k}:{w:.3f}" for k, w in zip(TABULAR_KEYS, gradnorm.current_weights))
                 logger.info(f"Stage 1 Epoch {epoch+1} GradNorm Weights — {weights_str}")
         global_epoch += 1
+
+    if is_main_process():
+        _save_checkpoint(model, config, stage=1, args=args)
 
     # ------------------ STAGE 2: Train AdoptionSpeed Head ------------------
     freeze_s1 = config.get('freeze_stage1', True)
@@ -306,6 +337,9 @@ def main():
         if is_main_process():
             logger.info(f"Epoch {epoch+1} - Val AdoptionSpeed — Acc: {val_acc:.2f}% | QWK: {val_qwk:.4f}\n")
         global_epoch += 1
+
+    if is_main_process():
+        _save_checkpoint(model, config, stage=2, args=args)
 
     # --- Classification Report (rank 0 only) ---
     if is_main_process():
