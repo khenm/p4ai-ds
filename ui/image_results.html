@@ -125,12 +125,29 @@
         .winner-card.silver { border-color: #9E9E9E; background: #FAFAFA; }
         .winner-card.insight { border-color: var(--accent-blue); background: var(--card-sky); }
 
+        /* Grad-CAM cards */
+        .gcam-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); overflow: hidden;
+            box-shadow: var(--shadow-sm); transition: var(--transition);
+        }
+        .gcam-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .gcam-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; }
+        .gcam-card .gcam-info { padding: .6rem .8rem; }
+        .gcam-card .gcam-pet { font-size: .72rem; font-family: var(--font-mono); color: var(--text-muted); margin-bottom: .3rem; }
+        .gcam-card .gcam-labels { display: flex; gap: .4rem; align-items: center; flex-wrap: wrap; }
+        .gcam-badge-correct { background: #D4EDDA; color: #155724; }
+        .gcam-badge-wrong   { background: #F8D7DA; color: #721C24; }
+        .gcam-label-true  { background: var(--card-sky);      color: var(--accent-blue); }
+        .gcam-label-pred  { background: var(--card-lavender); color: #4a3f8a; }
+
         .charts-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
         .chart-box { min-height: 340px; }
         @media (max-width: 768px) {
             .metric-hero { grid-template-columns: repeat(2, 1fr); }
             .charts-2col { grid-template-columns: 1fr; }
             .winner-grid { grid-template-columns: 1fr; }
+            #gcam-grid   { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
@@ -359,7 +376,63 @@
     </div>
 
     <!-- ══════════════════════════════════════════════════════ -->
-    <!-- S5: Conclusion — Best Model Per Category              -->
+    <!-- S5: Grad-CAM Visualisation                            -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="eda-section" id="section-gradcam">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-fire-flame-curved"></i> Grad-CAM — What the Model Sees</h2>
+            <span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <p style="margin-bottom:1rem;color:var(--text-secondary);font-size:.9rem;">
+                Gradient-weighted Class Activation Maps (Grad-CAM) back-propagate through the last ResNet block
+                (<code>backbone.layer4[-1]</code>) to highlight the image regions that drove the AdoptionSpeed prediction.
+                Warmer colours (red) indicate higher influence; cooler colours (blue/green) are less attended.
+                Overlays are from the <strong>TwoStage ResNet + GradNorm</strong> Stage-2 head on 16 validation samples.
+            </p>
+
+            <!-- Summary stats + filter bar -->
+            <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1.2rem;">
+                <div style="display:flex;gap:.6rem;">
+                    <span class="badge" style="background:#D4EDDA;color:#155724;font-size:.8rem;padding:4px 12px;">
+                        <i class="fa-solid fa-check"></i> 3 Correct
+                    </span>
+                    <span class="badge" style="background:#F8D7DA;color:#721C24;font-size:.8rem;padding:4px 12px;">
+                        <i class="fa-solid fa-xmark"></i> 13 Incorrect
+                    </span>
+                    <span class="badge" style="background:var(--card-lavender);color:#4a3f8a;font-size:.8rem;padding:4px 12px;">
+                        16 Total Samples
+                    </span>
+                </div>
+                <div class="model-tabs" style="margin:0;" id="gcam-filter-tabs">
+                    <button class="model-tab active" onclick="filterGcam('all',this)">All</button>
+                    <button class="model-tab" onclick="filterGcam('correct',this)">Correct</button>
+                    <button class="model-tab" onclick="filterGcam('incorrect',this)">Incorrect</button>
+                    <button class="model-tab" onclick="filterGcam('speed0',this)">Speed 0</button>
+                    <button class="model-tab" onclick="filterGcam('speed1',this)">Speed 1</button>
+                    <button class="model-tab" onclick="filterGcam('speed2',this)">Speed 2</button>
+                    <button class="model-tab" onclick="filterGcam('speed3',this)">Speed 3</button>
+                    <button class="model-tab" onclick="filterGcam('speed4',this)">Speed 4</button>
+                </div>
+            </div>
+
+            <!-- Image grid -->
+            <div id="gcam-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;"></div>
+
+            <div class="insight-box">
+                <h4><i class="fa-solid fa-lightbulb"></i> Observations</h4>
+                <ul>
+                    <li><strong>Correct predictions</strong> tend to focus on the pet's body and face — semantically relevant regions for assessing condition and appeal.</li>
+                    <li><strong>Speed 1 → Speed 2 errors</strong> are common (5 of 13 misses): the model over-predicts slower adoption, possibly due to class imbalance during Stage-2 training.</li>
+                    <li><strong>Speed 0 (Same day)</strong> is predicted as Speed 4 — the model sees no distinguishing visual cue for urgent adoption, which aligns with Speed 0 having zero recall in the confusion matrix.</li>
+                    <li>Several incorrect predictions still attend to the pet rather than background, suggesting the error originates in the decision boundary rather than feature extraction.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- S6: Conclusion — Best Model Per Category              -->
     <!-- ══════════════════════════════════════════════════════ -->
     <div class="eda-section" id="section-conclusion">
         <div class="section-header" onclick="toggleSection(this)">
@@ -851,6 +924,65 @@ function buildAblation() {
     });
 }
 
+/* ── Section 5: Grad-CAM ─────────────────────────────────── */
+const SPEED_NAMES = ['Same day','1–7 days','8–30 days','31–90 days','No adoption'];
+const GCAM_SAMPLES = [
+    { file:'0b8614414_true1_pred2.jpg', true:1, pred:2 },
+    { file:'0e686a63a_true4_pred2.jpg', true:4, pred:2 },
+    { file:'125522846_true1_pred2.jpg', true:1, pred:2 },
+    { file:'2826f9095_true4_pred2.jpg', true:4, pred:2 },
+    { file:'38f6f3011_true3_pred4.jpg', true:3, pred:4 },
+    { file:'4daad230c_true4_pred4.jpg', true:4, pred:4 },
+    { file:'59e6d1d66_true1_pred2.jpg', true:1, pred:2 },
+    { file:'859bcc995_true2_pred1.jpg', true:2, pred:1 },
+    { file:'a338df612_true0_pred4.jpg', true:0, pred:4 },
+    { file:'ab821872c_true4_pred1.jpg', true:4, pred:1 },
+    { file:'acb802c0c_true1_pred2.jpg', true:1, pred:2 },
+    { file:'b7856db41_true3_pred4.jpg', true:3, pred:4 },
+    { file:'cf5c8352d_true2_pred2.jpg', true:2, pred:2 },
+    { file:'da34209ec_true2_pred2.jpg', true:2, pred:2 },
+    { file:'df89cc1e0_true1_pred2.jpg', true:1, pred:2 },
+    { file:'e2205b952_true3_pred2.jpg', true:3, pred:2 },
+];
+
+function buildGcamGrid(samples) {
+    const grid = document.getElementById('gcam-grid');
+    grid.innerHTML = '';
+    samples.forEach(s => {
+        const correct = s.true === s.pred;
+        const petId = s.file.split('_')[0];
+        const card = document.createElement('div');
+        card.className = 'gcam-card';
+        card.dataset.true = s.true;
+        card.dataset.correct = correct ? '1' : '0';
+        card.innerHTML = `
+            <img src="assets/gradcam/${s.file}" alt="GradCAM ${petId}" loading="lazy">
+            <div class="gcam-info">
+                <div class="gcam-pet">${petId}</div>
+                <div class="gcam-labels">
+                    <span class="badge gcam-label-true">True: Speed ${s.true} · ${SPEED_NAMES[s.true]}</span>
+                    <span class="badge gcam-label-pred">Pred: Speed ${s.pred} · ${SPEED_NAMES[s.pred]}</span>
+                    <span class="badge ${correct ? 'gcam-badge-correct' : 'gcam-badge-wrong'}">${correct ? '✓ Correct' : '✗ Wrong'}</span>
+                </div>
+            </div>`;
+        grid.appendChild(card);
+    });
+}
+
+function filterGcam(mode, btn) {
+    document.querySelectorAll('#gcam-filter-tabs .model-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    let filtered;
+    if (mode === 'all')       filtered = GCAM_SAMPLES;
+    else if (mode === 'correct')   filtered = GCAM_SAMPLES.filter(s => s.true === s.pred);
+    else if (mode === 'incorrect') filtered = GCAM_SAMPLES.filter(s => s.true !== s.pred);
+    else {
+        const spd = parseInt(mode.replace('speed',''));
+        filtered = GCAM_SAMPLES.filter(s => s.true === spd);
+    }
+    buildGcamGrid(filtered);
+}
+
 /* ── Toggle helpers (re-use from image.html) ─────────────── */
 function toggleSection(header) {
     const body = header.nextElementSibling;
@@ -869,6 +1001,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCM();
     buildStage1();
     buildAblation();
+    buildGcamGrid(GCAM_SAMPLES);
 });
 </script>
 </body>
