@@ -39,7 +39,7 @@ function renderModelMetrics(metrics) {
         y: mses,
         name: 'RMSE',
         type: 'bar',
-        marker: { color: '#E57373' },
+        marker: { color: '#6886A5' }, // --accent-blue
         hovertemplate: 'RMSE: %{y:.2f}<extra></extra>'
     };
 
@@ -48,7 +48,7 @@ function renderModelMetrics(metrics) {
         y: maes,
         name: 'MAE',
         type: 'bar',
-        marker: { color: '#FFB74D' },
+        marker: { color: '#D98A4E' }, // --primary-light
         hovertemplate: 'MAE: %{y:.2f}<extra></extra>'
     };
 
@@ -61,8 +61,8 @@ function renderModelMetrics(metrics) {
         text: r2s.map(r => r + '%'),
         textposition: 'top center',
         yaxis: 'y2',
-        marker: { size: 12, color: '#4CAF50' },
-        line: { width: 3, dash: 'dot' },
+        marker: { size: 12, color: '#9E5420' }, // --primary-dark
+        line: { width: 3, dash: 'dot', color: '#9E5420' },
         hovertemplate: 'R² Score: %{y:.4f}<extra></extra>'
     };
 
@@ -125,8 +125,11 @@ function renderFeatureImportance() {
         orientation: 'h',
         marker: {
             color: importances,
-            colorscale: 'Blues',
-            reversescale: true
+            colorscale: [
+                [0, '#F2DCC8'], // --primary-pale
+                [1, '#C26A2E']  // --primary
+            ],
+            reversescale: false
         },
         hovertemplate: '%{x:.4f}<extra></extra>'
     };
@@ -153,11 +156,11 @@ function renderPreprocessingCharts(data) {
     if (!data) return;
 
     // 1. Ordinal Encoding Chart (Education Level)
-    const eduMap = data.Ordinal['Education Level'];
-    // Sort logic by integer value
-    const eduSorted = Object.entries(eduMap).sort((a,b) => a[1] - b[1]);
-    const eduLabels = eduSorted.map(x => x[0]);
-    const eduVals = eduSorted.map(x => x[1]);
+    const eduMap = data.Ordinal['education_level'];
+    // Sort logic by integer value (which is now the string key of the dictionary)
+    const eduSorted = Object.entries(eduMap).sort((a,b) => Number(a[0]) - Number(b[0]));
+    const eduLabels = eduSorted.map(x => x[1]); // e.g. "High School"
+    const eduVals = eduSorted.map(x => Number(x[0])); // e.g. 0
 
     const ordTrace = {
         x: eduLabels,
@@ -166,10 +169,10 @@ function renderPreprocessingCharts(data) {
         mode: 'lines+markers+text',
         text: eduVals.map(String),
         textposition: 'top center',
-        line: { shape: 'hv', width: 4, color: '#3f51b5' },
-        marker: { size: 12, color: '#3f51b5' },
+        line: { shape: 'hv', width: 4, color: '#6886A5' }, // --accent-blue
+        marker: { size: 12, color: '#6886A5' },
         fill: 'tozeroy',
-        fillcolor: 'rgba(63, 81, 181, 0.1)',
+        fillcolor: 'rgba(104, 134, 165, 0.15)',
         hovertemplate: 'Level %{y}<extra></extra>'
     };
 
@@ -192,8 +195,10 @@ function renderPreprocessingCharts(data) {
     // 2. Target Encoding Chart (Job Title)
     // Extract top salaries visually
     const jobMap = data.Target['job_title'];
-    let jobSorted = Object.entries(jobMap).sort((a,b) => a[1] - b[1]);
-    // Take top 8 and bottom 2, or just top 10 for simplicity
+    // Filter out internal TargetEncoder fallback placeholders (-1 for Unseen, -2 for NaN)
+    let jobFiltered = Object.entries(jobMap).filter(x => !['-1', '-2'].includes(x[0]));
+    let jobSorted = jobFiltered.sort((a,b) => a[1] - b[1]);
+    // Take top 10 for simplicity
     jobSorted = jobSorted.slice(-10); // Keep top 10 paying jobs
 
     const jobLabels = jobSorted.map(x => x[0]);
@@ -206,8 +211,11 @@ function renderPreprocessingCharts(data) {
         orientation: 'h',
         marker: {
             color: jobVals,
-            colorscale: 'Greens',
-            line: { color: '#2E7D32', width: 1 }
+            colorscale: [
+                [0, '#F0E8DD'],  // --border-light
+                [1, '#5E8A5C']   // --accent-green
+            ],
+            line: { color: '#5E8A5C', width: 1 }
         },
         hovertemplate: '$%{x:,.0f}<extra></extra>'
     };
