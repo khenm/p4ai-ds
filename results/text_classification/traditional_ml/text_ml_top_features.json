@@ -1,0 +1,331 @@
+{
+  "model": "logistic_regression",
+  "top_labels": [
+    "POLITICS",
+    "WELLNESS",
+    "ENTERTAINMENT",
+    "TRAVEL",
+    "STYLE & BEAUTY",
+    "PARENTING"
+  ],
+  "groups": [
+    {
+      "category": "POLITICS",
+      "features": [
+        {
+          "term": "trump",
+          "score": 15.9131
+        },
+        {
+          "term": "obama",
+          "score": 10.4687
+        },
+        {
+          "term": "gop",
+          "score": 9.5868
+        },
+        {
+          "term": "democrats",
+          "score": 8.5859
+        },
+        {
+          "term": "congress",
+          "score": 8.0594
+        },
+        {
+          "term": "senate",
+          "score": 7.9767
+        },
+        {
+          "term": "republicans",
+          "score": 7.8802
+        },
+        {
+          "term": "clinton",
+          "score": 7.6195
+        },
+        {
+          "term": "biden",
+          "score": 7.4967
+        },
+        {
+          "term": "morning email",
+          "score": 7.3432
+        },
+        {
+          "term": "congressman",
+          "score": 7.123
+        },
+        {
+          "term": "democratic",
+          "score": 6.6129
+        }
+      ]
+    },
+    {
+      "category": "WELLNESS",
+      "features": [
+        {
+          "term": "fearless",
+          "score": 9.8536
+        },
+        {
+          "term": "health",
+          "score": 8.8295
+        },
+        {
+          "term": "cancer",
+          "score": 8.2387
+        },
+        {
+          "term": "yoga",
+          "score": 8.1865
+        },
+        {
+          "term": "sleep",
+          "score": 7.6678
+        },
+        {
+          "term": "workout",
+          "score": 7.584
+        },
+        {
+          "term": "fitness",
+          "score": 7.073
+        },
+        {
+          "term": "healthy",
+          "score": 6.7924
+        },
+        {
+          "term": "researchers",
+          "score": 6.3935
+        },
+        {
+          "term": "superfoods",
+          "score": 6.3007
+        },
+        {
+          "term": "study",
+          "score": 6.2137
+        },
+        {
+          "term": "obesity",
+          "score": 6.0367
+        }
+      ]
+    },
+    {
+      "category": "ENTERTAINMENT",
+      "features": [
+        {
+          "term": "actor",
+          "score": 8.4217
+        },
+        {
+          "term": "trailer",
+          "score": 8.3112
+        },
+        {
+          "term": "film",
+          "score": 7.9494
+        },
+        {
+          "term": "movie",
+          "score": 7.9461
+        },
+        {
+          "term": "box office",
+          "score": 7.3565
+        },
+        {
+          "term": "movies",
+          "score": 6.8367
+        },
+        {
+          "term": "singer",
+          "score": 6.4851
+        },
+        {
+          "term": "netflix",
+          "score": 6.3997
+        },
+        {
+          "term": "kardashian",
+          "score": 6.3027
+        },
+        {
+          "term": "music",
+          "score": 6.2993
+        },
+        {
+          "term": "adele",
+          "score": 5.9018
+        },
+        {
+          "term": "album",
+          "score": 5.8779
+        }
+      ]
+    },
+    {
+      "category": "TRAVEL",
+      "features": [
+        {
+          "term": "travel",
+          "score": 18.4707
+        },
+        {
+          "term": "hotel",
+          "score": 11.9822
+        },
+        {
+          "term": "tsa",
+          "score": 11.7261
+        },
+        {
+          "term": "hotels",
+          "score": 11.3043
+        },
+        {
+          "term": "travelers",
+          "score": 11.0166
+        },
+        {
+          "term": "vacation",
+          "score": 10.9196
+        },
+        {
+          "term": "traveling",
+          "score": 9.9256
+        },
+        {
+          "term": "flight",
+          "score": 9.59
+        },
+        {
+          "term": "airline",
+          "score": 9.5824
+        },
+        {
+          "term": "airlines",
+          "score": 9.1275
+        },
+        {
+          "term": "traveler",
+          "score": 9.094
+        },
+        {
+          "term": "looney",
+          "score": 8.7142
+        }
+      ]
+    },
+    {
+      "category": "STYLE & BEAUTY",
+      "features": [
+        {
+          "term": "fashion",
+          "score": 16.335
+        },
+        {
+          "term": "photos",
+          "score": 15.9345
+        },
+        {
+          "term": "style",
+          "score": 13.0117
+        },
+        {
+          "term": "beauty",
+          "score": 10.1209
+        },
+        {
+          "term": "hair",
+          "score": 9.7536
+        },
+        {
+          "term": "photo",
+          "score": 9.322
+        },
+        {
+          "term": "makeup",
+          "score": 9.0925
+        },
+        {
+          "term": "model",
+          "score": 8.5044
+        },
+        {
+          "term": "vogue",
+          "score": 8.1528
+        },
+        {
+          "term": "wear",
+          "score": 7.7443
+        },
+        {
+          "term": "dress",
+          "score": 7.6511
+        },
+        {
+          "term": "wardrobe",
+          "score": 7.6435
+        }
+      ]
+    },
+    {
+      "category": "PARENTING",
+      "features": [
+        {
+          "term": "kids",
+          "score": 14.209
+        },
+        {
+          "term": "children",
+          "score": 12.5931
+        },
+        {
+          "term": "parenting",
+          "score": 11.5946
+        },
+        {
+          "term": "baby",
+          "score": 11.2606
+        },
+        {
+          "term": "parents",
+          "score": 10.504
+        },
+        {
+          "term": "daughter",
+          "score": 10.1747
+        },
+        {
+          "term": "child",
+          "score": 9.9695
+        },
+        {
+          "term": "breastfeeding",
+          "score": 9.813
+        },
+        {
+          "term": "babies",
+          "score": 9.7239
+        },
+        {
+          "term": "son",
+          "score": 9.5991
+        },
+        {
+          "term": "table talk",
+          "score": 9.1232
+        },
+        {
+          "term": "parent",
+          "score": 9.0529
+        }
+      ]
+    }
+  ]
+}

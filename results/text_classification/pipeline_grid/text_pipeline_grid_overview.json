@@ -1,0 +1,41 @@
+{
+  "dataset": "News_Category_Dataset_v3.json",
+  "task": "multi_class_text_classification",
+  "workflow": "reduced_feature_x_classifier_grid",
+  "sample_size": null,
+  "train_size": 167617,
+  "test_size": 41905,
+  "class_count": 42,
+  "feature_steps": [
+    "bow",
+    "tfidf"
+  ],
+  "reduction_steps": [
+    "chi2_k20000",
+    "svd_100",
+    "svd_300"
+  ],
+  "linear_model_steps": [
+    "logistic_regression",
+    "linear_svc",
+    "sgd_hinge"
+  ],
+  "dense_svd_model_steps": [
+    "mlp"
+  ],
+  "best_pipeline": {
+    "pipeline": "tfidf__chi2_k20000__logistic_regression",
+    "feature_step": "tfidf",
+    "reduction_step": "chi2_k20000",
+    "model": "logistic_regression",
+    "feature_seconds": 11.12,
+    "reduction_seconds": 0.95,
+    "accuracy": 0.5852,
+    "macro_f1": 0.4842,
+    "weighted_f1": 0.5913,
+    "macro_precision": 0.4743,
+    "macro_recall": 0.5008,
+    "train_seconds": 35.67,
+    "status": "ok"
+  }
+}

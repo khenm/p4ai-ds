@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text EDA — News Category Analysis</title>
+    <title>Text Report — News Category Analysis</title>
     <meta name="description" content="Text exploratory data analysis of the News Category dataset.">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
@@ -23,6 +23,11 @@
 
 <div class="page-container">
     <section class="hero"><h1>Text EDA Report</h1><p>Exploratory analysis of HuffPost news articles in the News Category dataset, covering class balance, missing values, text lengths, timeline patterns, and dominant terms.</p></section>
+
+    <div class="sub-tabs">
+        <a href="text.html" class="sub-tab active"><i class="fa-solid fa-chart-area"></i> EDA</a>
+        <a href="text_results.html" class="sub-tab"><i class="fa-solid fa-trophy"></i> Results</a>
+    </div>
     <div class="page-controls">
         <button class="btn" onclick="expandAll()"><i class="fa-solid fa-angles-down"></i> Expand All</button>
         <button class="btn" onclick="collapseAll()"><i class="fa-solid fa-angles-up"></i> Collapse All</button>

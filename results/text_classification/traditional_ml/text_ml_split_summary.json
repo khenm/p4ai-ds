@@ -1,0 +1,126 @@
+{
+  "train_class_distribution": [
+    {
+      "category": "POLITICS",
+      "count": 28481
+    },
+    {
+      "category": "WELLNESS",
+      "count": 14356
+    },
+    {
+      "category": "ENTERTAINMENT",
+      "count": 13889
+    },
+    {
+      "category": "TRAVEL",
+      "count": 7920
+    },
+    {
+      "category": "STYLE & BEAUTY",
+      "count": 7851
+    },
+    {
+      "category": "PARENTING",
+      "count": 7033
+    },
+    {
+      "category": "HEALTHY LIVING",
+      "count": 5355
+    },
+    {
+      "category": "QUEER VOICES",
+      "count": 5077
+    },
+    {
+      "category": "FOOD & DRINK",
+      "count": 5072
+    },
+    {
+      "category": "BUSINESS",
+      "count": 4793
+    },
+    {
+      "category": "COMEDY",
+      "count": 4320
+    },
+    {
+      "category": "SPORTS",
+      "count": 4062
+    },
+    {
+      "category": "BLACK VOICES",
+      "count": 3666
+    },
+    {
+      "category": "HOME & LIVING",
+      "count": 3456
+    },
+    {
+      "category": "PARENTS",
+      "count": 3164
+    }
+  ],
+  "test_class_distribution": [
+    {
+      "category": "POLITICS",
+      "count": 7120
+    },
+    {
+      "category": "WELLNESS",
+      "count": 3589
+    },
+    {
+      "category": "ENTERTAINMENT",
+      "count": 3473
+    },
+    {
+      "category": "TRAVEL",
+      "count": 1980
+    },
+    {
+      "category": "STYLE & BEAUTY",
+      "count": 1963
+    },
+    {
+      "category": "PARENTING",
+      "count": 1758
+    },
+    {
+      "category": "HEALTHY LIVING",
+      "count": 1339
+    },
+    {
+      "category": "QUEER VOICES",
+      "count": 1269
+    },
+    {
+      "category": "FOOD & DRINK",
+      "count": 1268
+    },
+    {
+      "category": "BUSINESS",
+      "count": 1198
+    },
+    {
+      "category": "COMEDY",
+      "count": 1080
+    },
+    {
+      "category": "SPORTS",
+      "count": 1015
+    },
+    {
+      "category": "BLACK VOICES",
+      "count": 917
+    },
+    {
+      "category": "HOME & LIVING",
+      "count": 864
+    },
+    {
+      "category": "PARENTS",
+      "count": 791
+    }
+  ]
+}

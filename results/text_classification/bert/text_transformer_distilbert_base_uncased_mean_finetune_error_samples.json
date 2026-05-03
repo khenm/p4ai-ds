@@ -1,0 +1,68 @@
+{
+  "pipeline_id": "distilbert_base_uncased_mean_finetune",
+  "model_name": "distilbert-base-uncased",
+  "pooling": "mean",
+  "freeze_encoder": false,
+  "rows": [
+    {
+      "actual": "HEALTHY LIVING",
+      "predicted": "STYLE",
+      "text_preview": "Bareback"
+    },
+    {
+      "actual": "ENTERTAINMENT",
+      "predicted": "WOMEN",
+      "text_preview": "HBO and Sexual Harassment HBO'sConfirmation captures a lot of the electrifying and byzantine battle, especially the cowardice of Joe Biden, who could have done so much more to help Hill and stand up to the GOP, stand up for truth."
+    },
+    {
+      "actual": "ENTERTAINMENT",
+      "predicted": "STYLE",
+      "text_preview": "Britney Spears' Pop Anthem Gets A Beautiful Vintage Makeover A cover like this should wear a warning."
+    },
+    {
+      "actual": "ENTERTAINMENT",
+      "predicted": "POLITICS",
+      "text_preview": "Jill Scott Pulls Bill Cosby Support After Deposition Release Jill Scott has renounced her support for Bill Cosby following the release of a 2005 deposition in which he admitted to obtaining"
+    },
+    {
+      "actual": "CRIME",
+      "predicted": "IMPACT",
+      "text_preview": "To Those of You on Hunger Strike For five days, 29,000 inmates in California's state prisons have refused all meals in the largest hunger strike and prison protest in state history. Your actions speak loudly. We can hear you. We know things"
+    },
+    {
+      "actual": "ENTERTAINMENT",
+      "predicted": "CRIME",
+      "text_preview": "Actress Misty Upham Reported Missing In Washington State"
+    },
+    {
+      "actual": "POLITICS",
+      "predicted": "THE WORLDPOST",
+      "text_preview": "Did The German Embassy Just Subtweet America? It could be innocent -- or the shadiest shade ever thrown."
+    },
+    {
+      "actual": "ENTERTAINMENT",
+      "predicted": "ARTS",
+      "text_preview": "Larry Kramer's The Normal Heart Bleeds For All of Us (Well, Not Quite All) Kramer's most powerful speeches and his seminal stage work -- The Normal Heart -- were products of his often controversial rage, an anger so profound that he perhaps"
+    },
+    {
+      "actual": "BLACK VOICES",
+      "predicted": "PARENTING",
+      "text_preview": "Dear Clair Huxtable: A Letter To My Favorite TV Mom (PHOTOS, VIDEOS) I spent my Thursday evenings as a child glued to my family's wooden television set watching \"The Cosby Show\" and pretending"
+    },
+    {
+      "actual": "PARENTING",
+      "predicted": "COMEDY",
+      "text_preview": "The Trouble with 'Whyyyyyyy?' And what you can do about it."
+    },
+    {
+      "actual": "WOMEN",
+      "predicted": "PARENTS",
+      "text_preview": "We Make It Easy for Our Children to Not Grow Up I believe it is parents' responsibility to launch their children after college, letting them both succeed and fail on their own."
+    },
+    {
+      "actual": "ARTS & CULTURE",
+      "predicted": "ENTERTAINMENT",
+      "text_preview": "Stephen King's New Book With His Son Involves 'Feral Women,' 'Abandoned Men' The book debuts shortly after the film remake of \"It\" in September."
+    }
+  ]
+}

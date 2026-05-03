@@ -112,9 +112,13 @@ function showToast(msg) {
 // ── Nav active state ─────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
     const page = globalThis.location.pathname.split('/').pop() || 'index.html';
+    const activePage = {
+        'text_results.html': 'text.html',
+        'image_results.html': 'image.html',
+    }[page] || page;
     document.querySelectorAll('.nav-links a').forEach(a => {
         const href = a.getAttribute('href');
-        if (href === page || (page === '' && href === 'index.html')) {
+        if (href === activePage || (activePage === '' && href === 'index.html')) {
             a.classList.add('active');
         }
     });

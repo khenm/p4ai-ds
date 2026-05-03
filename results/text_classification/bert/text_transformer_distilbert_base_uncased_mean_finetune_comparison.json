@@ -1,0 +1,28 @@
+{
+  "rows": [
+    {
+      "model": "logistic_regression",
+      "family": "traditional_ml",
+      "accuracy": 0.6058,
+      "macro_f1": 0.4981,
+      "weighted_f1": 0.6063,
+      "macro_precision": 0.4994,
+      "macro_recall": 0.5028,
+      "train_seconds": 48.01
+    },
+    {
+      "model": "distilbert_base_uncased_mean_finetune",
+      "family": "transformer",
+      "model_name": "distilbert-base-uncased",
+      "pooling": "mean",
+      "freeze_encoder": false,
+      "accuracy": 0.6492,
+      "macro_f1": 0.587,
+      "weighted_f1": 0.6602,
+      "macro_precision": 0.5554,
+      "macro_recall": 0.6433,
+      "loss": 1.1843,
+      "train_seconds": 1915.77
+    }
+  ]
+}

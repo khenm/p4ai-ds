@@ -1,0 +1,42 @@
+{
+  "dataset": "News_Category_Dataset_v3.json",
+  "task": "multi_class_text_classification",
+  "workflow": "scalable_ml_only",
+  "train_size": 167617,
+  "test_size": 41905,
+  "class_count": 42,
+  "avg_words_per_article": 29.27,
+  "median_words_per_article": 28,
+  "class_imbalance_ratio": 35.12,
+  "tfidf_config": {
+    "word_ngram_range": [
+      1,
+      2
+    ],
+    "char_ngram_range": [
+      3,
+      5
+    ],
+    "min_df": 5,
+    "max_df": 0.95,
+    "max_features": 50000,
+    "hashing_features": 1048576,
+    "sublinear_tf": true,
+    "stop_words": "english"
+  },
+  "eda_guidance": [
+    "Combined headline and short description are used to increase text context while staying lightweight.",
+    "Macro-F1 is treated as the primary ranking metric because the dataset is imbalanced across categories.",
+    "The model set avoids RBF kernels, dense sklearn boosting, and MLP baselines because they do not scale well on the full text dataset.",
+    "Linear, Naive Bayes, SGD, character n-gram, hashing, voting, and histogram XGBoost baselines are used for faster CPU/GPU-friendly experiments."
+  ],
+  "best_model": {
+    "name": "logistic_regression",
+    "accuracy": 0.6058,
+    "macro_f1": 0.4981,
+    "weighted_f1": 0.6063,
+    "macro_precision": 0.4994,
+    "macro_recall": 0.5028,
+    "train_seconds": 48.01
+  }
+}

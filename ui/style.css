@@ -129,6 +129,22 @@ body {
     position: relative; z-index: 1; line-height: 1.7;
 }
 
+/* ── Sub Tabs ────────────────────────────────────────── */
+.sub-tabs {
+    display: flex; gap: 6px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 30px; padding: 5px;
+    width: fit-content; margin: 0 auto 2rem;
+}
+.sub-tab {
+    padding: 7px 22px; border-radius: 24px;
+    font-size: 0.85rem; font-weight: 500;
+    color: var(--text-secondary); text-decoration: none;
+    transition: var(--transition);
+}
+.sub-tab:hover { background: var(--surface-warm); color: var(--primary); }
+.sub-tab.active { background: var(--primary); color: #fff; }
+
 /* ── Controls ────────────────────────────────────────── */
 .page-controls { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; }
 .btn {
@@ -198,6 +214,64 @@ body {
 }
 .section-body.collapsed { display: none; }
 
+/* ── Pipeline Flow ───────────────────────────────────── */
+.pipeline-flow {
+    display: flex;
+    align-items: stretch;
+    gap: 0.65rem;
+    margin-bottom: 0.9rem;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+}
+.pipeline-step {
+    min-width: 190px;
+    flex: 1;
+    background: var(--surface-warm);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.95rem;
+    position: relative;
+}
+.pipeline-step .step-index {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    margin-bottom: 0.45rem;
+}
+.pipeline-step h3 {
+    font-size: 0.86rem;
+    margin-bottom: 0.3rem;
+}
+.pipeline-step p {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+}
+.pipeline-arrow {
+    display: flex;
+    align-items: center;
+    color: var(--primary);
+    opacity: 0.8;
+}
+.split-note {
+    background: var(--card-sky);
+    color: #2D4A6B;
+    border: 1px solid #C9D9EA;
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 0.9rem;
+    font-size: 0.83rem;
+    margin-bottom: 1rem;
+}
+.split-note i { margin-right: 0.45rem; }
+
 /* ── Chart Containers ────────────────────────────────── */
 .chart-container { margin-bottom: 1.5rem; }
 .chart-box {
@@ -214,6 +288,7 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
     gap: 1.5rem;
 }
+.chart-container.chart-wide { grid-column: 1 / -1; }
 
 /* ── Cards ───────────────────────────────────────────── */
 .reports-grid {
@@ -290,6 +365,67 @@ body {
 .data-table td { padding: 7px 13px; border-bottom: 1px solid var(--border-light); }
 .data-table tr:hover td { background: var(--surface-warm); }
 .data-table .num { font-family: var(--font-mono); text-align: right; }
+
+.text-results-page .data-table-wrap {
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+}
+.text-results-page .data-table th {
+    background: linear-gradient(180deg, #FFF4E5 0%, #F6E4D0 100%);
+    color: #6B3A15;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.text-results-page .data-table tbody tr:nth-child(even) td {
+    background: #FFFCF7;
+}
+.text-results-page .data-table tbody tr:hover td {
+    background: #F3E8D8;
+}
+.text-results-page .data-table td:first-child {
+    color: var(--text);
+    font-weight: 600;
+}
+.text-results-page .data-table .num {
+    color: var(--text);
+    font-weight: 400;
+}
+.text-results-page .table-chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 2px 9px;
+    font-size: 0.73rem;
+    font-weight: 700;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+.text-results-page .table-chip { color: var(--text); }
+.text-results-page .chip-feature-bow { background: #E8F1FB; }
+.text-results-page .chip-feature-tfidf { background: #FFF0D8; }
+.text-results-page .chip-reducer-chi2 { background: #E7F4E6; }
+.text-results-page .chip-reducer-svd100 { background: #F0E9FA; }
+.text-results-page .chip-reducer-svd300 { background: #FCE6EA; }
+.text-results-page .chip-encoder-bert { background: #F0E9FA; }
+.text-results-page .chip-encoder-distilbert { background: #E8F1FB; }
+.text-results-page .chip-pooling-cls { background: #E7F4E6; }
+.text-results-page .chip-pooling-mean { background: #FFF0D8; }
+.text-results-page .chip-pooling-pooler { background: #FCE6EA; }
+.text-results-page .chip-model-logistic-regression,
+.text-results-page .chip-model-linear-svc,
+.text-results-page .chip-model-char-linear-svc { background: #E8F1FB; }
+.text-results-page #table-grid .chip-model-logistic-regression { background: #E8F1FB; }
+.text-results-page #table-grid .chip-model-linear-svc { background: #E7F4E6; }
+.text-results-page #table-grid .chip-model-sgd-hinge { background: #FFF0D8; }
+.text-results-page #table-grid .chip-model-mlp { background: #E9F6F5; }
+.text-results-page .chip-model-sgd-hinge,
+.text-results-page .chip-model-sgd-log-loss,
+.text-results-page .chip-model-hashing-sgd-hinge,
+.text-results-page .chip-model-passive-aggressive { background: #E7F4E6; }
+.text-results-page .chip-model-ridge-classifier,
+.text-results-page .chip-model-voting-ensemble { background: #F0E9FA; }
+.text-results-page .chip-model-mlp { background: #FCE6EA; }
 
 /* ── Balance Cards ───────────────────────────────────── */
 .balance-grid {
