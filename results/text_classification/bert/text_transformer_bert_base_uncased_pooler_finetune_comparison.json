@@ -1,0 +1,28 @@
+{
+  "rows": [
+    {
+      "model": "logistic_regression",
+      "family": "traditional_ml",
+      "accuracy": 0.6058,
+      "macro_f1": 0.4981,
+      "weighted_f1": 0.6063,
+      "macro_precision": 0.4994,
+      "macro_recall": 0.5028,
+      "train_seconds": 48.01
+    },
+    {
+      "model": "bert_base_uncased_pooler_finetune",
+      "family": "transformer",
+      "model_name": "bert-base-uncased",
+      "pooling": "pooler",
+      "freeze_encoder": false,
+      "accuracy": 0.6597,
+      "macro_f1": 0.5959,
+      "weighted_f1": 0.6693,
+      "macro_precision": 0.5642,
+      "macro_recall": 0.6507,
+      "loss": 1.1603,
+      "train_seconds": 3571.03
+    }
+  ]
+}

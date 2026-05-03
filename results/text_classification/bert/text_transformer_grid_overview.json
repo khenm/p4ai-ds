@@ -1,0 +1,38 @@
+{
+  "dataset": "News_Category_Dataset_v3.json",
+  "task": "multi_class_text_classification",
+  "workflow": "tokenizer_encoder_pooling_linear_grid",
+  "sample_size": null,
+  "model_names": [
+    "distilbert-base-uncased",
+    "bert-base-uncased"
+  ],
+  "poolings": [
+    "cls",
+    "mean",
+    "pooler"
+  ],
+  "freeze_modes": [
+    false
+  ],
+  "max_length": 128,
+  "epochs": 2,
+  "batch_size": 8,
+  "learning_rate": 2e-05,
+  "dropout": 0.2,
+  "best_pipeline": {
+    "pipeline_id": "bert_base_uncased_mean_finetune",
+    "model_name": "bert-base-uncased",
+    "pooling": "mean",
+    "freeze_encoder": false,
+    "status": "ok",
+    "accuracy": 0.6633,
+    "macro_f1": 0.6005,
+    "weighted_f1": 0.6728,
+    "macro_precision": 0.5685,
+    "macro_recall": 0.6547,
+    "loss": 1.1498,
+    "train_seconds": 3556.89,
+    "artifact_dir": "/home/jesse/BachKhoa/252/P4AIDS/BTL/btl2/p4ai-ds/results/text_classification/artifacts/bert_base_uncased_mean_finetune"
+  }
+}

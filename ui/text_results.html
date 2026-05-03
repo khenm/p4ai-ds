@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Classification Results — News Category</title>
+    <meta name="description" content="Modeling results for News Category text classification: traditional ML, dimensionality-reduction grid, and BERT-style fine-tuning.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css?v=6">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body class="text-results-page">
+<nav class="site-nav"><div class="nav-inner">
+    <a href="index.html" class="nav-brand"><i class="fa-solid fa-flask"></i> P4AI-DS</a>
+    <div class="nav-links">
+        <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="salary_dashboard.html"><i class="fa-solid fa-table"></i> Tabular</a>
+        <a href="text.html"><i class="fa-solid fa-font"></i> Text</a>
+        <a href="image.html"><i class="fa-solid fa-microscope"></i> Image</a>
+    </div>
+</div></nav>
+
+<div class="page-container">
+    <section class="hero">
+        <h1>Text Results Report</h1>
+        <p>News Category text classification report comparing scalable ML baselines, reduced-feature pipelines, and transformer fine-tuning on held-out test performance.</p>
+    </section>
+
+    <div class="sub-tabs">
+        <a href="text.html" class="sub-tab"><i class="fa-solid fa-chart-area"></i> EDA</a>
+        <a href="text_results.html" class="sub-tab active"><i class="fa-solid fa-trophy"></i> Results</a>
+    </div>
+
+    <div class="page-controls">
+        <button class="btn" onclick="expandAll()"><i class="fa-solid fa-angles-down"></i> Expand All</button>
+        <button class="btn" onclick="collapseAll()"><i class="fa-solid fa-angles-up"></i> Collapse All</button>
+    </div>
+
+    <div class="eda-section" id="section-summary">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-ranking-star"></i> Overall Comparison</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div id="result-stats" class="stats-grid"></div>
+            <div class="chart-container"><div class="chart-box" id="chart-family-comparison"></div></div>
+            <div class="data-table-wrap"><table class="data-table" id="table-family-comparison"></table></div>
+        </div>
+    </div>
+
+    <div class="eda-section" id="section-traditional">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-gears"></i> Traditional ML Baselines</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="pipeline-flow" aria-label="Traditional ML pipeline">
+                <div class="pipeline-step"><div class="step-index">1</div><h3>Input Text</h3><p>Headline and short description are combined into one document</p></div>
+                <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="pipeline-step"><div class="step-index">2</div><h3>Vectorize</h3><p>Word TF-IDF, character TF-IDF, and hashing-based sparse features</p></div>
+                <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="pipeline-step"><div class="step-index">3</div><h3>Classify</h3><p>Scalable linear classifiers and ensemble baselines for sparse text features</p></div>
+                <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="pipeline-step"><div class="step-index">4</div><h3>Evaluate</h3><p>Accuracy, macro-F1, weighted-F1, precision, and recall on the test split</p></div>
+            </div>
+            <div class="split-note"><i class="fa-solid fa-circle-info"></i> Evaluation protocol: train/test split only. These baselines are used for direct held-out comparison, without a separate validation stage.</div>
+            <div class="desc-box" id="traditional-desc"></div>
+            <div class="chart-container"><div class="chart-box" id="chart-traditional"></div></div>
+            <div class="data-table-wrap"><table class="data-table" id="table-traditional"></table></div>
+        </div>
+    </div>
+
+    <div class="eda-section" id="section-grid">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-diagram-project"></i> Feature Reduction Pipeline Grid</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="pipeline-flow" aria-label="Pipeline grid workflow">
+                <div class="pipeline-step"><div class="step-index">1</div><h3>Feature Extraction</h3><p>Bag-of-Words and TF-IDF representations with unigram and bigram terms</p></div>
+                <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="pipeline-step"><div class="step-index">2</div><h3>Dimensionality Reduction</h3><p>Chi-square feature selection and TruncatedSVD projections</p></div>
+                <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="pipeline-step"><div class="step-index">3</div><h3>Classifier</h3><p>Linear LR/SVC/SGD models, with MLP evaluated on dense SVD features</p></div>
+                <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="pipeline-step"><div class="step-index">4</div><h3>Grid Ranking</h3><p>Candidate pipelines are ranked by macro-F1 on the held-out test set</p></div>
+            </div>
+            <div class="split-note"><i class="fa-solid fa-circle-info"></i> Evaluation protocol: train/test split only. The grid is presented as an empirical comparison of reduced-feature pipelines, not as validation-based model selection.</div>
+            <div class="desc-box" id="grid-desc"></div>
+            <div class="charts-row">
+                <div class="chart-container chart-wide"><div class="chart-box" id="chart-grid-top"></div></div>
+                <div class="chart-container"><div class="chart-box" id="chart-grid-reducers"></div></div>
+            </div>
+            <div class="data-table-wrap"><table class="data-table" id="table-grid"></table></div>
+        </div>
+    </div>
+
+    <div class="eda-section" id="section-bert">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-brain"></i> BERT Fine-Tuning Grid</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="pipeline-flow" aria-label="BERT fine-tuning workflow">
+                <div class="pipeline-step"><div class="step-index">1</div><h3>Input Text</h3><p>Combined headline and description, truncated or padded to 128 tokens</p></div>
+                <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="pipeline-step"><div class="step-index">2</div><h3>Tokenizer</h3><p>Checkpoint-specific WordPiece tokenization for BERT-family encoders</p></div>
+                <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="pipeline-step"><div class="step-index">3</div><h3>Encoder</h3><p>BERT and DistilBERT encoders are fine-tuned end to end</p></div>
+                <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="pipeline-step"><div class="step-index">4</div><h3>Pooling + Head</h3><p>CLS, mean, or pooler-style representation with dropout and a linear head</p></div>
+                <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="pipeline-step"><div class="step-index">5</div><h3>Evaluate</h3><p>The best validation checkpoint is evaluated once on the final test split</p></div>
+            </div>
+            <div class="split-note"><i class="fa-solid fa-circle-info"></i> Evaluation protocol: train/validation/test split. Validation macro-F1 is used for checkpoint selection before reporting final test metrics.</div>
+            <div class="desc-box" id="bert-desc"></div>
+            <div class="charts-row">
+                <div class="chart-container"><div class="chart-box" id="chart-bert"></div></div>
+                <div class="chart-container"><div class="chart-box" id="chart-bert-time"></div></div>
+            </div>
+            <div class="data-table-wrap"><table class="data-table" id="table-bert"></table></div>
+        </div>
+    </div>
+
+    <div class="eda-section" id="section-perclass">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-list-check"></i> Best Model Per-Class Report</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="chart-container"><div class="chart-box" id="chart-per-class"></div></div>
+            <h3 class="section-title-inline"><i class="fa-solid fa-table-list"></i> Per-Class Metrics</h3>
+            <div class="data-table-wrap"><table class="data-table" id="table-per-class"></table></div>
+        </div>
+    </div>
+
+    <div class="eda-section" id="section-errors">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2><i class="fa-solid fa-triangle-exclamation"></i> Error Samples</h2><span class="collapse-icon"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+        <div class="section-body">
+            <div class="data-table-wrap"><table class="data-table" id="table-errors"></table></div>
+        </div>
+    </div>
+</div>
+
+<footer class="site-footer">
+    <p>P4AI-DS (CO3135) | Text Classification: News Category Dataset</p>
+</footer>
+
+<script src="script.js?v=3"></script>
+<script src="text_results.js?v=9"></script>
+</body>
+</html>

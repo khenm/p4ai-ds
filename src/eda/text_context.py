@@ -55,6 +55,13 @@ def _load_df():
     df["date"] = pd.to_datetime(df["date"], errors="coerce")
     return df
 
+def load_text_dataset():
+    df = _load_df().copy()
+    df["combined_text"] = (
+        df["headline"].str.strip() + " " + df["short_description"].str.strip()
+    ).str.strip()
+    df["year"] = df["date"].dt.year
+    return df
 
 def _word_count(series):
     return series.fillna("").astype(str).str.split().str.len()

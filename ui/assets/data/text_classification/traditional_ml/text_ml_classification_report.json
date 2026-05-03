@@ -1,0 +1,310 @@
+{
+  "model": "logistic_regression",
+  "accuracy": 0.6058,
+  "macro_avg": {
+    "precision": 0.4994,
+    "recall": 0.5028,
+    "f1_score": 0.4981
+  },
+  "weighted_avg": {
+    "precision": 0.6107,
+    "recall": 0.6058,
+    "f1_score": 0.6063
+  },
+  "per_class": [
+    {
+      "category": "POLITICS",
+      "precision": 0.8245,
+      "recall": 0.7296,
+      "f1_score": 0.7742,
+      "support": 7120
+    },
+    {
+      "category": "WELLNESS",
+      "precision": 0.6503,
+      "recall": 0.6804,
+      "f1_score": 0.665,
+      "support": 3589
+    },
+    {
+      "category": "ENTERTAINMENT",
+      "precision": 0.7003,
+      "recall": 0.6856,
+      "f1_score": 0.6929,
+      "support": 3473
+    },
+    {
+      "category": "TRAVEL",
+      "precision": 0.7248,
+      "recall": 0.7727,
+      "f1_score": 0.748,
+      "support": 1980
+    },
+    {
+      "category": "STYLE & BEAUTY",
+      "precision": 0.7938,
+      "recall": 0.7866,
+      "f1_score": 0.7902,
+      "support": 1963
+    },
+    {
+      "category": "PARENTING",
+      "precision": 0.5415,
+      "recall": 0.6092,
+      "f1_score": 0.5733,
+      "support": 1758
+    },
+    {
+      "category": "HEALTHY LIVING",
+      "precision": 0.3438,
+      "recall": 0.3271,
+      "f1_score": 0.3352,
+      "support": 1339
+    },
+    {
+      "category": "QUEER VOICES",
+      "precision": 0.7653,
+      "recall": 0.6809,
+      "f1_score": 0.7206,
+      "support": 1269
+    },
+    {
+      "category": "FOOD & DRINK",
+      "precision": 0.626,
+      "recall": 0.7114,
+      "f1_score": 0.6659,
+      "support": 1268
+    },
+    {
+      "category": "BUSINESS",
+      "precision": 0.4882,
+      "recall": 0.5526,
+      "f1_score": 0.5184,
+      "support": 1198
+    },
+    {
+      "category": "COMEDY",
+      "precision": 0.4995,
+      "recall": 0.4898,
+      "f1_score": 0.4946,
+      "support": 1080
+    },
+    {
+      "category": "SPORTS",
+      "precision": 0.6824,
+      "recall": 0.7685,
+      "f1_score": 0.7229,
+      "support": 1015
+    },
+    {
+      "category": "BLACK VOICES",
+      "precision": 0.4883,
+      "recall": 0.4776,
+      "f1_score": 0.4829,
+      "support": 917
+    },
+    {
+      "category": "HOME & LIVING",
+      "precision": 0.7099,
+      "recall": 0.7419,
+      "f1_score": 0.7255,
+      "support": 864
+    },
+    {
+      "category": "PARENTS",
+      "precision": 0.3785,
+      "recall": 0.3072,
+      "f1_score": 0.3391,
+      "support": 791
+    },
+    {
+      "category": "THE WORLDPOST",
+      "precision": 0.4825,
+      "recall": 0.4516,
+      "f1_score": 0.4665,
+      "support": 733
+    },
+    {
+      "category": "WEDDINGS",
+      "precision": 0.7709,
+      "recall": 0.7825,
+      "f1_score": 0.7766,
+      "support": 731
+    },
+    {
+      "category": "WOMEN",
+      "precision": 0.3468,
+      "recall": 0.4314,
+      "f1_score": 0.3845,
+      "support": 714
+    },
+    {
+      "category": "CRIME",
+      "precision": 0.4827,
+      "recall": 0.6475,
+      "f1_score": 0.5531,
+      "support": 712
+    },
+    {
+      "category": "IMPACT",
+      "precision": 0.3605,
+      "recall": 0.3615,
+      "f1_score": 0.361,
+      "support": 697
+    },
+    {
+      "category": "DIVORCE",
+      "precision": 0.7837,
+      "recall": 0.7139,
+      "f1_score": 0.7471,
+      "support": 685
+    },
+    {
+      "category": "WORLD NEWS",
+      "precision": 0.4308,
+      "recall": 0.3727,
+      "f1_score": 0.3997,
+      "support": 660
+    },
+    {
+      "category": "MEDIA",
+      "precision": 0.5149,
+      "recall": 0.528,
+      "f1_score": 0.5214,
+      "support": 589
+    },
+    {
+      "category": "WEIRD NEWS",
+      "precision": 0.3597,
+      "recall": 0.3856,
+      "f1_score": 0.3722,
+      "support": 555
+    },
+    {
+      "category": "GREEN",
+      "precision": 0.3679,
+      "recall": 0.4466,
+      "f1_score": 0.4034,
+      "support": 524
+    },
+    {
+      "category": "WORLDPOST",
+      "precision": 0.3971,
+      "recall": 0.4225,
+      "f1_score": 0.4094,
+      "support": 516
+    },
+    {
+      "category": "RELIGION",
+      "precision": 0.5175,
+      "recall": 0.6019,
+      "f1_score": 0.5566,
+      "support": 515
+    },
+    {
+      "category": "STYLE",
+      "precision": 0.4077,
+      "recall": 0.3769,
+      "f1_score": 0.3917,
+      "support": 451
+    },
+    {
+      "category": "SCIENCE",
+      "precision": 0.5159,
+      "recall": 0.5147,
+      "f1_score": 0.5153,
+      "support": 441
+    },
+    {
+      "category": "TECH",
+      "precision": 0.4824,
+      "recall": 0.5867,
+      "f1_score": 0.5295,
+      "support": 421
+    },
+    {
+      "category": "TASTE",
+      "precision": 0.3386,
+      "recall": 0.2578,
+      "f1_score": 0.2927,
+      "support": 419
+    },
+    {
+      "category": "MONEY",
+      "precision": 0.4514,
+      "recall": 0.4758,
+      "f1_score": 0.4632,
+      "support": 351
+    },
+    {
+      "category": "ARTS",
+      "precision": 0.3067,
+      "recall": 0.3179,
+      "f1_score": 0.3122,
+      "support": 302
+    },
+    {
+      "category": "ENVIRONMENT",
+      "precision": 0.445,
+      "recall": 0.3356,
+      "f1_score": 0.3826,
+      "support": 289
+    },
+    {
+      "category": "FIFTY",
+      "precision": 0.3562,
+      "recall": 0.2964,
+      "f1_score": 0.3236,
+      "support": 280
+    },
+    {
+      "category": "GOOD NEWS",
+      "precision": 0.2645,
+      "recall": 0.2607,
+      "f1_score": 0.2626,
+      "support": 280
+    },
+    {
+      "category": "U.S. NEWS",
+      "precision": 0.2828,
+      "recall": 0.2036,
+      "f1_score": 0.2368,
+      "support": 275
+    },
+    {
+      "category": "ARTS & CULTURE",
+      "precision": 0.3004,
+      "recall": 0.2724,
+      "f1_score": 0.2857,
+      "support": 268
+    },
+    {
+      "category": "COLLEGE",
+      "precision": 0.4246,
+      "recall": 0.5284,
+      "f1_score": 0.4708,
+      "support": 229
+    },
+    {
+      "category": "LATINO VOICES",
+      "precision": 0.48,
+      "recall": 0.4248,
+      "f1_score": 0.4507,
+      "support": 226
+    },
+    {
+      "category": "CULTURE & ARTS",
+      "precision": 0.5164,
+      "recall": 0.293,
+      "f1_score": 0.3739,
+      "support": 215
+    },
+    {
+      "category": "EDUCATION",
+      "precision": 0.3718,
+      "recall": 0.5074,
+      "f1_score": 0.4292,
+      "support": 203
+    }
+  ]
+}
