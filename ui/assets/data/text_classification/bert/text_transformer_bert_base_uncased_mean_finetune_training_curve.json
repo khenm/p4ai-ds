@@ -1,0 +1,20 @@
+{
+  "rows": [
+    {
+      "epoch": 1,
+      "train_loss": 1.618,
+      "val_loss": 1.2137,
+      "val_accuracy": 0.6383,
+      "val_macro_f1": 0.5735,
+      "val_weighted_f1": 0.6475
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.9314,
+      "val_loss": 1.1425,
+      "val_accuracy": 0.6611,
+      "val_macro_f1": 0.5974,
+      "val_weighted_f1": 0.6706
+    }
+  ]
+}

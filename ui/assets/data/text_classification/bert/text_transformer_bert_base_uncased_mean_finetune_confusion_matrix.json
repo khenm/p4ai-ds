@@ -1,0 +1,202 @@
+{
+  "pipeline_id": "bert_base_uncased_mean_finetune",
+  "model_name": "bert-base-uncased",
+  "pooling": "mean",
+  "freeze_encoder": false,
+  "labels": [
+    "POLITICS",
+    "WELLNESS",
+    "ENTERTAINMENT",
+    "TRAVEL",
+    "STYLE & BEAUTY",
+    "PARENTING",
+    "HEALTHY LIVING",
+    "QUEER VOICES",
+    "FOOD & DRINK",
+    "BUSINESS"
+  ],
+  "matrix": [
+    [
+      0.9136,
+      0.003,
+      0.0113,
+      0.003,
+      0.0006,
+      0.0038,
+      0.0175,
+      0.0194,
+      0.0002,
+      0.0277
+    ],
+    [
+      0.0007,
+      0.81,
+      0.002,
+      0.0119,
+      0.0086,
+      0.0372,
+      0.0892,
+      0.003,
+      0.0204,
+      0.0171
+    ],
+    [
+      0.0153,
+      0.0051,
+      0.9287,
+      0.0068,
+      0.0055,
+      0.0076,
+      0.0085,
+      0.0166,
+      0.0017,
+      0.0042
+    ],
+    [
+      0.0,
+      0.0051,
+      0.0062,
+      0.9414,
+      0.009,
+      0.0073,
+      0.0045,
+      0.0017,
+      0.0209,
+      0.0039
+    ],
+    [
+      0.0006,
+      0.0165,
+      0.008,
+      0.0085,
+      0.9443,
+      0.0091,
+      0.0011,
+      0.0023,
+      0.0045,
+      0.0051
+    ],
+    [
+      0.0022,
+      0.0321,
+      0.0015,
+      0.0075,
+      0.0075,
+      0.9187,
+      0.0142,
+      0.0075,
+      0.0052,
+      0.0037
+    ],
+    [
+      0.0145,
+      0.2599,
+      0.0068,
+      0.0106,
+      0.0029,
+      0.0232,
+      0.6502,
+      0.0029,
+      0.0087,
+      0.0203
+    ],
+    [
+      0.0162,
+      0.0086,
+      0.0439,
+      0.0038,
+      0.0029,
+      0.0095,
+      0.0057,
+      0.9075,
+      0.001,
+      0.001
+    ],
+    [
+      0.0,
+      0.014,
+      0.0,
+      0.0331,
+      0.004,
+      0.008,
+      0.006,
+      0.0,
+      0.9289,
+      0.006
+    ],
+    [
+      0.0449,
+      0.0422,
+      0.0095,
+      0.0068,
+      0.0014,
+      0.0068,
+      0.0422,
+      0.0068,
+      0.0014,
+      0.8381
+    ]
+  ],
+  "top_confusions": [
+    {
+      "actual": "POLITICS",
+      "predicted": "MEDIA",
+      "count": 274
+    },
+    {
+      "actual": "WELLNESS",
+      "predicted": "HEALTHY LIVING",
+      "count": 271
+    },
+    {
+      "actual": "HEALTHY LIVING",
+      "predicted": "WELLNESS",
+      "count": 269
+    },
+    {
+      "actual": "POLITICS",
+      "predicted": "BLACK VOICES",
+      "count": 208
+    },
+    {
+      "actual": "ENTERTAINMENT",
+      "predicted": "COMEDY",
+      "count": 206
+    },
+    {
+      "actual": "FOOD & DRINK",
+      "predicted": "TASTE",
+      "count": 202
+    },
+    {
+      "actual": "PARENTS",
+      "predicted": "PARENTING",
+      "count": 201
+    },
+    {
+      "actual": "POLITICS",
+      "predicted": "U.S. NEWS",
+      "count": 197
+    },
+    {
+      "actual": "THE WORLDPOST",
+      "predicted": "WORLD NEWS",
+      "count": 185
+    },
+    {
+      "actual": "WORLD NEWS",
+      "predicted": "THE WORLDPOST",
+      "count": 184
+    },
+    {
+      "actual": "PARENTING",
+      "predicted": "PARENTS",
+      "count": 180
+    },
+    {
+      "actual": "ENTERTAINMENT",
+      "predicted": "BLACK VOICES",
+      "count": 169
+    }
+  ]
+}

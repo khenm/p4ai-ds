@@ -1,0 +1,19 @@
+{
+  "rows": [
+    {
+      "pipeline": "bow__chi2_k20000__logistic_regression",
+      "feature_step": "bow",
+      "reduction_step": "chi2_k20000",
+      "model": "logistic_regression",
+      "feature_seconds": 9.99,
+      "reduction_seconds": 0.94,
+      "accuracy": 0.5758,
+      "macro_f1": 0.4677,
+      "weighted_f1": 0.5821,
+      "macro_precision": 0.4678,
+      "macro_recall": 0.4727,
+      "train_seconds": 132.72,
+      "status": "ok"
+    }
+  ]
+}

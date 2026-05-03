@@ -1,0 +1,65 @@
+{
+  "model": "logistic_regression",
+  "rows": [
+    {
+      "actual": "TASTE",
+      "predicted": "HEALTHY LIVING",
+      "text_preview": "If You're Not Stocking Your Fridge This Way, You're Doing It Wrong There are rules you should be following."
+    },
+    {
+      "actual": "ENTERTAINMENT",
+      "predicted": "POLITICS",
+      "text_preview": "HBO and Sexual Harassment HBO'sConfirmation captures a lot of the electrifying and byzantine battle, especially the cowardice of Joe Biden, who could have done so much more to help Hill and stand up to the GOP, stand up for truth."
+    },
+    {
+      "actual": "BLACK VOICES",
+      "predicted": "IMPACT",
+      "text_preview": "2 Ministers Are Trying To Revive The Campaign To End Poverty That MLK Started \u201cThe time is now \u2014 more than ever \u2014 for us to have a Poor People's Campaign.\u201d"
+    },
+    {
+      "actual": "HOME & LIVING",
+      "predicted": "FOOD & DRINK",
+      "text_preview": "Kitchen Of 2063 Will Have Hologram Cookbooks And 3D Printed Food (PHOTOS) Saturated In Sunlight External walls and roofs will be made of glass-like materials in an effort to harness the sunlight"
+    },
+    {
+      "actual": "WORLD NEWS",
+      "predicted": "WORLDPOST",
+      "text_preview": "Carrie Lam Says Hong Kong's Violence Becoming More Serious, But Government In Control Hong Kong\u2019s Chief Executive spoke in public for the first time since demonstrations escalated on Sunday."
+    },
+    {
+      "actual": "HOME & LIVING",
+      "predicted": "FOOD & DRINK",
+      "text_preview": "Build a Chicken Coop Raising chickens is a hobby that is gaining more and more popularity. It will pay off with food for your family and fertilizer"
+    },
+    {
+      "actual": "STYLE",
+      "predicted": "STYLE & BEAUTY",
+      "text_preview": "Grace Coddington Is Stepping Down At Vogue. Here's Why That's A Big Deal \ud83d\udc96 \ud83d\udc96 \ud83d\udc96 \ud83d\udc96 \ud83d\udc96 \ud83d\udc96 \ud83d\udc96"
+    },
+    {
+      "actual": "CRIME",
+      "predicted": "POLITICS",
+      "text_preview": "To Those of You on Hunger Strike For five days, 29,000 inmates in California's state prisons have refused all meals in the largest hunger strike and prison protest in state history. Your actions speak loudly. We can hear you. We know things"
+    },
+    {
+      "actual": "STYLE & BEAUTY",
+      "predicted": "TRAVEL",
+      "text_preview": "World Goth Day Is Here! Check Out These Celebs Who Have Gone 'Goth' (PHOTOS) Happy World Goth Day! Er, not happy? We've never been into goth subculture ourselves, but we know it's not full of happy"
+    },
+    {
+      "actual": "ENTERTAINMENT",
+      "predicted": "CRIME",
+      "text_preview": "Actress Misty Upham Reported Missing In Washington State"
+    },
+    {
+      "actual": "POLITICS",
+      "predicted": "TRAVEL",
+      "text_preview": "Did The German Embassy Just Subtweet America? It could be innocent -- or the shadiest shade ever thrown."
+    },
+    {
+      "actual": "FOOD & DRINK",
+      "predicted": "TRAVEL",
+      "text_preview": "Restaurant Instagram Accounts You Should Follow Right Now (PHOTOS) You might be missing out on some of the best behind-the-scenes looks into the dining industry."
+    }
+  ]
+}
