@@ -25,8 +25,8 @@
 <div class="page-container">
 
     <section class="hero" id="hero">
-        <h1>Exploratory Data Analysis</h1>
-        <p>This landing page presents Assignment 1 for P4AI-DS (CO3135): an exploratory data analysis project spanning three data modalities, where each report focuses on loading, summarizing, visualizing, and interpreting a different type of dataset.</p>
+        <h1>Data Science Pipeline: From EDA to Machine Learning</h1>
+        <p>This landing page presents the comprehensive project for P4AI-DS (CO3135). It spans three core data modalities - Tabular, Text, and Image - guiding each dataset through rigorous Exploratory Data Analysis (EDA) and robust Machine Learning modeling.</p>
     </section>
 
     <table class="footer-members-table" style="margin: 0 auto 1.5rem;">
@@ -42,8 +42,8 @@
 
     <div class="about-box">
         <h2><i class="fa-solid fa-circle-info"></i> About This Project</h2>
-        <p>The objective of this project is to perform <strong>Exploratory Data Analysis (EDA)</strong> on datasets of different modalities so students can practice understanding data before building downstream AI and data science solutions. The assignment requires coverage of <strong>tabular</strong>, <strong>text</strong>, and <strong>image</strong> data, with one dataset analyzed for each modality.</p>
-        <p style="margin-top: 0.75rem;">For each report, the work follows the core EDA tasks stated in the brief: inspect dataset size and schema, review sample records, compute basic statistics such as distributions, missing values, and duplicates, create meaningful visualizations, and summarize notable findings or potential issues such as imbalance, noise, or preprocessing needs.</p>
+        <p>The objective of this project is to build an end-to-end Data Science pipeline across <strong>tabular</strong>, <strong>text</strong>, and <strong>image</strong> modalities. The project is divided into two assignment: <strong>Assignment 1: Exploratory Data Analysis (EDA)</strong> to deeply understand and visualize the inherent patterns in the data, and <strong>Assignment 2: Machine Learning</strong> to train, evaluate, and benchmark predictive algorithms.</p>
+        <p style="margin-top: 0.75rem;">For each modality, the EDA phase covers schema inspection, missing value handling, and visual insight generation. The Machine Learning phase builds upon these findings to deploy optimal preprocessing techniques, benchmark multiple models, and expose feature importance to validate the models' mathematical logic against human insights.</p>
     </div>
 
     <h2 class="section-title-inline"><i class="fa-solid fa-folder-open"></i> Reports</h2>
@@ -59,7 +59,10 @@
                 <li>Cramér's V categorical redundancy and Pearson correlation</li>
                 <li>Actionable insights for Machine Learning engineering</li>
             </ul>
-            <a href="salary_dashboard.html" class="btn-report">View Report <i class="fa-solid fa-arrow-right"></i></a>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="salary_dashboard.html" class="btn-report">EDA <i class="fa-solid fa-arrow-right"></i></a>
+                <a href="salary_ml_dashboard.html" class="btn-report">Results <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
         </div>
         <div class="report-card">
             <span class="badge badge-tabular"><i class="fa-solid fa-font"></i> Text Analysis</span>
@@ -88,7 +91,10 @@
                 <li>Interactive breed gallery with Dog/Cat tabs</li>
                 <li>t-SNE, PCA, and cross-modality insights</li>
             </ul>
-            <a href="image.html" class="btn-report">View Report <i class="fa-solid fa-arrow-right"></i></a>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="image.html" class="btn-report">EDA <i class="fa-solid fa-arrow-right"></i></a>
+                <a href="image_results.html" class="btn-report">Results <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
         </div>
     </div>
 
