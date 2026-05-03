@@ -1,6 +1,8 @@
 import json
 import os
 from datetime import datetime
+
+import numpy as np
 from sklearn.metrics import classification_report, confusion_matrix
 
 
@@ -23,9 +25,16 @@ ADOPTION_SPEED_NAMES = [
 ]
 
 
+def _to_int_list(arr):
+    """Flatten any array-like to a plain Python list of ints."""
+    return np.asarray(arr).ravel().astype(int).tolist()
+
+
 def build_adoption_speed_section(targets, preds):
     """Classification report + confusion matrix for AdoptionSpeed (5 classes)."""
-    labels = sorted(set(list(targets) + list(preds)))
+    targets = _to_int_list(targets)
+    preds   = _to_int_list(preds)
+    labels  = sorted(set(targets + preds))
     class_names = [ADOPTION_SPEED_NAMES[i] for i in labels]
     return build_clf_section(targets, preds, class_names=class_names)
 
@@ -36,7 +45,7 @@ def build_breed_section(targets, preds):
     Class names are omitted because breed IDs have no human-readable mapping here;
     the report uses numeric breed codes instead.
     """
-    return build_clf_section(targets, preds, class_names=None)
+    return build_clf_section(_to_int_list(targets), _to_int_list(preds), class_names=None)
 
 
 def save_report(config_path, report_data, report_dir="results/reports"):

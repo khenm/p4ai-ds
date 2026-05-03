@@ -9,11 +9,41 @@ decision_tree DecisionTreeClassifier
 svm           SVC with probability=True  (slow on large feature sets)
 """
 
+import numpy as np
+from sklearn.preprocessing import LabelEncoder
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
 
 SUPPORTED = ("lightgbm", "xgboost", "catboost", "decision_tree", "svm")
+
+
+class _XGBLabelWrapper:
+    """Wraps XGBClassifier to handle non-zero-based integer labels.
+
+    XGBoost requires labels in [0, n_classes); PetFinder tabular attributes
+    are 1-indexed (e.g. FurLength ∈ {1,2,3}). This wrapper encodes on fit
+    and inverse-transforms on predict so the rest of the pipeline is unaffected.
+    """
+
+    def __init__(self, **kwargs):
+        from xgboost import XGBClassifier
+        self._clf = XGBClassifier(**kwargs)
+        self._le = LabelEncoder()
+
+    def fit(self, X, y):
+        self._clf.fit(X, self._le.fit_transform(y))
+        return self
+
+    def predict(self, X):
+        return self._le.inverse_transform(self._clf.predict(X))
+
+    def predict_proba(self, X):
+        return self._clf.predict_proba(X)
+
+    @property
+    def classes_(self):
+        return self._le.classes_
 
 
 def build_classifier(name: str, gpu: bool = False, random_state: int = 42, **kwargs):
@@ -43,7 +73,6 @@ def build_classifier(name: str, gpu: bool = False, random_state: int = 42, **kwa
         return LGBMClassifier(**{**defaults, **kwargs})
 
     if name == "xgboost":
-        from xgboost import XGBClassifier
         defaults = dict(
             n_estimators=100,
             random_state=random_state,
@@ -52,7 +81,7 @@ def build_classifier(name: str, gpu: bool = False, random_state: int = 42, **kwa
             device="cuda" if gpu else "cpu",
             eval_metric="mlogloss",
         )
-        return XGBClassifier(**{**defaults, **kwargs})
+        return _XGBLabelWrapper(**{**defaults, **kwargs})
 
     if name == "catboost":
         from catboost import CatBoostClassifier

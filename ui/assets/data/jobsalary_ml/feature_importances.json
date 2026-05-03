@@ -1,0 +1,104 @@
+{
+    "Random Forest": [
+        {
+            "Feature": "location",
+            "Importance": 0.325017809828774
+        },
+        {
+            "Feature": "experience_years",
+            "Importance": 0.19947325374668023
+        },
+        {
+            "Feature": "company_size",
+            "Importance": 0.17102330879090274
+        },
+        {
+            "Feature": "job_title",
+            "Importance": 0.16925204118258844
+        },
+        {
+            "Feature": "education_level",
+            "Importance": 0.09804170334441405
+        },
+        {
+            "Feature": "skills_count",
+            "Importance": 0.024155141873217177
+        },
+        {
+            "Feature": "industry",
+            "Importance": 0.0070775251566633475
+        },
+        {
+            "Feature": "remote_work",
+            "Importance": 0.005959216076760118
+        }
+    ],
+    "XGBoost": [
+        {
+            "Feature": "location",
+            "Importance": 0.32365548610687256
+        },
+        {
+            "Feature": "company_size",
+            "Importance": 0.23739969730377197
+        },
+        {
+            "Feature": "experience_years",
+            "Importance": 0.1690053790807724
+        },
+        {
+            "Feature": "job_title",
+            "Importance": 0.1483878642320633
+        },
+        {
+            "Feature": "education_level",
+            "Importance": 0.0946539118885994
+        },
+        {
+            "Feature": "skills_count",
+            "Importance": 0.015262017957866192
+        },
+        {
+            "Feature": "remote_work",
+            "Importance": 0.011545753106474876
+        },
+        {
+            "Feature": "industry",
+            "Importance": 8.996223914436996e-05
+        }
+    ],
+    "LightGBM": [
+        {
+            "Feature": "job_title",
+            "Importance": 1152
+        },
+        {
+            "Feature": "experience_years",
+            "Importance": 1134
+        },
+        {
+            "Feature": "location",
+            "Importance": 994
+        },
+        {
+            "Feature": "education_level",
+            "Importance": 824
+        },
+        {
+            "Feature": "company_size",
+            "Importance": 792
+        },
+        {
+            "Feature": "skills_count",
+            "Importance": 765
+        },
+        {
+            "Feature": "remote_work",
+            "Importance": 335
+        },
+        {
+            "Feature": "industry",
+            "Importance": 4
+        }
+    ]
+}
