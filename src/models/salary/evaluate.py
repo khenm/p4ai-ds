@@ -6,17 +6,17 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
 def evaluate_models(fitted_models, X_test, y_test, results_dir='ui/assets/data/jobsalary_ml'):
     """
-    Evaluates trained models, captures metrics, and outputs them as JSON for the Dashboard UI.
-    Also extracts Feature Importances for Tree-based models.
+    Evaluates trained Pipeline models, captures metrics, and outputs them as JSON for the Dashboard UI.
+    Extracts Feature Importances dynamically from the regressors within the Pipelines.
     """
     os.makedirs(results_dir, exist_ok=True)
     
     evaluation_results = []
     feature_importances = {}
 
-    for name, model in fitted_models.items():
+    for name, pipeline in fitted_models.items():
         print(f"Evaluating {name}...")
-        y_pred = model.predict(X_test)
+        y_pred = pipeline.predict(X_test)
         
         mae = mean_absolute_error(y_test, y_pred)
         rmse = np.sqrt(mean_squared_error(y_test, y_pred))
@@ -29,12 +29,17 @@ def evaluate_models(fitted_models, X_test, y_test, results_dir='ui/assets/data/j
             'R2_Score': float(r2)
         })
 
+        # Extract Regressor and Preprocessor from the Pipeline
+        regressor = pipeline.named_steps['regressor']
+        preprocessor = pipeline.named_steps['preprocessor']
+        
         # Extract Feature Importances if available
-        if hasattr(model, 'feature_importances_'):
-            importances = model.feature_importances_
-            # Depending on TargetEncoder, the columns of X_test remain unchanged
+        if hasattr(regressor, 'feature_importances_'):
+            importances = regressor.feature_importances_
+            feature_names = preprocessor.get_feature_names_out()
+            
             feat_imp = pd.DataFrame({
-                'Feature': X_test.columns,
+                'Feature': feature_names,
                 'Importance': importances
             }).sort_values(by='Importance', ascending=False)
             
