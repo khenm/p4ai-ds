@@ -1,10 +1,12 @@
-# P4AI-DS EDA Dashboard
+# P4AI-DS Project
 
-Exploratory Data Analysis dashboard for **Assignment 1 — P4AI-DS (CO3135)**. Covers three data modalities — tabular, text, and image — each with a dedicated interactive report built as a static web app.
+This repository contains the coursework project for **P4AI-DS / CO3135**, covering exploratory data analysis, classical machine learning, deep learning, and interactive reporting across three independent datasets:
 
-**Live demo:** https://khenm.github.io/p4ai-ds/
+- **Tabular:** Job salary prediction and regression modeling
+- **Text:** News category exploration and multi-class classification
+- **Image:** PetFinder adoption prediction, image-quality analysis, CNN/ML baselines, Grad-CAM, and visual galleries
 
----
+**Dashboard:** https://khenm.github.io/p4ai-ds/
 
 ## Datasets
 
@@ -18,105 +20,227 @@ Exploratory Data Analysis dashboard for **Assignment 1 — P4AI-DS (CO3135)**. C
 
 ## Quick Start
 
-**Requirements:** Python 3.10+, [`uv`](https://docs.astral.sh/uv/)
+Requirements:
+
+- Python 3.10+
+- [`uv`](https://docs.astral.sh/uv/)
+- Dataset files downloaded separately from Kaggle
+
+Install dependencies:
 
 ```bash
-# Install dependencies
 uv sync
+```
 
-# Run full pipeline and launch dashboard (default port 8081)
+Run the EDA exports and launch the dashboard:
+
+```bash
 ./run.sh
 ```
 
-Open `http://localhost:8081` in your browser.
+The default server is available at:
 
-### Run individual stages
-
-```bash
-uv run python scripts/eda_text.py       # Text EDA  → ui/assets/data/
-uv run python scripts/eda_salary.py     # Salary EDA → ui/assets/data/jobsalary/
-uv run python scripts/eda_image.py      # PetFinder EDA (4 phases) → ui/assets/data/ + ui/assets/samples/
-uv run python scripts/gallery_export.py # Breed gallery → ui/assets/data/image_gallery.json
-
-# Start web server only (after assets are generated)
-cd ui && python3 -m http.server 8081
+```text
+http://localhost:8081
 ```
 
----
+Use another port by passing it as the first argument:
+
+```bash
+./run.sh 9000
+```
+
+If the dashboard assets already exist, serve the UI only:
+
+```bash
+cd ui
+python3 -m http.server 8081
+```
+
+## Main Workflows
+
+### EDA Exports
+
+```bash
+uv run python scripts/eda_text.py
+uv run python scripts/eda_salary.py
+uv run python scripts/eda_image.py
+uv run python scripts/gallery_export.py
+```
+
+These commands generate dashboard-ready JSON, CSV, image samples, and figures under `ui/assets/`.
+
+### Salary Regression
+
+```bash
+uv run python scripts/run_salary_ml.py
+```
+
+Outputs are written to:
+
+```text
+ui/assets/data/jobsalary_ml/
+```
+
+Current checked-in benchmark:
+
+| Model | MAE | RMSE | R2 |
+|---|---:|---:|---:|
+| XGBoost | 4,651.68 | 5,818.09 | 0.9756 |
+| LightGBM | 4,683.65 | 5,858.75 | 0.9753 |
+| Random Forest | 5,246.05 | 6,587.19 | 0.9688 |
+| Linear Regression | 6,487.02 | 8,361.01 | 0.9497 |
+
+### News Category Text Classification
+
+Traditional ML:
+
+```bash
+uv run python scripts/text_classification/train_traditional_ml.py
+```
+
+Reduced-dimension pipeline grid:
+
+```bash
+uv run python scripts/text_classification/train_pipeline_grid.py
+```
+
+Transformer fine-tuning:
+
+```bash
+uv run python scripts/text_classification/train_bert.py
+```
+
+Useful quick-run options:
+
+```bash
+uv run python scripts/text_classification/train_traditional_ml.py --sample-size 5000 --n-jobs -1
+uv run python scripts/text_classification/train_pipeline_grid.py --sample-size 5000 --limit 10
+uv run python scripts/text_classification/train_bert.py --sample-size 5000 --epochs 1 --limit 2
+```
+
+Current checked-in text benchmark:
+
+| Model | Family | Accuracy | Macro F1 | Weighted F1 |
+|---|---|---:|---:|---:|
+| BERT base, mean pooling | Transformer | 0.6633 | 0.6005 | 0.6728 |
+| BERT base, CLS pooling | Transformer | 0.6614 | 0.5988 | 0.6710 |
+| BERT base, pooler | Transformer | 0.6597 | 0.5959 | 0.6693 |
+| DistilBERT, CLS/pooler | Transformer | 0.6517 | 0.5880 | 0.6622 |
+| Logistic regression | Traditional ML | 0.6058 | 0.4981 | 0.6063 |
+
+### PetFinder Image and Adoption Modeling
+
+Train the two-stage ResNet-18 CNN:
+
+```bash
+uv run python scripts/train_cnn.py --config configs/train_cnn.yaml
+```
+
+Run Grad-CAM from a saved checkpoint:
+
+```bash
+uv run python scripts/train_cnn.py \
+  --config configs/train_cnn.yaml \
+  --checkpoint results/checkpoints/train_cnn/stage2.pt
+```
+
+Train classical ML on ResNet image embeddings:
+
+```bash
+uv run python scripts/train_ml.py --model lightgbm
+uv run python scripts/train_ml.py --model xgboost
+uv run python scripts/train_ml.py --model catboost
+uv run python scripts/train_ml.py --model decision_tree
+```
+
+Current checked-in PetFinder benchmarks:
+
+| Model | Adoption Accuracy | Quadratic Weighted Kappa |
+|---|---:|---:|
+| LightGBM two-stage embedding model | 0.3630 | 0.2616 |
+| XGBoost two-stage embedding model | 0.3555 | 0.2108 |
+
+Selected Stage-1 validation accuracies from the LightGBM run:
+
+| Attribute | Accuracy |
+|---|---:|
+| Type | 0.9652 |
+| Health | 0.9655 |
+| Sterilized | 0.6950 |
+| MaturitySize | 0.6878 |
+| Color1 | 0.6445 |
+| FurLength | 0.6380 |
+| Breed1 | 0.3115 |
 
 ## Project Structure
 
-```
-petfinder-analysis/
+```text
+.
 ├── configs/
-│   ├── eda.yaml               # EDA parameters (seed, top_labels_k)
-│   ├── style.yaml             # Color palette config
-│   └── datasets/              # Dataset-specific metadata
-├── data/                      # Raw datasets (not tracked in git)
-│   ├── petfinder/             # train.csv, train_images/, BreedLabels.csv, ColorLabels.csv
-│   ├── newscategory/          # News_Category_Dataset_v3.json
-│   └── jobsalary/             # job_salary_prediction_dataset.csv
+│   ├── datasets/              # Dataset path and metadata configuration
+│   ├── models/                # Model-specific configuration
+│   ├── eda.yaml               # EDA parameters
+│   ├── train_cnn.yaml         # Two-stage ResNet training config
+│   └── train_lgbm.yaml        # PetFinder ML baseline config
+├── notebooks/                 # Exploratory notebooks
+├── results/
+│   ├── reports/               # PetFinder model reports
+│   ├── gradcam/               # Grad-CAM overlays
+│   └── text_classification/   # Text metrics, artifacts, and comparisons
 ├── scripts/
-│   ├── eda_image.py           # PetFinder EDA entry point (4 phases)
-│   ├── eda_text.py            # News Category EDA entry point
-│   ├── eda_salary.py          # Salary EDA entry point
-│   ├── gallery_export.py      # Breed gallery image export
-│   └── preprocess.py          # Image preprocessing & COCO annotations
+│   ├── eda_*.py               # EDA export entry points
+│   ├── train_*.py             # PetFinder training entry points
+│   ├── run_salary_ml.py       # Salary ML pipeline
+│   └── text_classification/   # Text training entry points
 ├── src/
-│   ├── preprocess/            # Image preprocessing modules
-│   └── eda/
-│       ├── tabular_context.py # PetFinder tabular analysis (Phase 1)
-│       ├── image_metadata.py  # Image dimensions & resolution (Phase 2)
-│       ├── image_quality.py   # Quality metrics on 3K-image sample (Phase 3)
-│       ├── image_advanced.py  # PCA, t-SNE, dominant colors (Phase 4)
-│       ├── text_context.py    # News Category text analysis
-│       ├── salary_eda.py      # Salary EDA analysis
-│       └── theme.py           # Shared pastel color palette
-├── ui/                        # Static web dashboard (vanilla HTML/CSS/JS)
-│   ├── index.html             # Landing page
-│   ├── salary_dashboard.html  # Salary EDA report
-│   ├── salary_dashboard.js    # Salary chart rendering
-│   ├── image.html             # PetFinder EDA report
-│   ├── image.js               # PetFinder chart rendering & gallery
-│   ├── text.html              # News Category report
-│   ├── text.js                # News Category chart rendering
-│   ├── style.css              # Warm pastel theme
-│   ├── script.js              # Shared utilities & Plotly config
-│   └── assets/                # Generated JSON + sample images (not tracked)
-├── run.sh                     # One-command pipeline + server
+│   ├── analysis/              # Ablation, SHAP, Grad-CAM
+│   ├── datasets/              # PetFinder dataset loader
+│   ├── eda/                   # EDA modules for all datasets
+│   ├── models/                # CNN, ML classifiers, salary models
+│   ├── preprocess/            # Image and tabular preprocessing
+│   ├── text_classification/   # Traditional ML, pipeline-grid, transformer code
+│   └── utils/                 # Training, distributed, reporting, checkpoint utilities
+├── ui/                        # Static dashboards and generated assets
 ├── pyproject.toml
-└── uv.lock
+├── uv.lock
+└── run.sh
 ```
 
----
+## Dashboard Pages
 
-## Dashboard Reports
+| Page | Purpose |
+|---|---|
+| `ui/index.html` | Dashboard landing page |
+| `ui/salary_dashboard.html` | Salary EDA |
+| `ui/salary_ml_dashboard.html` | Salary regression results |
+| `ui/text.html` | News Category EDA |
+| `ui/text_results.html` | Text classification results |
+| `ui/image.html` | PetFinder EDA |
+| `ui/image_results.html` | PetFinder image-model results and Grad-CAM |
 
-### Tabular — Job Salary Prediction Dataset
-- Dataset schema, missing values, and feature validation
-- Multivariate interactions between Education Level and Company Size
-- Category frequency tracking and Class Imbalance mapping for Job Titles
-- Cramér's V categorical redundancy and Pearson correlation matrices
-- Actionable insights for Machine Learning feature engineering
+## Outputs
 
-### Text — News Category
-- Dataset overview, schema, and sample records
-- Category imbalance and smallest class analysis
-- Headline and combined text length distributions
-- Timeline drift across publication years (2012–2022)
-- Missing values, duplicates, top terms, and top authors
+The codebase writes analysis artifacts to predictable locations:
 
-### Image — PetFinder Adoption Prediction
-- Dataset overview: 14,993 listings, 58,313 images, 5-class `AdoptionSpeed` target
-- Feature distributions, correlation heatmap, health and vaccination patterns
-- Image dimensions, resolution, photo count impact on adoption speed
-- Quality metrics: brightness, contrast, blur, saturation, colorfulness (3K-image sample)
-- Composite quality scores and interaction heatmap
-- Interactive breed gallery with Dog/Cat tabs
-- Dominant color palettes, PCA variance, t-SNE projections, cross-modality analysis
+| Output | Location |
+|---|---|
+| Static dashboard data | `ui/assets/data/` |
+| Dashboard figures and image samples | `ui/assets/figures/`, `ui/assets/samples/` |
+| Salary ML dashboard data | `ui/assets/data/jobsalary_ml/` |
+| PetFinder model reports | `results/reports/` |
+| Grad-CAM overlays | `results/gradcam/`, `ui/assets/gradcam/` |
+| Text classification reports | `results/text_classification/` |
+| Serialized text models | `results/text_classification/artifacts/` |
 
----
+## Development Notes
 
-## Dependencies
+- The dashboards are static and do not require a backend once assets are generated.
+- Model artifacts and generated dashboard data can be large; keep raw Kaggle data outside git.
+- Transformer training requires downloading Hugging Face checkpoints and benefits strongly from a GPU.
+- PetFinder CNN training uses the first image per listing (`<PetID>-1.jpg`) in `PetFinderDataset`.
+- Distributed CNN training can be enabled through `configs/train_cnn.yaml` and launched with the appropriate PyTorch distributed runner.
 
-Key packages: `pandas`, `numpy`, `scikit-learn`, `opencv-python`, `Pillow`, `torch`, `torchvision`, `matplotlib`, `seaborn`.
+## License and Data Terms
+
+This repository is for academic coursework. Dataset usage is governed by the terms of the respective Kaggle datasets and competitions.
