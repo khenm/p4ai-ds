@@ -1,0 +1,71 @@
+{
+    "Target": {
+        "job_title": {
+            "Machine Learning Engineer": 163280.131946956,
+            "Backend Developer": 139269.18348190567,
+            "Data Analyst": 119755.32768259694,
+            "Business Analyst": 122693.2238778848,
+            "Frontend Developer": 132534.04847461716,
+            "AI Engineer": 173592.46589754318,
+            "Data Scientist": 147360.53122581413,
+            "Cloud Engineer": 152141.32203903503,
+            "Product Manager": 157533.62828101646,
+            "Cybersecurity Analyst": 148591.88655788655,
+            "Software Engineer": 141706.8346603933,
+            "DevOps Engineer": 149834.3828448121,
+            "-1": 145713.97281,
+            "-2": 145713.97281
+        },
+        "industry": {
+            "Technology": 145792.60199501246,
+            "Consulting": 145396.74715867158,
+            "Manufacturing": 145861.2846385542,
+            "Finance": 145863.18224322062,
+            "Retail": 145164.78688854256,
+            "Telecom": 145783.96301902024,
+            "Education": 145937.69716786558,
+            "Government": 145722.1404010025,
+            "Media": 145808.46222624072,
+            "Healthcare": 145811.78010733813,
+            "-1": 145713.97281,
+            "-2": 145713.97281
+        },
+        "location": {
+            "India": 97702.14551938919,
+            "Sweden": 139376.977764483,
+            "Canada": 167387.3301245472,
+            "UK": 160112.4879394213,
+            "Germany": 153284.63852242744,
+            "Singapore": 139338.3012294062,
+            "Netherlands": 139318.23545039853,
+            "Remote": 139512.53944147474,
+            "USA": 181757.4889803705,
+            "Australia": 139379.34305884677,
+            "-1": 145713.97281,
+            "-2": 145713.97281
+        },
+        "remote_work": {
+            "Yes": 149257.4052523483,
+            "No": 143958.1651421397,
+            "Hybrid": 143961.99988037563,
+            "-1": 145713.97281,
+            "-2": 145713.97281
+        }
+    },
+    "Ordinal": {
+        "education_level": {
+            "0": "High School",
+            "1": "Diploma",
+            "2": "Bachelor",
+            "3": "Master",
+            "4": "PhD"
+        },
+        "company_size": {
+            "0": "Startup",
+            "1": "Small",
+            "2": "Medium",
+            "3": "Large",
+            "4": "Enterprise"
+        }
+    }
+}
