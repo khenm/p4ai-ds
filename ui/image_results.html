@@ -62,9 +62,10 @@
         .cmp-table tr:hover td { background: var(--surface-warm); }
         .cmp-table tr:last-child td { border-bottom: none; }
         .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
-        .badge-cnn { background: var(--card-sky); color: var(--accent-blue); }
-        .badge-gbm { background: var(--card-mint); color: var(--accent-green); }
-        .badge-best { background: var(--card-mint); color: var(--accent-green); }
+        .badge-cnn  { background: var(--card-sky);      color: var(--accent-blue); }
+        .badge-gbm  { background: var(--card-mint);     color: var(--accent-green); }
+        .badge-tree { background: var(--card-lavender); color: #4a3f8a; }
+        .badge-best { background: var(--card-mint);     color: var(--accent-green); }
         .rank-1 { color: #C9A227; font-weight: 700; }
         .rank-2 { color: #9E9E9E; font-weight: 600; }
         .rank-3 { color: #A0522D; font-weight: 600; }
@@ -198,8 +199,8 @@
                 </div>
                 <div class="metric-card">
                     <div class="mc-label">Models Evaluated</div>
-                    <div class="mc-value">4</div>
-                    <div class="mc-sub">Baseline · 2×ResNet · LightGBM</div>
+                    <div class="mc-value">7</div>
+                    <div class="mc-sub">ResNet · LightGBM · XGBoost · CatBoost · DT</div>
                 </div>
                 <div class="metric-card">
                     <div class="mc-label">Val Set Size</div>
@@ -234,9 +235,9 @@
             <div class="insight-box">
                 <h4><i class="fa-solid fa-lightbulb"></i> Key Findings</h4>
                 <ul>
-                    <li>LightGBM outperforms all ResNet variants on both accuracy (+0.9 pp over best ResNet) and QWK (+0.019).</li>
-                    <li>TwoStage ResNet + GradNorm (35.4%, QWK 0.243) now slightly beats the No-Norm variant (34.66%, QWK 0.2148), suggesting GradNorm converged well.</li>
-                    <li>Baseline ResNet (image-only, 28.32%, QWK 0.114) confirms that visual features alone are insufficient — multi-task pre-training and tabular integration are essential.</li>
+                    <li>LightGBM leads all 7 models on both accuracy (36.3%) and QWK (0.2616); CatBoost is 2nd by accuracy (35.69%) but 3rd by QWK, while TwoStage ResNet + GradNorm is 2nd by QWK (0.243).</li>
+                    <li>XGBoost achieves the best Stage-1 Breed1 accuracy (63.66%) but its Stage-2 QWK (0.2108) is weaker — likely because its class probability distributions are less calibrated as Stage-2 inputs.</li>
+                    <li>Decision Tree (27.94%, QWK 0.123) performs on par with Baseline ResNet (28.32%, 0.114), confirming tree stumps are too weak to leverage the 860-dim feature space.</li>
                     <li>All models struggle with Speed 0 (same-day adoptions) — a highly imbalanced class with only 83 val samples.</li>
                 </ul>
             </div>
@@ -297,6 +298,9 @@
                         <th>ResNet (No Norm)</th>
                         <th>ResNet (GradNorm)</th>
                         <th>LightGBM</th>
+                        <th>XGBoost</th>
+                        <th>CatBoost</th>
+                        <th>DT</th>
                         <th>Best</th>
                     </tr></thead>
                     <tbody></tbody>
@@ -305,15 +309,15 @@
 
             <!-- Feature accuracy bar chart -->
             <div class="chart-box" id="chart-feat-acc" style="min-height:420px;"></div>
-            <p class="chart-description" style="margin-top:.5rem;">Per-feature validation accuracy across three Stage-1 configurations. Features with >90% accuracy (Type, Health) are easily inferred from images; Breed1 and Gender are hardest.</p>
+            <p class="chart-description" style="margin-top:.5rem;">Per-feature validation accuracy across all Stage-1 configurations. Type and Health exceed 90% in every model; Breed1 is hardest for LightGBM/CatBoost but XGBoost (63.7%) matches CNN accuracy.</p>
 
             <div class="insight-box" style="margin-top:1rem;">
                 <h4><i class="fa-solid fa-lightbulb"></i> Insights</h4>
                 <ul>
-                    <li><strong>Type</strong> (Dog/Cat) and <strong>Health</strong> are visually obvious — all models exceed 95%.</li>
-                    <li><strong>Breed1</strong> is the hardest attribute. ResNet models (~60–61%) are nearly 2× better than LightGBM (31%), likely because the ResNet learns breed-specific visual features during multi-task training.</li>
-                    <li><strong>Gender</strong> is the weakest non-breed feature. GradNorm ResNet (47.7%) outperforms No-Norm (50.8%) here, showing adaptive weighting helps the hardest head.</li>
-                    <li>LightGBM leads on 7 of 10 features despite using only a 512-dim linear embedding — no fine-grained visual feature learning.</li>
+                    <li><strong>Type</strong> (Dog/Cat) and <strong>Health</strong> are visually obvious — all models exceed 92%, with XGBoost reaching 97.2%.</li>
+                    <li><strong>Breed1</strong>: XGBoost (63.7%) and ResNet GradNorm (61.0%) are the top two; LightGBM (31.2%) is weakest — it lacks the fine-grained visual feature learning of the CNN backbone during multi-task training.</li>
+                    <li><strong>Gender</strong> is the weakest non-breed feature across all models (43–52%); Decision Tree is worst (43.8%), confirming gender is poorly discriminated by visual appearance alone.</li>
+                    <li>XGBoost leads on 5 of 10 features, LightGBM leads on 4, suggesting boosting with deeper per-tree splits better exploits the 512-dim embedding space.</li>
                 </ul>
             </div>
         </div>
@@ -638,26 +642,38 @@ const SPEED_LABELS = ['Speed 0\n(Same day)', 'Speed 1\n(1–7d)', 'Speed 2\n(8�
 const SPEED_SHORT  = ['Speed 0', 'Speed 1', 'Speed 2', 'Speed 3', 'Speed 4'];
 
 const MODELS = [
-    { id:'baseline',     name:'Baseline ResNet',         type:'CNN', acc:28.32, qwk:0.114,
+    { id:'baseline',       name:'Baseline ResNet',           type:'CNN', acc:28.32, qwk:0.114,
       cm:[[2,28,26,12,15],[11,173,241,90,88],[20,215,354,129,128],[13,148,258,100,103],[15,139,291,131,201]],
       notes:'Single-head ResNet18, direct AdoptionSpeed classification' },
-    { id:'cnn_no_norm',  name:'TwoStage ResNet (No Norm)', type:'CNN', acc:34.66, qwk:0.2148,
+    { id:'cnn_no_norm',    name:'TwoStage ResNet (No Norm)', type:'CNN', acc:34.66, qwk:0.2148,
       cm:[[0,17,38,1,27],[0,81,325,2,195],[0,104,464,9,269],[0,43,311,7,261],[0,45,264,4,464]],
       notes:'Multi-task Stage 1 (equal loss weights), frozen Stage 2' },
-    { id:'cnn_norm',     name:'TwoStage ResNet + GradNorm', type:'CNN', acc:35.4,  qwk:0.243,
+    { id:'cnn_norm',       name:'TwoStage ResNet + GradNorm', type:'CNN', acc:35.4,  qwk:0.243,
       cm:[[0,27,39,1,16],[0,110,356,19,118],[0,108,526,31,182],[0,55,355,33,179],[0,55,337,16,369]],
       notes:'Multi-task Stage 1 with GradNorm adaptive loss weighting' },
-    { id:'lgbm',         name:'LightGBM Pipeline',       type:'GBM', acc:36.3,  qwk:0.2616,
+    { id:'lgbm',           name:'LightGBM',                  type:'GBM', acc:36.3,  qwk:0.2616,
       cm:[[1,25,27,4,24],[1,123,225,64,175],[0,124,305,91,284],[0,60,216,115,265],[0,63,156,63,520]],
       notes:'ResNet embeddings + 10 Stage-1 LightGBM logits + PhotoAmt → LightGBM Stage 2' },
+    { id:'xgboost',        name:'XGBoost',                   type:'GBM', acc:35.55, qwk:0.2108,
+      cm:[[0,12,33,3,27],[1,65,226,49,270],[0,53,276,63,410],[0,23,186,84,336],[0,21,146,30,617]],
+      notes:'ResNet embeddings + 10 Stage-1 XGBoost logits + PhotoAmt → XGBoost Stage 2' },
+    { id:'catboost',       name:'CatBoost',                  type:'GBM', acc:35.69, qwk:0.2372,
+      cm:[[0,22,28,3,22],[0,143,275,32,161],[0,99,397,61,245],[0,52,259,66,252],[0,70,255,49,440]],
+      notes:'ResNet embeddings + 10 Stage-1 CatBoost logits + PhotoAmt → CatBoost Stage 2' },
+    { id:'decision_tree',  name:'Decision Tree',             type:'Tree', acc:27.94, qwk:0.123,
+      cm:[[2,21,28,15,9],[15,166,196,103,131],[17,172,244,178,191],[18,119,183,138,171],[17,154,195,179,269]],
+      notes:'ResNet embeddings + 10 Stage-1 DT logits + PhotoAmt → Decision Tree Stage 2' },
 ];
 
 const FEATURES = ['Type','FurLength','MaturitySize','Breed1','Health','Vaccinated','Dewormed','Sterilized','Gender','Color1'];
 const FEAT_CLASSES = [2, 4, 5, 308, 4, 4, 4, 4, 4, 8];
 const STAGE1_ACC = {
-    cnn_no_norm: [96.25, 56.81, 62.67, 59.77, 96.11, 53.77, 54.66, 63.02, 50.77, 58.31],
-    cnn_norm:    [96.35, 59.65, 63.71, 61.02, 95.98, 57.74, 56.92, 67.02, 47.71, 56.45],
-    lgbm:        [96.52, 63.80, 68.78, 31.15, 96.55, 60.87, 59.88, 69.50, 52.03, 64.45],
+    cnn_no_norm:   [96.25, 56.81, 62.67, 59.77, 96.11, 53.77, 54.66, 63.02, 50.77, 58.31],
+    cnn_norm:      [96.35, 59.65, 63.71, 61.02, 95.98, 57.74, 56.92, 67.02, 47.71, 56.45],
+    lgbm:          [96.52, 63.80, 68.78, 31.15, 96.55, 60.87, 59.88, 69.50, 52.03, 64.45],
+    xgboost:       [97.24, 61.79, 68.61, 63.66, 96.42, 59.50, 58.82, 68.47, 50.15, 62.27],
+    catboost:      [96.62, 60.18, 66.60, 54.01, 96.42, 57.73, 56.67, 65.64, 48.11, 60.59],
+    decision_tree: [92.12, 56.23, 64.45, 54.59, 96.01, 52.71, 52.68, 62.09, 43.84, 56.77],
 };
 
 const SINGLE_ABL = [
@@ -713,13 +729,13 @@ function tagHtml(groups) {
 /* ── Section 1: Leaderboard ──────────────────────────────── */
 function buildLeaderboard() {
     const sorted = [...MODELS].sort((a,b) => b.qwk - a.qwk);
-    const ranks = ['rank-1','rank-2','rank-3',''];
-    const medals = ['🥇','🥈','🥉',''];
+    const rankCls  = ['rank-1','rank-2','rank-3','rank-3','','',''];
+    const medals   = ['🥇','🥈','🥉','','','',''];
     const tbody = document.getElementById('leaderboard-tbody');
     sorted.forEach((m, i) => {
         const isBest = i === 0;
         tbody.innerHTML += `<tr>
-            <td class="${ranks[i]}">${medals[i]} ${i+1}</td>
+            <td class="${rankCls[i] || ''}">${medals[i] || ''} ${i+1}</td>
             <td><strong>${m.name}</strong></td>
             <td><span class="badge badge-${m.type.toLowerCase()}">${m.type}</span></td>
             <td>${isBest ? `<strong class="rank-1">${m.acc}%</strong>` : m.acc+'%'}</td>
@@ -729,31 +745,39 @@ function buildLeaderboard() {
     });
 
     // Bar chart: Acc + QWK grouped
-    const names = MODELS.map(m => m.name.replace(' Pipeline','').replace('TwoStage ','2S-'));
+    const names = MODELS.map(m => m.name.replace('TwoStage ','2S-'));
+    const accColors = ['#DDE9F6','#D9F0E3','#FAE8D4','#C9A227','#E5E0F5','#F8E4E4','#FFF5E6'];
+    const qwkColors = ['#B8CFE8','#A8D4BC','#C9B090','#8A6E18','#9E8FD0','#D08F8F','#C9B854'];
     Plotly.newPlot('chart-model-acc', [
         { name:'Val Accuracy (%)', x:names, y:MODELS.map(m=>m.acc), type:'bar',
-          marker:{color:['#DDE9F6','#D9F0E3','#FAE8D4','#C9A227']}, text:MODELS.map(m=>m.acc+'%'), textposition:'outside' },
+          marker:{color:accColors}, text:MODELS.map(m=>m.acc+'%'), textposition:'outside' },
         { name:'QWK (×100)', x:names, y:MODELS.map(m=>+(m.qwk*100).toFixed(1)), type:'bar',
-          marker:{color:['#B8CFE8','#A8D4BC','#C9B090','#8A6E18']}, text:MODELS.map(m=>m.qwk), textposition:'outside' },
+          marker:{color:qwkColors}, text:MODELS.map(m=>m.qwk), textposition:'outside' },
     ], {
-        barmode:'group', height:320, margin:{t:20,b:80,l:50,r:20},
+        barmode:'group', height:360, margin:{t:20,b:100,l:50,r:20},
         paper_bgcolor:'transparent', plot_bgcolor:'transparent',
         font:{family:'Inter',size:11}, yaxis:{title:'Value'},
-        legend:{orientation:'h',y:-0.3},
-        xaxis:{tickangle:-15}
+        legend:{orientation:'h',y:-0.35},
+        xaxis:{tickangle:-20}
     }, PLY_CFG);
 
     // Radar / polar chart
     const cats = ['Accuracy (norm)','QWK (norm)','Stage1 Avg Acc (norm)'];
     const maxAcc = Math.max(...MODELS.map(m=>m.acc));
     const maxQwk = Math.max(...MODELS.map(m=>m.qwk));
-    const s1Avg = { baseline:null, cnn_no_norm: (STAGE1_ACC.cnn_no_norm.reduce((a,b)=>a+b)/10)/100,
-                    cnn_norm: (STAGE1_ACC.cnn_norm.reduce((a,b)=>a+b)/10)/100,
-                    lgbm: (STAGE1_ACC.lgbm.reduce((a,b)=>a+b)/10)/100 };
+    const s1Avg = {
+        baseline:null,
+        cnn_no_norm:   (STAGE1_ACC.cnn_no_norm.reduce((a,b)=>a+b)/10)/100,
+        cnn_norm:      (STAGE1_ACC.cnn_norm.reduce((a,b)=>a+b)/10)/100,
+        lgbm:          (STAGE1_ACC.lgbm.reduce((a,b)=>a+b)/10)/100,
+        xgboost:       (STAGE1_ACC.xgboost.reduce((a,b)=>a+b)/10)/100,
+        catboost:      (STAGE1_ACC.catboost.reduce((a,b)=>a+b)/10)/100,
+        decision_tree: (STAGE1_ACC.decision_tree.reduce((a,b)=>a+b)/10)/100,
+    };
     const maxS1 = Math.max(...Object.values(s1Avg).filter(Boolean));
-    const colors = ['#B8CFE8','#A8D4BC','#C9B090','#C9A227'];
+    const colors = ['#B8CFE8','#A8D4BC','#C9B090','#C9A227','#9E8FD0','#D08F8F','#C9B854'];
     const radarTraces = MODELS.map((m,i) => ({
-        type:'scatterpolar', name:m.name.replace(' Pipeline',''),
+        type:'scatterpolar', name:m.name.replace('TwoStage ','2S-'),
         r:[m.acc/maxAcc, m.qwk/maxQwk, s1Avg[m.id] ? s1Avg[m.id]/maxS1 : 0],
         theta:cats, fill:'toself',
         line:{color:colors[i]}, fillcolor:colors[i]+'55'
@@ -808,38 +832,48 @@ function buildStage1() {
     const tbody = document.querySelector('#feat-acc-table tbody');
     FEATURES.forEach((feat, i) => {
         const vals = {
-            cnn_no_norm: STAGE1_ACC.cnn_no_norm[i],
-            cnn_norm:    STAGE1_ACC.cnn_norm[i],
-            lgbm:        STAGE1_ACC.lgbm[i],
+            cnn_no_norm:   STAGE1_ACC.cnn_no_norm[i],
+            cnn_norm:      STAGE1_ACC.cnn_norm[i],
+            lgbm:          STAGE1_ACC.lgbm[i],
+            xgboost:       STAGE1_ACC.xgboost[i],
+            catboost:      STAGE1_ACC.catboost[i],
+            decision_tree: STAGE1_ACC.decision_tree[i],
         };
         const best = Object.entries(vals).sort((a,b)=>b[1]-a[1])[0];
         const cell = (key) => {
             const v = vals[key];
             const cls = heatColor(v, 44, 97);
             const isBest = key === best[0];
-            return `<td><span class="${cls}${isBest?' best-cell':''}" style="display:inline-block;padding:3px 8px;min-width:58px;">${v.toFixed(1)}%</span></td>`;
+            return `<td><span class="${cls}${isBest?' best-cell':''}" style="display:inline-block;padding:3px 8px;min-width:52px;">${v.toFixed(1)}%</span></td>`;
         };
-        const bestNames = { cnn_no_norm:'ResNet No Norm', cnn_norm:'ResNet GradNorm', lgbm:'LightGBM' };
+        const bestNames = {
+            cnn_no_norm:'ResNet No Norm', cnn_norm:'ResNet GradNorm',
+            lgbm:'LightGBM', xgboost:'XGBoost', catboost:'CatBoost', decision_tree:'DT',
+        };
+        const badgeCls = ['lgbm','xgboost','catboost'].includes(best[0]) ? 'gbm' : 'cnn';
         tbody.innerHTML += `<tr>
             <td><strong>${feat}</strong></td>
             <td style="text-align:center;color:var(--text-muted)">${FEAT_CLASSES[i]}</td>
-            ${cell('cnn_no_norm')}${cell('cnn_norm')}${cell('lgbm')}
-            <td><span class="badge badge-${best[0]==='lgbm'?'gbm':'cnn'}">${bestNames[best[0]]}</span></td>
+            ${cell('cnn_no_norm')}${cell('cnn_norm')}${cell('lgbm')}${cell('xgboost')}${cell('catboost')}${cell('decision_tree')}
+            <td><span class="badge badge-${badgeCls}">${bestNames[best[0]]}</span></td>
         </tr>`;
     });
 
     // Grouped bar chart per feature
     Plotly.newPlot('chart-feat-acc', [
-        { name:'ResNet (No Norm)', x:FEATURES, y:STAGE1_ACC.cnn_no_norm, type:'bar', marker:{color:'#B8CFE8'} },
-        { name:'ResNet (GradNorm)', x:FEATURES, y:STAGE1_ACC.cnn_norm,   type:'bar', marker:{color:'#C9B090'} },
-        { name:'LightGBM',      x:FEATURES, y:STAGE1_ACC.lgbm,         type:'bar', marker:{color:'#C9A227'} },
+        { name:'ResNet (No Norm)', x:FEATURES, y:STAGE1_ACC.cnn_no_norm,   type:'bar', marker:{color:'#B8CFE8'} },
+        { name:'ResNet (GradNorm)', x:FEATURES, y:STAGE1_ACC.cnn_norm,     type:'bar', marker:{color:'#C9B090'} },
+        { name:'LightGBM',         x:FEATURES, y:STAGE1_ACC.lgbm,          type:'bar', marker:{color:'#C9A227'} },
+        { name:'XGBoost',          x:FEATURES, y:STAGE1_ACC.xgboost,       type:'bar', marker:{color:'#9E8FD0'} },
+        { name:'CatBoost',         x:FEATURES, y:STAGE1_ACC.catboost,      type:'bar', marker:{color:'#D08F8F'} },
+        { name:'Decision Tree',    x:FEATURES, y:STAGE1_ACC.decision_tree,  type:'bar', marker:{color:'#C9B854'} },
     ], {
-        barmode:'group', height:400, margin:{t:20,b:80,l:50,r:20},
+        barmode:'group', height:440, margin:{t:20,b:80,l:50,r:20},
         paper_bgcolor:'transparent', plot_bgcolor:'transparent',
         font:{family:'Inter',size:11},
         yaxis:{title:'Val Accuracy (%)', range:[25,100]},
         xaxis:{tickangle:-20},
-        legend:{orientation:'h',y:-0.28},
+        legend:{orientation:'h',y:-0.32},
         shapes:[{type:'line',x0:-0.5,x1:9.5,y0:50,y1:50,line:{color:'#ccc',dash:'dot',width:1}}]
     }, PLY_CFG);
 }
